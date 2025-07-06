@@ -9,8 +9,8 @@ Un générateur de factures **polyvalent** pour les entrepreneurs français. Sim
 
 Ce générateur a été créé spécifiquement pour répondre aux besoins des **entrepreneurs français** :
 
-- ✅ **Multi-statuts** - Supporte les micro-entreprises ET les SASU
-- ✅ **Gestion TVA intelligente** - Pas de TVA pour les micro-entreprises, calcul automatique TVA 20% pour les SASU
+- ✅ **Multi-statuts** - Supporte les micro-entreprises, SASU ET EURL
+- ✅ **Gestion TVA intelligente** - Pas de TVA pour les micro-entreprises, calcul automatique TVA 20% pour les SASU et EURL
 - ✅ **Mentions légales conformes** - Toutes les mentions obligatoires selon le statut choisi
 - ✅ **Simple et rapide** - Aucune installation, fonctionne dans votre navigateur
 - ✅ **Gratuit à vie** - Pas d'abonnement, pas de limitations
@@ -19,7 +19,7 @@ Ce générateur a été créé spécifiquement pour répondre aux besoins des **
 ## 🚀 Fonctionnalités
 
 - **Interface moderne et intuitive** - Créez vos factures en quelques clics
-- **Multi-statuts juridiques** - Micro-entreprise et SASU supportés
+- **Multi-statuts juridiques** - Micro-entreprise, SASU et EURL supportés
 - **Génération PDF instantanée** - Factures prêtes à envoyer
 - **Calcul automatique intelligent** - TVA automatique selon le statut choisi
 - **Gestion des prestations multiples** - Ajoutez autant de lignes que nécessaire
@@ -52,7 +52,7 @@ cd caps_facturation
    ```javascript
    const CONFIG = {
      // Statut juridique
-     statutJuridique: "micro", // "micro" ou "sasu"
+     statutJuridique: "micro", // "micro", "sasu" ou "eurl"
      
      // Vos informations d'entreprise
      emetteurNom: "Votre Nom ou Raison Sociale",
@@ -67,6 +67,13 @@ cd caps_facturation
      capitalSocial: "1000", // Capital social en euros
      numTva: "FR12345678901", // N° TVA intracommunautaire
      dateCreationSasu: "2024-01-01", // Date de création de la SASU
+     
+     // Informations spécifiques EURL (si statutJuridique = "eurl")
+     capitalSocialEurl: "1000", // Capital social EURL en euros
+     numTvaEurl: "FR12345678901", // N° TVA intracommunautaire EURL
+     dateCreationEurl: "2024-01-01", // Date de création de l'EURL
+     gerantEurl: "Votre Nom Gérant", // Nom du gérant
+     associeUniqueEurl: "Votre Nom Associé", // Nom de l'associé unique
      
      // Vos informations bancaires
      iban: "FR76 1234 5678 9012 3456 7890 123",
@@ -95,7 +102,7 @@ cd caps_facturation
 
 ## 📄 Conformité Légale Multi-Statuts
 
-Ce générateur respecte **toutes les obligations légales** selon le statut choisi :
+Ce générateur respecte **toutes les obligations légales** selon le statut choisi (micro-entreprise, SASU et EURL) :
 
 ### 📋 Micro-Entreprise - Mentions obligatoires incluses :
 - ✅ TVA non applicable, art. 293 B du CGI
@@ -114,6 +121,19 @@ Ce générateur respecte **toutes les obligations légales** selon le statut cho
 - ✅ Informations TVA détaillées
 - ✅ Mentions légales SASU spécifiques
 - ✅ Date de création de la SASU
+- ✅ Numéro RCS Lyon obligatoire
+
+### 🏭 EURL - Mentions obligatoires incluses :
+- ✅ Capital social de l'EURL
+- ✅ Siège social
+- ✅ N° TVA intracommunautaire
+- ✅ Calcul automatique TVA 20%
+- ✅ Gérant et associé unique
+- ✅ Régime réel normal - Déclarations mensuelles
+- ✅ TVA sur les débits (facturation)
+- ✅ Responsabilité limitée aux apports
+- ✅ Mentions légales EURL spécifiques
+- ✅ Date de création de l'EURL
 - ✅ Numéro RCS Lyon obligatoire
 
 ## 🆘 Support et Aide
@@ -146,7 +166,7 @@ Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de 
 
 ## ⚖️ Mentions légales
 
-Ce générateur est conçu pour les **entrepreneurs français** (micro-entreprises et SASU). Il respecte la réglementation en vigueur mais nous vous recommandons de vérifier la conformité avec votre situation fiscale spécifique.
+Ce générateur est conçu pour les **entrepreneurs français** (micro-entreprises, SASU et EURL). Il respecte la réglementation en vigueur mais nous vous recommandons de vérifier la conformité avec votre situation fiscale spécifique.
 
 **Développé avec ❤️ pour les entrepreneurs français**
 

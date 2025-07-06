@@ -51,6 +51,7 @@
         <select id="statutJuridique" onchange="changerStatut()" required>
           <option value="micro">Micro-entreprise</option>
           <option value="sasu">SASU</option>
+          <option value="eurl">EURL</option>
         </select>
         <label>Nom de l'entreprise</label>
         <input type="text" id="emetteurNom" value="" required>
@@ -69,6 +70,18 @@
           <input type="text" id="numTva" placeholder="FR12345678901">
           <label>Date de création SASU</label>
           <input type="date" id="dateCreationSasu">
+        </div>
+        <div id="champsEurl" style="display: none;">
+          <label>Capital social EURL (€)</label>
+          <input type="number" id="capitalSocialEurl" min="0" step="0.01">
+          <label>N° TVA intracommunautaire</label>
+          <input type="text" id="numTvaEurl" placeholder="FR12345678901">
+          <label>Date de création EURL</label>
+          <input type="date" id="dateCreationEurl">
+          <label>Gérant</label>
+          <input type="text" id="gerantEurl" placeholder="Nom du gérant">
+          <label>Associé unique</label>
+          <input type="text" id="associeUniqueEurl" placeholder="Nom de l'associé unique">
         </div>
         <label>Email</label>
         <input type="email" id="emetteurEmail" value="" required>
@@ -136,6 +149,7 @@
     function changerStatut() {
       const statut = document.getElementById('statutJuridique').value;
       const champsSasu = document.getElementById('champsSasu');
+      const champsEurl = document.getElementById('champsEurl');
       const champsClientSasu = document.getElementById('champsClientSasu');
       const prixTTCInput = document.getElementById('prixPresta');
       const infoTVA = document.getElementById('infoTVA');
@@ -143,12 +157,21 @@
       
       if (statut === 'sasu') {
         champsSasu.style.display = 'block';
+        champsEurl.style.display = 'none';
+        champsClientSasu.style.display = 'block';
+        prixTTCInput.disabled = false;
+        infoTVA.style.display = 'block';
+        infoMicro.style.display = 'none';
+      } else if (statut === 'eurl') {
+        champsSasu.style.display = 'none';
+        champsEurl.style.display = 'block';
         champsClientSasu.style.display = 'block';
         prixTTCInput.disabled = false;
         infoTVA.style.display = 'block';
         infoMicro.style.display = 'none';
       } else {
         champsSasu.style.display = 'none';
+        champsEurl.style.display = 'none';
         champsClientSasu.style.display = 'none';
         prixTTCInput.disabled = true;
         prixTTCInput.value = '';
@@ -176,7 +199,7 @@
       const statutJuridique = document.getElementById('statutJuridique').value;
       
       if (!isNaN(prixHT) && prixHT >= 0) {
-        if (statutJuridique === 'sasu') {
+        if (statutJuridique === 'sasu' || statutJuridique === 'eurl') {
           const prixTTC = prixHT * 1.20; // TVA 20%
           document.getElementById('prixPresta').value = prixTTC.toFixed(2);
         } else {
@@ -193,7 +216,7 @@
       const statutJuridique = document.getElementById('statutJuridique').value;
       
       if (!isNaN(prixTTC) && prixTTC >= 0) {
-        if (statutJuridique === 'sasu') {
+        if (statutJuridique === 'sasu' || statutJuridique === 'eurl') {
           const prixHT = prixTTC / 1.20; // Déduction TVA 20%
           document.getElementById('prixHT').value = prixHT.toFixed(2);
         } else {
@@ -220,8 +243,8 @@
       if (!titre || !desc) return;
       
       let prixFinal;
-      if (statutJuridique === 'sasu') {
-        // Pour SASU, on peut avoir HT ou TTC, on stocke le TTC
+      if (statutJuridique === 'sasu' || statutJuridique === 'eurl') {
+        // Pour SASU et EURL, on peut avoir HT ou TTC, on stocke le TTC
         if (!isNaN(prixTTC)) {
           prixFinal = prixTTC;
         } else if (!isNaN(prixHT)) {
@@ -260,7 +283,7 @@
       list.innerHTML = '';
       prestations.forEach((p, i) => {
         let prixLabel;
-        if (statutJuridique === 'sasu') {
+        if (statutJuridique === 'sasu' || statutJuridique === 'eurl') {
           prixLabel = `${p.prix.toFixed(2)} € TTC`;
         } else {
           prixLabel = `${p.prix.toFixed(2)} € HT`;
@@ -300,6 +323,9 @@
       if (statutJuridique === 'sasu') {
         // Pour SASU, totalPrix = TTC
         genererFactureSASU(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
+      } else if (statutJuridique === 'eurl') {
+        // Pour EURL, totalPrix = TTC
+        genererFactureEURL(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
       } else {
         // Pour micro-entreprise, totalPrix = HT
         genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
@@ -363,6 +389,107 @@
           • En cas de retard de paiement, indemnité forfaitaire de recouvrement : 40 €<br>
           • Taux de pénalité de retard : 3 fois le taux de l'intérêt légal<br>
           • Aucun escompte pour paiement anticipé
+        </div>
+      `;
+    }
+    
+    function genererFactureEURL(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalTTC) {
+      const capitalSocialEurl = document.getElementById('capitalSocialEurl').value;
+      const numTvaEurl = document.getElementById('numTvaEurl').value;
+      const dateCreationEurl = document.getElementById('dateCreationEurl').value;
+      const gerantEurl = document.getElementById('gerantEurl').value;
+      const associeUniqueEurl = document.getElementById('associeUniqueEurl').value;
+      const clientTva = document.getElementById('clientTva').value;
+      const datePrestation = document.getElementById('datePrestation').value;
+      
+      const totalHT = totalTTC / 1.20; // Calcul HT à partir du TTC
+      const tva = totalTTC - totalHT; // TVA = TTC - HT
+      
+      document.getElementById('factureApercu').innerHTML = `
+        <div class="facture-header">
+          <div class="facture-emetteur">
+            <b style="font-size:1.3rem;">${emetteurNom}</b><br>
+            <b>EURL au capital de ${capitalSocialEurl || '[CAPITAL]'} €</b><br><br>
+            Siège social : ${emetteurAdresse.replace(/\n/g, '<br>')}<br><br>
+            SIRET : ${emetteurSiret || '[SIRET EURL]'}<br>
+            RCS Lyon : ${emetteurRcs || '[N° RCS]'}<br>
+            N° TVA : ${numTvaEurl || '[N° TVA INTRA]'}<br><br>
+            Gérant : ${gerantEurl || '[NOM GÉRANT]'}<br>
+            Associé unique : ${associeUniqueEurl || '[NOM ASSOCIÉ]'}<br><br>
+            Email : ${emetteurEmail}<br>
+            Tél : ${emetteurTel}
+          </div>
+          <div style="text-align:right;min-width:220px;">
+            <div class="facture-title">FACTURE</div>
+            <div class="facture-info">N° <b>${numFacture || '2025-001'}</b></div>
+            <div class="facture-info">Date d'émission : <b>${dateFacture || '[DATE]'}</b></div>
+            <div class="facture-info">Date d'échéance : <b>${echeance || '[DATE + 30 jours]'}</b></div>
+            <div class="facture-info">Date de prestation : <b>${datePrestation || periode || '[PÉRIODE]'}</b></div>
+          </div>
+        </div>
+        <div class="facture-client-box">
+          <b>ADRESSÉ À :</b><br>
+          ${clientNom ? `<b>${clientNom}</b><br>` : '[RAISON SOCIALE CLIENT]<br>'}
+          ${clientAdresse ? `${clientAdresse}<br>` : '[ADRESSE CLIENT]<br>'}
+          ${clientVille ? `${clientVille}<br>` : '[CODE POSTAL VILLE CLIENT]<br>'}
+          ${clientSiret ? `SIRET : ${clientSiret}<br>` : 'SIRET : [SIRET CLIENT]<br>'}
+          ${clientTva ? `N° TVA : ${clientTva}<br>` : 'N° TVA : [N° TVA CLIENT si applicable]<br>'}
+        </div>
+        <table class="facture-table">
+          <tr>
+            <th>Description des prestations</th>
+            <th>Période</th>
+            <th>Qté</th>
+            <th>Prix unit. HT</th>
+            <th>Prix unit. TTC</th>
+            <th>Total HT</th>
+            <th>Total TTC</th>
+          </tr>
+          ${prestations.length === 0 ? `<tr><td colspan='7' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
+            prestations.map(p => {
+              const prixHT = p.prix / 1.20; // Pour EURL, HT = TTC / 1.20
+              const totalHT = prixHT * (p.qte || 1);
+              const totalTTC = p.prix * (p.qte || 1);
+              return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}</td><td>${periode}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:right;'>${p.prix.toFixed(2)} €</td><td style='text-align:right;'>${totalHT.toFixed(2)} €</td><td style='text-align:right;'>${totalTTC.toFixed(2)} €</td></tr>`;
+            }).join('')}
+        </table>
+        <div style="margin: 20px 0;">
+          <b>INFORMATIONS TVA :</b><br>
+          • EURL assujettie à la TVA depuis le ${dateCreationEurl ? new Date(dateCreationEurl).toLocaleDateString('fr-FR') : '[DATE CRÉATION]'}<br>
+          • Régime réel normal - Déclarations mensuelles<br>
+          • Taux de TVA applicable : 20% (services aux entreprises)<br>
+          • TVA sur les débits (facturation)
+        </div>
+        <div class="facture-total">
+          Total HT : ${totalHT.toFixed(2)} €<br>
+          TVA 20% : ${tva.toFixed(2)} €<br>
+          <span style="font-size:1.25em; font-weight:800;">TOTAL TTC : ${totalTTC.toFixed(2)} €</span>
+        </div>
+        <div class="facture-paiement-box">
+          <b>MODALITÉS DE PAIEMENT</b><br>
+          Échéance : 30 jours nets à réception<br>
+          Mode : Virement bancaire uniquement<br>
+          Devise : Euro (EUR)<br>
+          Domiciliation bancaire : France<br><br>
+          <b>Coordonnées bancaires EURL :</b><br>
+          IBAN : ${iban || '[IBAN EURL]'}<br>
+          BIC : ${bic || '[BIC EURL]'}<br>
+          Banque : ${banque || '[NOM BANQUE]'}<br>
+          Titulaire : ${emetteurNom} EURL
+        </div>
+        <div class="mentions">
+          <b>MENTIONS LÉGALES OBLIGATOIRES EURL :</b><br>
+          • En cas de retard de paiement : indemnité forfaitaire de recouvrement de 40 €<br>
+          • Pénalités de retard : 3 fois le taux de l'intérêt légal (soit 3,99% en 2025)<br>
+          • Aucun escompte accordé pour paiement anticipé<br>
+          • TVA sur les débits - Régime réel normal<br>
+          • Responsabilité limitée aux apports - EURL unipersonnelle<br>
+          • Gérance : ${gerantEurl || '[NOM GÉRANT]'} - Associé unique : ${associeUniqueEurl || '[NOM ASSOCIÉ]'}
+        </div>
+        <div style="text-align: center; margin-top: 30px; font-size: 0.9rem; color: #666;">
+          <b>${emetteurNom} EURL</b><br>
+          EURL au capital de ${capitalSocialEurl || '[CAPITAL]'} € - RCS Lyon ${emetteurRcs || '[N° RCS]'} - SIRET ${emetteurSiret || '[SIRET]'} - N° TVA ${numTvaEurl || 'FR[N° TVA]'}<br>
+          Gérant : ${gerantEurl || '[NOM GÉRANT]'} - Associé unique : ${associeUniqueEurl || '[NOM ASSOCIÉ]'}
         </div>
       `;
     }
@@ -520,6 +647,14 @@
         if (CONFIG.capitalSocial) document.getElementById('capitalSocial').value = CONFIG.capitalSocial;
         if (CONFIG.numTva) document.getElementById('numTva').value = CONFIG.numTva;
         if (CONFIG.dateCreationSasu) document.getElementById('dateCreationSasu').value = CONFIG.dateCreationSasu;
+        
+        // Valeurs spécifiques EURL
+        if (CONFIG.capitalSocialEurl) document.getElementById('capitalSocialEurl').value = CONFIG.capitalSocialEurl;
+        if (CONFIG.numTvaEurl) document.getElementById('numTvaEurl').value = CONFIG.numTvaEurl;
+        if (CONFIG.dateCreationEurl) document.getElementById('dateCreationEurl').value = CONFIG.dateCreationEurl;
+        if (CONFIG.gerantEurl) document.getElementById('gerantEurl').value = CONFIG.gerantEurl;
+        if (CONFIG.associeUniqueEurl) document.getElementById('associeUniqueEurl').value = CONFIG.associeUniqueEurl;
+        
         if (CONFIG.statutJuridique) document.getElementById('statutJuridique').value = CONFIG.statutJuridique;
       }
       
