@@ -1,5 +1,8 @@
 # Générateur de Factures pour Micro-Entreprises - CAPSLOCK
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub stars](https://img.shields.io/github/stars/AllieEco/caps_facturation.svg?style=social)](https://github.com/AllieEco/caps_facturation/stargazers)
+
 Un générateur de factures **spécialement conçu** pour les micro-entrepreneurs français. Simple, gratuit et 100% adapté au régime de la micro-entreprise.
 
 ## ✨ Pourquoi ce générateur ?
@@ -108,6 +111,10 @@ Vous pouvez contribuer en :
 - 💡 Proposant des améliorations
 - 📝 Améliorant la documentation
 - ⭐ Mettant une étoile au projet !
+
+## 📜 Licence
+
+Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
 
 ## 📱 Captures d'écran
 
