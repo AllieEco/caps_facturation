@@ -1,4 +1,4 @@
-# Générateur de Factures Multi-Statuts - CAPSLOCK
+# Générateur de Factures Multi-Statuts 
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub stars](https://img.shields.io/github/stars/AllieEco/caps_facturation.svg?style=social)](https://github.com/AllieEco/caps_facturation/stargazers)
