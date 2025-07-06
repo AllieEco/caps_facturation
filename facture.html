@@ -47,20 +47,19 @@
       <form id="factureForm" autocomplete="off" onsubmit="return false;">
         <h3 style="color: #1a7ee7; margin-top: 20px; margin-bottom: 10px;">Informations émetteur</h3>
         <label>Nom de l'entreprise</label>
-        <input type="text" id="emetteurNom" value="VOTRE_NOM_ENTREPRISE" required>
+        <input type="text" id="emetteurNom" value="" required>
         <label>Contact</label>
-        <input type="text" id="emetteurContact" value="VOTRE_NOM_PRENOM" required>
+        <input type="text" id="emetteurContact" value="" required>
         <label>Adresse</label>
-        <textarea id="emetteurAdresse" rows="2" required>VOTRE_ADRESSE
-VOTRE_CODE_POSTAL VOTRE_VILLE</textarea>
+        <textarea id="emetteurAdresse" rows="2" required></textarea>
         <label>SIRET</label>
-        <input type="text" id="emetteurSiret" value="VOTRE_SIRET" required>
+        <input type="text" id="emetteurSiret" value="" required>
         <label>RCS</label>
-        <input type="text" id="emetteurRcs" value="VOTRE_RCS_OU_DISPENSE" required>
+        <input type="text" id="emetteurRcs" value="" required>
         <label>Email</label>
-        <input type="email" id="emetteurEmail" value="votre.email@exemple.com" required>
+        <input type="email" id="emetteurEmail" value="" required>
         <label>Téléphone</label>
-        <input type="tel" id="emetteurTel" value="VOTRE_TELEPHONE" required>
+        <input type="tel" id="emetteurTel" value="" required>
         <h3 style="color: #1a7ee7; margin-top: 20px; margin-bottom: 10px;">Informations facture</h3>
         <label>Numéro de facture</label>
         <input type="text" id="numFacture" value="F001" required>
@@ -86,11 +85,11 @@ VOTRE_CODE_POSTAL VOTRE_VILLE</textarea>
         <div class="prestations-list" id="prestationsList"></div>
         <h3 style="color: #1a7ee7; margin-top: 20px; margin-bottom: 10px;">Informations bancaires</h3>
         <label>IBAN</label>
-        <input type="text" id="iban" value="VOTRE_IBAN" required>
+        <input type="text" id="iban" value="" required>
         <label>BIC</label>
-        <input type="text" id="bic" value="VOTRE_BIC" required>
+        <input type="text" id="bic" value="" required>
         <label>Banque</label>
-        <input type="text" id="banque" value="NOM_DE_VOTRE_BANQUE" required>
+        <input type="text" id="banque" value="" required>
         <button class="btn" type="button" onclick="imprimerFacture()">Enregistrer en PDF</button>
       </form>
     </div>
@@ -100,6 +99,7 @@ VOTRE_CODE_POSTAL VOTRE_VILLE</textarea>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="config.js"></script>
   <script>
     let prestations = [];
     function ajouterPrestation() {
@@ -253,6 +253,21 @@ VOTRE_CODE_POSTAL VOTRE_VILLE</textarea>
     function initialiserFormulaire() {
       const aujourdhui = new Date().toISOString().split('T')[0];
       document.getElementById('dateFacture').value = aujourdhui;
+      
+      // Charger les valeurs de configuration si disponibles
+      if (typeof CONFIG !== 'undefined') {
+        document.getElementById('emetteurNom').value = CONFIG.emetteurNom || '';
+        document.getElementById('emetteurContact').value = CONFIG.emetteurContact || '';
+        document.getElementById('emetteurAdresse').value = CONFIG.emetteurAdresse || '';
+        document.getElementById('emetteurSiret').value = CONFIG.emetteurSiret || '';
+        document.getElementById('emetteurRcs').value = CONFIG.emetteurRcs || '';
+        document.getElementById('emetteurEmail').value = CONFIG.emetteurEmail || '';
+        document.getElementById('emetteurTel').value = CONFIG.emetteurTel || '';
+        document.getElementById('iban').value = CONFIG.iban || '';
+        document.getElementById('bic').value = CONFIG.bic || '';
+        document.getElementById('banque').value = CONFIG.banque || '';
+      }
+      
       majApercu();
     }
     initialiserFormulaire();
