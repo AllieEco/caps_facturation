@@ -599,25 +599,73 @@
       // Capturer l'aperçu en image
       html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
         const imgData = canvas.toDataURL('image/jpeg', 1.0);
-        // Format A4 : 210 x 297 mm en points jsPDF (1 mm = 2.83465 pt)
+        // Format A4 : 210 x 297 mm
         const pdf = new jspdf.jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
         const pageWidth = 210;
         const pageHeight = 297;
-        // Calculer la taille de l'image pour qu'elle tienne dans la page
-        let imgWidth = pageWidth - 20; // marges de 10mm
-        let imgHeight = canvas.height * imgWidth / canvas.width;
-        if (imgHeight > pageHeight - 20) {
-          imgHeight = pageHeight - 20;
-          imgWidth = canvas.width * imgHeight / canvas.height;
+        const margin = 10; // marges de 10mm
+        const usableWidth = pageWidth - (margin * 2);
+        const usableHeight = pageHeight - (margin * 2);
+        
+        // Calculer la largeur optimale de l'image
+        const imgWidth = usableWidth;
+        const imgHeight = canvas.height * imgWidth / canvas.width;
+        
+        // Si l'image tient dans une page
+        if (imgHeight <= usableHeight) {
+          const x = (pageWidth - imgWidth) / 2;
+          const y = margin;
+          pdf.addImage(imgData, 'JPEG', x, y, imgWidth, imgHeight);
+        } else {
+          // Si l'image dépasse une page, la diviser en plusieurs pages
+          const ratio = canvas.width / canvas.height;
+          const pageImgHeight = usableHeight;
+          const pageImgWidth = pageImgHeight * ratio;
+          
+          // Calculer le nombre de pages nécessaires
+          const totalPages = Math.ceil(imgHeight / usableHeight);
+          
+          console.log(`Document trop grand, division en ${totalPages} pages`);
+          
+          // Créer un canvas temporaire pour chaque page
+          for (let pageNum = 0; pageNum < totalPages; pageNum++) {
+            const startY = pageNum * usableHeight * (canvas.height / imgHeight);
+            const sliceHeight = Math.min(usableHeight * (canvas.height / imgHeight), canvas.height - startY);
+            
+            // Créer un canvas pour cette portion
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = sliceHeight;
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            // Copier la portion de l'image originale
+            tempCtx.drawImage(canvas, 0, startY, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
+            
+            // Ajouter une nouvelle page si ce n'est pas la première
+            if (pageNum > 0) {
+              pdf.addPage();
+            }
+            
+            // Calculer les dimensions pour cette page
+            const pageImgData = tempCanvas.toDataURL('image/jpeg', 1.0);
+            const actualHeight = sliceHeight * imgWidth / canvas.width;
+            const x = (pageWidth - imgWidth) / 2;
+            const y = margin;
+            
+            pdf.addImage(pageImgData, 'JPEG', x, y, imgWidth, actualHeight);
+            
+            // Ajouter un numéro de page en bas de chaque page
+            pdf.setFontSize(8);
+            pdf.setTextColor(128, 128, 128);
+            pdf.text(`Page ${pageNum + 1}/${totalPages}`, pageWidth - 20, pageHeight - 5);
+          }
         }
-        const x = (pageWidth - imgWidth) / 2;
-        const y = 10;
-        pdf.addImage(imgData, 'JPEG', x, y, imgWidth, imgHeight);
-                 const numFacture = document.getElementById('numFacture').value || 'F001';
-         const clientNom = document.getElementById('clientNom').value || 'CLIENT';
-         // Nettoyer le nom du client pour le nom de fichier (supprimer espaces et caractères spéciaux)
-         const clientNomClean = clientNom.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-         const filename = `${numFacture}${clientNomClean}.pdf`;
+        
+        const numFacture = document.getElementById('numFacture').value || 'F001';
+        const clientNom = document.getElementById('clientNom').value || 'CLIENT';
+        // Nettoyer le nom du client pour le nom de fichier (supprimer espaces et caractères spéciaux)
+        const clientNomClean = clientNom.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+        const filename = `${numFacture}${clientNomClean}.pdf`;
         pdf.save(filename);
       }).catch(err => {
         console.error('Erreur lors de la génération du PDF:', err);
