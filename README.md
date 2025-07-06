@@ -111,7 +111,9 @@ Vous pouvez contribuer en :
 
 ## 📱 Captures d'écran
 
-*Interface moderne adaptée aux micro-entreprises*
+![image](https://github.com/user-attachments/assets/208d91a5-4734-4991-8433-425cdcbc29bb)
+
+
 
 ---
 
