@@ -111,7 +111,8 @@ Vous pouvez contribuer en :
 
 ## 📱 Captures d'écran
 
-![image](https://github.com/user-attachments/assets/80a62fcb-ef89-4b85-854b-732c565cf5a9)
+![image](https://github.com/user-attachments/assets/208d91a5-4734-4991-8433-425cdcbc29bb)
+
 
 
 ---
