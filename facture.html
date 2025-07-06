@@ -13,6 +13,7 @@
     h1 { color: #1a7ee7; font-size: 2.1rem; margin-bottom: 18px; letter-spacing: 1px; }
     label { font-weight: 500; margin-top: 12px; display: block; }
     input, textarea, select { width: 100%; padding: 8px 10px; margin-top: 4px; margin-bottom: 10px; border: 1px solid #c7e0f7; border-radius: 6px; font-size: 1rem; font-family: inherit; background: #fafdff; transition: border 0.2s; }
+    input:disabled { background: #f5f5f5; color: #999; border: 1px solid #ddd; cursor: not-allowed; }
     input:focus, textarea:focus { border: 1.5px solid #1a7ee7; outline: none; }
     .btn { background: #1a7ee7; color: #fff; border: none; border-radius: 6px; padding: 10px 22px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-top: 10px; box-shadow: 0 2px 8px rgba(26,126,231,0.08); transition: background 0.2s; }
     .btn:hover { background: #1766b8; }
@@ -99,7 +100,16 @@
         <label>Ajouter une prestation</label>
         <input type="text" id="titrePresta" placeholder="Titre de la tâche">
         <input type="text" id="descPresta" placeholder="Description détaillée">
-        <input type="number" id="prixPresta" placeholder="Prix TTC (€)" min="0" step="0.01">
+        <div style="display: flex; gap: 10px;">
+          <input type="number" id="prixHT" placeholder="Prix HT (€)" min="0" step="0.01" style="flex: 1;" oninput="calculerTTCDepuisHT()">
+          <input type="number" id="prixPresta" placeholder="Prix TTC (€)" min="0" step="0.01" style="flex: 1;" oninput="calculerHTDepuisTTC()" disabled>
+        </div>
+        <div id="infoTVA" style="font-size: 0.9rem; color: #666; margin-top: 5px; display: none;">
+          Pour les SASU : vous pouvez saisir soit le prix HT soit le prix TTC, l'autre sera calculé automatiquement.
+        </div>
+        <div id="infoMicro" style="font-size: 0.9rem; color: #666; margin-top: 5px;">
+          Pour les micro-entreprises : saisissez uniquement le prix HT (TVA non applicable).
+        </div>
         <input type="number" id="qtePresta" placeholder="Quantité" min="1" step="1">
         <button class="btn" type="button" onclick="ajouterPrestation()">Ajouter</button>
         <div class="prestations-list" id="prestationsList"></div>
@@ -127,30 +137,114 @@
       const statut = document.getElementById('statutJuridique').value;
       const champsSasu = document.getElementById('champsSasu');
       const champsClientSasu = document.getElementById('champsClientSasu');
+      const prixTTCInput = document.getElementById('prixPresta');
+      const infoTVA = document.getElementById('infoTVA');
+      const infoMicro = document.getElementById('infoMicro');
       
       if (statut === 'sasu') {
         champsSasu.style.display = 'block';
         champsClientSasu.style.display = 'block';
+        prixTTCInput.disabled = false;
+        infoTVA.style.display = 'block';
+        infoMicro.style.display = 'none';
       } else {
         champsSasu.style.display = 'none';
         champsClientSasu.style.display = 'none';
+        prixTTCInput.disabled = true;
+        prixTTCInput.value = '';
+        infoTVA.style.display = 'none';
+        infoMicro.style.display = 'block';
       }
+      
+      // Recalculer les prix dans les champs de saisie si des valeurs sont présentes
+      const prixTTC = document.getElementById('prixPresta').value;
+      const prixHT = document.getElementById('prixHT').value;
+      
+      if (prixTTC && !isNaN(parseFloat(prixTTC))) {
+        calculerHTDepuisTTC();
+      } else if (prixHT && !isNaN(parseFloat(prixHT))) {
+        calculerTTCDepuisHT();
+      }
+      
+      // Rafraîchir l'affichage des prestations avec les bons labels
+      afficherPrestations();
       majApercu();
+    }
+    
+    function calculerTTCDepuisHT() {
+      const prixHT = parseFloat(document.getElementById('prixHT').value);
+      const statutJuridique = document.getElementById('statutJuridique').value;
+      
+      if (!isNaN(prixHT) && prixHT >= 0) {
+        if (statutJuridique === 'sasu') {
+          const prixTTC = prixHT * 1.20; // TVA 20%
+          document.getElementById('prixPresta').value = prixTTC.toFixed(2);
+        } else {
+          // Pour micro-entreprise, on ne calcule pas de TTC, on laisse vide
+          document.getElementById('prixPresta').value = '';
+        }
+      } else if (prixHT === '' || isNaN(prixHT)) {
+        document.getElementById('prixPresta').value = '';
+      }
+    }
+    
+    function calculerHTDepuisTTC() {
+      const prixTTC = parseFloat(document.getElementById('prixPresta').value);
+      const statutJuridique = document.getElementById('statutJuridique').value;
+      
+      if (!isNaN(prixTTC) && prixTTC >= 0) {
+        if (statutJuridique === 'sasu') {
+          const prixHT = prixTTC / 1.20; // Déduction TVA 20%
+          document.getElementById('prixHT').value = prixHT.toFixed(2);
+        } else {
+          // Pour micro-entreprise, TTC = HT (pas de TVA)
+          document.getElementById('prixHT').value = prixTTC.toFixed(2);
+        }
+      } else if (prixTTC === '' || isNaN(prixTTC)) {
+        document.getElementById('prixHT').value = '';
+      }
     }
     
     function ajouterPrestation() {
       const titre = document.getElementById('titrePresta').value.trim();
       const desc = document.getElementById('descPresta').value.trim();
-      const prix = parseFloat(document.getElementById('prixPresta').value);
+      const prixTTC = parseFloat(document.getElementById('prixPresta').value);
+      const prixHT = parseFloat(document.getElementById('prixHT').value);
+      const statutJuridique = document.getElementById('statutJuridique').value;
       let qte = 1;
       if (document.getElementById('qtePresta')) {
         qte = parseInt(document.getElementById('qtePresta').value) || 1;
       }
-      if (!titre || !desc || isNaN(prix)) return;
-      prestations.push({ titre, desc, prix, qte });
+      
+      // Vérifier qu'on a au moins un prix (HT ou TTC selon le statut)
+      if (!titre || !desc) return;
+      
+      let prixFinal;
+      if (statutJuridique === 'sasu') {
+        // Pour SASU, on peut avoir HT ou TTC, on stocke le TTC
+        if (!isNaN(prixTTC)) {
+          prixFinal = prixTTC;
+        } else if (!isNaN(prixHT)) {
+          prixFinal = prixHT * 1.20; // Calculer TTC à partir de HT
+        } else {
+          return; // Pas de prix saisi
+        }
+      } else {
+        // Pour micro-entreprise, seul le HT compte
+        if (!isNaN(prixHT)) {
+          prixFinal = prixHT;
+        } else if (!isNaN(prixTTC)) {
+          prixFinal = prixTTC; // TTC = HT pour micro-entreprise
+        } else {
+          return; // Pas de prix saisi
+        }
+      }
+      
+      prestations.push({ titre, desc, prix: prixFinal, qte });
       document.getElementById('titrePresta').value = '';
       document.getElementById('descPresta').value = '';
       document.getElementById('prixPresta').value = '';
+      document.getElementById('prixHT').value = '';
       if (document.getElementById('qtePresta')) document.getElementById('qtePresta').value = '';
       afficherPrestations();
       majApercu();
@@ -162,9 +256,16 @@
     }
     function afficherPrestations() {
       const list = document.getElementById('prestationsList');
+      const statutJuridique = document.getElementById('statutJuridique').value;
       list.innerHTML = '';
       prestations.forEach((p, i) => {
-        list.innerHTML += `<div class='prest-item'><span><b>${p.titre}</b><br>${p.desc} — <b>${p.prix.toFixed(2)} € TTC</b></span><button onclick='supprimerPrestation(${i})' title='Supprimer'>&times;</button></div>`;
+        let prixLabel;
+        if (statutJuridique === 'sasu') {
+          prixLabel = `${p.prix.toFixed(2)} € TTC`;
+        } else {
+          prixLabel = `${p.prix.toFixed(2)} € HT`;
+        }
+        list.innerHTML += `<div class='prest-item'><span><b>${p.titre}</b><br>${p.desc} — <b>${prixLabel}</b></span><button onclick='supprimerPrestation(${i})' title='Supprimer'>&times;</button></div>`;
       });
     }
     function majApercu() {
@@ -194,16 +295,18 @@
         echeance = d.toLocaleDateString('fr-FR');
       }
       
-      const totalTTC = prestations.reduce((acc, p) => acc + (p.prix * (p.qte || 1)), 0);
+      const totalPrix = prestations.reduce((acc, p) => acc + (p.prix * (p.qte || 1)), 0);
       
       if (statutJuridique === 'sasu') {
-        genererFactureSASU(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalTTC);
+        // Pour SASU, totalPrix = TTC
+        genererFactureSASU(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
       } else {
-        genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalTTC);
+        // Pour micro-entreprise, totalPrix = HT
+        genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
       }
     }
     
-    function genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalTTC) {
+    function genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalHT) {
       document.getElementById('factureApercu').innerHTML = `
         <div class="facture-header">
           <div class="facture-emetteur">
@@ -235,19 +338,16 @@
             <th>Période</th>
             <th>Quantité</th>
             <th>Prix unit. HT</th>
-            <th>Prix unit. TTC</th>
             <th>Total HT</th>
-            <th>Total TTC</th>
           </tr>
-          ${prestations.length === 0 ? `<tr><td colspan='7' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
+          ${prestations.length === 0 ? `<tr><td colspan='5' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
             prestations.map(p => {
-              const prixHT = p.prix; // Pour micro-entreprise, HT = TTC (pas de TVA)
+              const prixHT = p.prix; // Pour micro-entreprise, le prix stocké est HT
               const totalHT = prixHT * (p.qte || 1);
-              const totalTTC = p.prix * (p.qte || 1);
-              return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}</td><td>${periode}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:right;'>${p.prix.toFixed(2)} €</td><td style='text-align:right;'>${totalHT.toFixed(2)} €</td><td style='text-align:right;'>${totalTTC.toFixed(2)} €</td></tr>`;
+              return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}</td><td>${periode}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:right;'>${totalHT.toFixed(2)} €</td></tr>`;
             }).join('')}
         </table>
-        <div class="facture-total">Total HT : ${totalTTC.toFixed(2)} €<br>TVA : Non applicable<br><span style="font-size:1.25em; font-weight:800;">TOTAL TTC : ${totalTTC.toFixed(2)} €</span></div>
+        <div class="facture-total">Total HT : ${totalHT.toFixed(2)} €<br>TVA : Non applicable<br><span style="font-size:1.25em; font-weight:800;">TOTAL TTC : ${totalHT.toFixed(2)} €</span></div>
         <div class="facture-paiement-box">
           <b>MODALITÉS DE PAIEMENT</b><br>
           Échéance : 30 jours à réception<br>
