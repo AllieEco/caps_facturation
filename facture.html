@@ -78,7 +78,8 @@
         <input type="text" id="periode" value="Juillet 2025" required>
         <h3 style="color: #1a7ee7; margin-top: 20px; margin-bottom: 10px;">Prestations</h3>
         <label>Ajouter une prestation</label>
-        <input type="text" id="descPresta" placeholder="Description de la tâche">
+        <input type="text" id="titrePresta" placeholder="Titre de la tâche">
+        <input type="text" id="descPresta" placeholder="Description détaillée">
         <input type="number" id="prixPresta" placeholder="Prix HT (€)" min="0" step="0.01">
         <input type="number" id="qtePresta" placeholder="Quantité" min="1" step="1">
         <button class="btn" type="button" onclick="ajouterPrestation()">Ajouter</button>
@@ -103,14 +104,16 @@
   <script>
     let prestations = [];
     function ajouterPrestation() {
+      const titre = document.getElementById('titrePresta').value.trim();
       const desc = document.getElementById('descPresta').value.trim();
       const prix = parseFloat(document.getElementById('prixPresta').value);
       let qte = 1;
       if (document.getElementById('qtePresta')) {
         qte = parseInt(document.getElementById('qtePresta').value) || 1;
       }
-      if (!desc || isNaN(prix)) return;
-      prestations.push({ desc, prix, qte });
+      if (!titre || !desc || isNaN(prix)) return;
+      prestations.push({ titre, desc, prix, qte });
+      document.getElementById('titrePresta').value = '';
       document.getElementById('descPresta').value = '';
       document.getElementById('prixPresta').value = '';
       if (document.getElementById('qtePresta')) document.getElementById('qtePresta').value = '';
@@ -126,7 +129,7 @@
       const list = document.getElementById('prestationsList');
       list.innerHTML = '';
       prestations.forEach((p, i) => {
-        list.innerHTML += `<div class='prest-item'><span>${p.desc} — <b>${p.prix.toFixed(2)} €</b></span><button onclick='supprimerPrestation(${i})' title='Supprimer'>&times;</button></div>`;
+        list.innerHTML += `<div class='prest-item'><span><b>${p.titre}</b><br>${p.desc} — <b>${p.prix.toFixed(2)} €</b></span><button onclick='supprimerPrestation(${i})' title='Supprimer'>&times;</button></div>`;
       });
     }
     function majApercu() {
@@ -188,7 +191,7 @@
             <th>Total HT</th>
           </tr>
           ${prestations.length === 0 ? `<tr><td colspan='5' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
-            prestations.map(p => `<tr><td>${p.desc.replace(/\n/g, '<br>')}</td><td>${periode}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${p.prix.toFixed(2)} €</td><td style='text-align:right;'>${(p.prix * (p.qte || 1)).toFixed(2)} €</td></tr>`).join('')}
+            prestations.map(p => `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}</td><td>${periode}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${p.prix.toFixed(2)} €</td><td style='text-align:right;'>${(p.prix * (p.qte || 1)).toFixed(2)} €</td></tr>`).join('')}
         </table>
         <div class="facture-total">Sous-total HT : ${totalHT.toFixed(2)} €<br>TVA : Non applicable<br><span style="font-size:1.25em; font-weight:800;">TOTAL TTC : ${totalHT.toFixed(2)} €</span></div>
         <div class="facture-paiement-box">
