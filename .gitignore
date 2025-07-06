@@ -1,0 +1,13 @@
+# Fichiers de configuration privés
+config.js
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers temporaires
+*.tmp
+*.temp
+
+# Logs
+*.log 

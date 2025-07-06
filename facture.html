@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Générateur de Facture - CAPSLOCK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Montserrat', Arial, sans-serif; background: #f7fafd; margin: 0; padding: 0; color: #222; }
+    .container { max-width: 1100px; margin: 30px auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); padding: 32px 24px; display: flex; gap: 40px; }
+    .form-section { flex: 1; min-width: 320px; }
+    .facture-section { flex: 2; background: #f4f8fb; border-radius: 12px; padding: 24px 32px; min-width: 400px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    h1 { color: #1a7ee7; font-size: 2.1rem; margin-bottom: 18px; letter-spacing: 1px; }
+    label { font-weight: 500; margin-top: 12px; display: block; }
+    input, textarea, select { width: 100%; padding: 8px 10px; margin-top: 4px; margin-bottom: 10px; border: 1px solid #c7e0f7; border-radius: 6px; font-size: 1rem; font-family: inherit; background: #fafdff; transition: border 0.2s; }
+    input:focus, textarea:focus { border: 1.5px solid #1a7ee7; outline: none; }
+    .btn { background: #1a7ee7; color: #fff; border: none; border-radius: 6px; padding: 10px 22px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-top: 10px; box-shadow: 0 2px 8px rgba(26,126,231,0.08); transition: background 0.2s; }
+    .btn:hover { background: #1766b8; }
+    .prestations-list { margin-bottom: 10px; }
+    .prest-item { background: #eaf4fb; border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; font-size: 0.98rem; }
+    .prest-item span { flex: 1; }
+    .prest-item button { background: none; border: none; color: #e74c3c; font-size: 1.2rem; cursor: pointer; margin-left: 8px; }
+    @media (max-width: 900px) { .container { flex-direction: column; } .facture-section { min-width: unset; } }
+    .facture { background: #fff; border-radius: 10px; padding: 28px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); color: #222; font-size: 0.75rem; max-width: 700px; margin: auto; }
+    .facture-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+    .facture-title { font-size: 1.6rem; font-weight: 700; background: linear-gradient(135deg, #ff6b9d, #c44569, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 1px; text-align: right; }
+    .facture-info { font-size: 0.8rem; color: #222; margin-bottom: 4px; text-align: right; }
+    .facture-emetteur { font-size: 0.8rem; color: #222; margin-bottom: 10px; font-weight: 400; line-height: 1.5; }
+    .facture-client-box { background: #f4f4f4; border: 1.5px solid #e3eaf1; border-radius: 6px; padding: 14px 18px; margin: 24px 0 18px 0; }
+    .facture-client-box b { font-size: 0.9rem; letter-spacing: 0.5px; }
+    .facture-table { width: 100%; border-collapse: collapse; margin: 18px 0 10px 0; background: #fff; }
+    .facture-table th, .facture-table td { border: 1px solid #222; padding: 8px 10px; text-align: left; font-size: 0.75rem; }
+    .facture-table th { background: #f4f4f4; font-weight: 700; text-align: center; }
+    .facture-table td { vertical-align: top; }
+    .facture-total { text-align: right; font-size: 0.85rem; font-weight: 700; margin-top: 10px; margin-bottom: 10px; }
+    .facture-paiement-box { background: #f4f4f4; border: 1.5px solid #e3eaf1; border-radius: 6px; padding: 14px 18px; margin: 28px 0 18px 0; }
+    .facture-paiement-box b { font-size: 0.8rem; }
+    .mentions { font-size: 0.7rem; color: #222; margin-top: 24px; border-top: 1px solid #e3eaf1; padding-top: 12px; }
+    .facture-footer { margin-top: 18px; font-size: 0.98rem; }
+    @media print { body, html { background: #fff !important; } .container { box-shadow: none !important; background: #fff !important; padding: 0 !important; margin: 0 !important; display: block !important; } .form-section, .prestations-list, .btn { display: none !important; } .facture-section { background: #fff !important; box-shadow: none !important; padding: 0 !important; min-width: unset !important; } .facture { box-shadow: none !important; margin: 0 auto !important; max-width: 100% !important; color: #222 !important; background: #fff !important; page-break-after: avoid; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="form-section">
+      <h1>Nouvelle facture</h1>
+      <form id="factureForm" autocomplete="off" onsubmit="return false;">
+        <h3 style="color: #1a7ee7; margin-top: 20px; margin-bottom: 10px;">Informations émetteur</h3>
+        <label>Nom de l'entreprise</label>
+        <input type="text" id="emetteurNom" value="VOTRE_NOM_ENTREPRISE" required>
+        <label>Contact</label>
+        <input type="text" id="emetteurContact" value="VOTRE_NOM_PRENOM" required>
+        <label>Adresse</label>
+        <textarea id="emetteurAdresse" rows="2" required>VOTRE_ADRESSE
+VOTRE_CODE_POSTAL VOTRE_VILLE</textarea>
+        <label>SIRET</label>
+        <input type="text" id="emetteurSiret" value="VOTRE_SIRET" required>
+        <label>RCS</label>
+        <input type="text" id="emetteurRcs" value="VOTRE_RCS_OU_DISPENSE" required>
+        <label>Email</label>
+        <input type="email" id="emetteurEmail" value="votre.email@exemple.com" required>
+        <label>Téléphone</label>
+        <input type="tel" id="emetteurTel" value="VOTRE_TELEPHONE" required>
+        <h3 style="color: #1a7ee7; margin-top: 20px; margin-bottom: 10px;">Informations facture</h3>
+        <label>Numéro de facture</label>
+        <input type="text" id="numFacture" value="F001" required>
+        <label>Date</label>
+        <input type="date" id="dateFacture" required>
+        <h3 style="color: #1a7ee7; margin-top: 20px; margin-bottom: 10px;">Informations client</h3>
+        <label>Nom du client</label>
+        <input type="text" id="clientNom" required>
+        <label>Adresse du client</label>
+        <input type="text" id="clientAdresse" required>
+        <label>Code postal & Ville</label>
+        <input type="text" id="clientVille" required>
+        <label>SIRET du client (optionnel)</label>
+        <input type="text" id="clientSiret">
+        <label>Période facturée</label>
+        <input type="text" id="periode" value="Juillet 2025" required>
+        <h3 style="color: #1a7ee7; margin-top: 20px; margin-bottom: 10px;">Prestations</h3>
+        <label>Ajouter une prestation</label>
+        <input type="text" id="descPresta" placeholder="Description de la tâche">
+        <input type="number" id="prixPresta" placeholder="Prix HT (€)" min="0" step="0.01">
+        <input type="number" id="qtePresta" placeholder="Quantité" min="1" step="1">
+        <button class="btn" type="button" onclick="ajouterPrestation()">Ajouter</button>
+        <div class="prestations-list" id="prestationsList"></div>
+        <h3 style="color: #1a7ee7; margin-top: 20px; margin-bottom: 10px;">Informations bancaires</h3>
+        <label>IBAN</label>
+        <input type="text" id="iban" value="VOTRE_IBAN" required>
+        <label>BIC</label>
+        <input type="text" id="bic" value="VOTRE_BIC" required>
+        <label>Banque</label>
+        <input type="text" id="banque" value="NOM_DE_VOTRE_BANQUE" required>
+        <button class="btn" type="button" onclick="imprimerFacture()">Enregistrer en PDF</button>
+      </form>
+    </div>
+    <div class="facture-section">
+      <div id="factureApercu" class="facture"></div>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    let prestations = [];
+    function ajouterPrestation() {
+      const desc = document.getElementById('descPresta').value.trim();
+      const prix = parseFloat(document.getElementById('prixPresta').value);
+      let qte = 1;
+      if (document.getElementById('qtePresta')) {
+        qte = parseInt(document.getElementById('qtePresta').value) || 1;
+      }
+      if (!desc || isNaN(prix)) return;
+      prestations.push({ desc, prix, qte });
+      document.getElementById('descPresta').value = '';
+      document.getElementById('prixPresta').value = '';
+      if (document.getElementById('qtePresta')) document.getElementById('qtePresta').value = '';
+      afficherPrestations();
+      majApercu();
+    }
+    function supprimerPrestation(idx) {
+      prestations.splice(idx, 1);
+      afficherPrestations();
+      majApercu();
+    }
+    function afficherPrestations() {
+      const list = document.getElementById('prestationsList');
+      list.innerHTML = '';
+      prestations.forEach((p, i) => {
+        list.innerHTML += `<div class='prest-item'><span>${p.desc} — <b>${p.prix.toFixed(2)} €</b></span><button onclick='supprimerPrestation(${i})' title='Supprimer'>&times;</button></div>`;
+      });
+    }
+    function majApercu() {
+      const numFacture = document.getElementById('numFacture').value;
+      const dateFacture = document.getElementById('dateFacture').value;
+      const clientNom = document.getElementById('clientNom').value;
+      const clientAdresse = document.getElementById('clientAdresse').value;
+      const clientVille = document.getElementById('clientVille').value;
+      const clientSiret = document.getElementById('clientSiret').value;
+      const periode = document.getElementById('periode').value;
+      const iban = document.getElementById('iban').value;
+      const bic = document.getElementById('bic').value;
+      const banque = document.getElementById('banque').value;
+      const emetteurNom = document.getElementById('emetteurNom').value;
+      const emetteurContact = document.getElementById('emetteurContact').value;
+      const emetteurAdresse = document.getElementById('emetteurAdresse').value;
+      const emetteurSiret = document.getElementById('emetteurSiret').value;
+      const emetteurRcs = document.getElementById('emetteurRcs').value;
+      const emetteurEmail = document.getElementById('emetteurEmail').value;
+      const emetteurTel = document.getElementById('emetteurTel').value;
+      let echeance = '';
+      if (dateFacture) {
+        const d = new Date(dateFacture);
+        d.setDate(d.getDate() + 30);
+        echeance = d.toLocaleDateString('fr-FR');
+      }
+      const totalHT = prestations.reduce((acc, p) => acc + (p.prix * (p.qte || 1)), 0);
+      document.getElementById('factureApercu').innerHTML = `
+        <div class="facture-header">
+          <div class="facture-emetteur">
+            <b style="font-size:1.3rem;">${emetteurNom}</b><br>
+            ${emetteurContact}<br>
+            ${emetteurAdresse.replace(/\n/g, '<br>')}<br>
+            SIRET : ${emetteurSiret}<br>
+            ${emetteurRcs}<br>
+            Email : ${emetteurEmail}<br>
+            Tél : ${emetteurTel}
+          </div>
+          <div style="text-align:right;min-width:220px;">
+            <div class="facture-title">FACTURE</div>
+            <div class="facture-info">N° <b>${numFacture || ''}</b></div>
+            <div class="facture-info">Date : <b>${dateFacture || '[DATE]'}</b></div>
+            <div class="facture-info">Échéance : <b>${echeance || '[DATE + 30 jours]'}</b></div>
+          </div>
+        </div>
+        <div class="facture-client-box">
+          <b>FACTURER À :</b><br>
+          ${clientNom ? `<b>${clientNom}</b><br>` : '[NOM DU CLIENT]<br>'}
+          ${clientAdresse ? `${clientAdresse}<br>` : '[ADRESSE CLIENT]<br>'}
+          ${clientVille ? `${clientVille}<br>` : '[CODE POSTAL VILLE]<br>'}
+          ${clientSiret ? `SIRET : ${clientSiret}<br>` : 'SIRET : [SIRET CLIENT si applicable]<br>'}
+        </div>
+        <table class="facture-table">
+          <tr>
+            <th>Description des prestations</th>
+            <th>Période</th>
+            <th>Quantité</th>
+            <th>Prix unitaire HT</th>
+            <th>Total HT</th>
+          </tr>
+          ${prestations.length === 0 ? `<tr><td colspan='5' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
+            prestations.map(p => `<tr><td>${p.desc.replace(/\n/g, '<br>')}</td><td>${periode}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${p.prix.toFixed(2)} €</td><td style='text-align:right;'>${(p.prix * (p.qte || 1)).toFixed(2)} €</td></tr>`).join('')}
+        </table>
+        <div class="facture-total">Sous-total HT : ${totalHT.toFixed(2)} €<br>TVA : Non applicable<br><span style="font-size:1.25em; font-weight:800;">TOTAL TTC : ${totalHT.toFixed(2)} €</span></div>
+        <div class="facture-paiement-box">
+          <b>MODALITÉS DE PAIEMENT</b><br>
+          Échéance : 30 jours à réception<br>
+          <b>Mode de paiement :</b> Virement bancaire<br>
+          <b>RIB :</b><br>
+          IBAN : ${iban || '[VOTRE IBAN]'}<br>
+          BIC : ${bic || '[VOTRE BIC]'}<br>
+          Banque : ${banque || '[NOM DE VOTRE BANQUE]'}
+        </div>
+        <div class="mentions">
+          <b>Mentions légales obligatoires :</b><br>
+          • TVA non applicable, art. 293 B du CGI<br>
+          • En cas de retard de paiement, indemnité forfaitaire de recouvrement : 40 €<br>
+          • Taux de pénalité de retard : 3 fois le taux de l'intérêt légal<br>
+          • Aucun escompte pour paiement anticipé
+        </div>
+      `;
+    }
+    document.querySelectorAll('#factureForm input').forEach(input => {
+      input.addEventListener('input', majApercu);
+    });
+    function imprimerFacture() {
+      majApercu();
+      const element = document.getElementById('factureApercu');
+      if (!element || !element.innerHTML.trim()) {
+        alert("Aperçu vide !");
+        return;
+      }
+      // Afficher la taille de l'élément pour debug
+      console.log('Taille aperçu:', element.offsetWidth, element.offsetHeight);
+      // Capturer l'aperçu en image
+      html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+        const imgData = canvas.toDataURL('image/jpeg', 1.0);
+        // Format A4 : 210 x 297 mm en points jsPDF (1 mm = 2.83465 pt)
+        const pdf = new jspdf.jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+        const pageWidth = 210;
+        const pageHeight = 297;
+        // Calculer la taille de l'image pour qu'elle tienne dans la page
+        let imgWidth = pageWidth - 20; // marges de 10mm
+        let imgHeight = canvas.height * imgWidth / canvas.width;
+        if (imgHeight > pageHeight - 20) {
+          imgHeight = pageHeight - 20;
+          imgWidth = canvas.width * imgHeight / canvas.height;
+        }
+        const x = (pageWidth - imgWidth) / 2;
+        const y = 10;
+        pdf.addImage(imgData, 'JPEG', x, y, imgWidth, imgHeight);
+                 const numFacture = document.getElementById('numFacture').value || 'F001';
+         const clientNom = document.getElementById('clientNom').value || 'CLIENT';
+         // Nettoyer le nom du client pour le nom de fichier (supprimer espaces et caractères spéciaux)
+         const clientNomClean = clientNom.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+         const filename = `${numFacture}${clientNomClean}.pdf`;
+        pdf.save(filename);
+      }).catch(err => {
+        console.error('Erreur lors de la génération du PDF:', err);
+        alert('Erreur lors de la génération du PDF. Veuillez réessayer.');
+      });
+    }
+    // Initialisation
+    function initialiserFormulaire() {
+      const aujourdhui = new Date().toISOString().split('T')[0];
+      document.getElementById('dateFacture').value = aujourdhui;
+      majApercu();
+    }
+    initialiserFormulaire();
+  </script>
+</body>
+</html> 
