@@ -29,7 +29,7 @@
     .facture-client-box { background: #f4f4f4; border: 1.5px solid #e3eaf1; border-radius: 6px; padding: 14px 18px; margin: 24px 0 18px 0; }
     .facture-client-box b { font-size: 0.9rem; letter-spacing: 0.5px; }
     .facture-table { width: 100%; border-collapse: collapse; margin: 18px 0 10px 0; background: #fff; }
-    .facture-table th, .facture-table td { border: 1px solid #222; padding: 8px 10px; text-align: left; font-size: 0.75rem; }
+    .facture-table th, .facture-table td { border: 1px solid #222; padding: 6px 8px; text-align: left; font-size: 0.7rem; }
     .facture-table th { background: #f4f4f4; font-weight: 700; text-align: center; }
     .facture-table td { vertical-align: top; }
     .facture-total { text-align: right; font-size: 0.85rem; font-weight: 700; margin-top: 10px; margin-bottom: 10px; }
@@ -46,6 +46,11 @@
       <h1>Nouvelle facture</h1>
       <form id="factureForm" autocomplete="off" onsubmit="return false;">
         <h3 style="color: #1a7ee7; margin-top: 20px; margin-bottom: 10px;">Informations émetteur</h3>
+        <label>Statut juridique</label>
+        <select id="statutJuridique" onchange="changerStatut()" required>
+          <option value="micro">Micro-entreprise</option>
+          <option value="sasu">SASU</option>
+        </select>
         <label>Nom de l'entreprise</label>
         <input type="text" id="emetteurNom" value="" required>
         <label>Contact</label>
@@ -56,6 +61,14 @@
         <input type="text" id="emetteurSiret" value="" required>
         <label>RCS</label>
         <input type="text" id="emetteurRcs" value="" required>
+        <div id="champsSasu" style="display: none;">
+          <label>Capital social (€)</label>
+          <input type="number" id="capitalSocial" min="0" step="0.01">
+          <label>N° TVA intracommunautaire</label>
+          <input type="text" id="numTva" placeholder="FR12345678901">
+          <label>Date de création SASU</label>
+          <input type="date" id="dateCreationSasu">
+        </div>
         <label>Email</label>
         <input type="email" id="emetteurEmail" value="" required>
         <label>Téléphone</label>
@@ -74,13 +87,19 @@
         <input type="text" id="clientVille" required>
         <label>SIRET du client (optionnel)</label>
         <input type="text" id="clientSiret">
+        <div id="champsClientSasu" style="display: none;">
+          <label>N° TVA client (optionnel)</label>
+          <input type="text" id="clientTva" placeholder="FR12345678901">
+        </div>
         <label>Période facturée</label>
         <input type="text" id="periode" value="Juillet 2025" required>
+        <label>Date de prestation</label>
+        <input type="date" id="datePrestation" required>
         <h3 style="color: #1a7ee7; margin-top: 20px; margin-bottom: 10px;">Prestations</h3>
         <label>Ajouter une prestation</label>
         <input type="text" id="titrePresta" placeholder="Titre de la tâche">
         <input type="text" id="descPresta" placeholder="Description détaillée">
-        <input type="number" id="prixPresta" placeholder="Prix HT (€)" min="0" step="0.01">
+        <input type="number" id="prixPresta" placeholder="Prix TTC (€)" min="0" step="0.01">
         <input type="number" id="qtePresta" placeholder="Quantité" min="1" step="1">
         <button class="btn" type="button" onclick="ajouterPrestation()">Ajouter</button>
         <div class="prestations-list" id="prestationsList"></div>
@@ -103,6 +122,22 @@
   <script src="config.js"></script>
   <script>
     let prestations = [];
+    
+    function changerStatut() {
+      const statut = document.getElementById('statutJuridique').value;
+      const champsSasu = document.getElementById('champsSasu');
+      const champsClientSasu = document.getElementById('champsClientSasu');
+      
+      if (statut === 'sasu') {
+        champsSasu.style.display = 'block';
+        champsClientSasu.style.display = 'block';
+      } else {
+        champsSasu.style.display = 'none';
+        champsClientSasu.style.display = 'none';
+      }
+      majApercu();
+    }
+    
     function ajouterPrestation() {
       const titre = document.getElementById('titrePresta').value.trim();
       const desc = document.getElementById('descPresta').value.trim();
@@ -129,10 +164,11 @@
       const list = document.getElementById('prestationsList');
       list.innerHTML = '';
       prestations.forEach((p, i) => {
-        list.innerHTML += `<div class='prest-item'><span><b>${p.titre}</b><br>${p.desc} — <b>${p.prix.toFixed(2)} €</b></span><button onclick='supprimerPrestation(${i})' title='Supprimer'>&times;</button></div>`;
+        list.innerHTML += `<div class='prest-item'><span><b>${p.titre}</b><br>${p.desc} — <b>${p.prix.toFixed(2)} € TTC</b></span><button onclick='supprimerPrestation(${i})' title='Supprimer'>&times;</button></div>`;
       });
     }
     function majApercu() {
+      const statutJuridique = document.getElementById('statutJuridique').value;
       const numFacture = document.getElementById('numFacture').value;
       const dateFacture = document.getElementById('dateFacture').value;
       const clientNom = document.getElementById('clientNom').value;
@@ -150,13 +186,24 @@
       const emetteurRcs = document.getElementById('emetteurRcs').value;
       const emetteurEmail = document.getElementById('emetteurEmail').value;
       const emetteurTel = document.getElementById('emetteurTel').value;
+      
       let echeance = '';
       if (dateFacture) {
         const d = new Date(dateFacture);
         d.setDate(d.getDate() + 30);
         echeance = d.toLocaleDateString('fr-FR');
       }
-      const totalHT = prestations.reduce((acc, p) => acc + (p.prix * (p.qte || 1)), 0);
+      
+      const totalTTC = prestations.reduce((acc, p) => acc + (p.prix * (p.qte || 1)), 0);
+      
+      if (statutJuridique === 'sasu') {
+        genererFactureSASU(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalTTC);
+      } else {
+        genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalTTC);
+      }
+    }
+    
+    function genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalTTC) {
       document.getElementById('factureApercu').innerHTML = `
         <div class="facture-header">
           <div class="facture-emetteur">
@@ -187,13 +234,20 @@
             <th>Description des prestations</th>
             <th>Période</th>
             <th>Quantité</th>
-            <th>Prix unitaire HT</th>
+            <th>Prix unit. HT</th>
+            <th>Prix unit. TTC</th>
             <th>Total HT</th>
+            <th>Total TTC</th>
           </tr>
-          ${prestations.length === 0 ? `<tr><td colspan='5' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
-            prestations.map(p => `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}</td><td>${periode}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${p.prix.toFixed(2)} €</td><td style='text-align:right;'>${(p.prix * (p.qte || 1)).toFixed(2)} €</td></tr>`).join('')}
+          ${prestations.length === 0 ? `<tr><td colspan='7' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
+            prestations.map(p => {
+              const prixHT = p.prix; // Pour micro-entreprise, HT = TTC (pas de TVA)
+              const totalHT = prixHT * (p.qte || 1);
+              const totalTTC = p.prix * (p.qte || 1);
+              return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}</td><td>${periode}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:right;'>${p.prix.toFixed(2)} €</td><td style='text-align:right;'>${totalHT.toFixed(2)} €</td><td style='text-align:right;'>${totalTTC.toFixed(2)} €</td></tr>`;
+            }).join('')}
         </table>
-        <div class="facture-total">Sous-total HT : ${totalHT.toFixed(2)} €<br>TVA : Non applicable<br><span style="font-size:1.25em; font-weight:800;">TOTAL TTC : ${totalHT.toFixed(2)} €</span></div>
+        <div class="facture-total">Total HT : ${totalTTC.toFixed(2)} €<br>TVA : Non applicable<br><span style="font-size:1.25em; font-weight:800;">TOTAL TTC : ${totalTTC.toFixed(2)} €</span></div>
         <div class="facture-paiement-box">
           <b>MODALITÉS DE PAIEMENT</b><br>
           Échéance : 30 jours à réception<br>
@@ -212,7 +266,98 @@
         </div>
       `;
     }
-    document.querySelectorAll('#factureForm input').forEach(input => {
+    
+    function genererFactureSASU(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalTTC) {
+      const capitalSocial = document.getElementById('capitalSocial').value;
+      const numTva = document.getElementById('numTva').value;
+      const dateCreationSasu = document.getElementById('dateCreationSasu').value;
+      const clientTva = document.getElementById('clientTva').value;
+      const datePrestation = document.getElementById('datePrestation').value;
+      
+      const totalHT = totalTTC / 1.20; // Calcul HT à partir du TTC
+      const tva = totalTTC - totalHT; // TVA = TTC - HT
+      
+      document.getElementById('factureApercu').innerHTML = `
+        <div class="facture-header">
+          <div class="facture-emetteur">
+            <b style="font-size:1.3rem;">${emetteurNom}</b><br>
+            <b>SASU au capital de ${capitalSocial || '[CAPITAL]'} €</b><br><br>
+            Siège social : ${emetteurAdresse.replace(/\n/g, '<br>')}<br><br>
+            SIRET : ${emetteurSiret || '[SIRET SASU]'}<br>
+            RCS Lyon : ${emetteurRcs || '[N° RCS]'}<br>
+            N° TVA : ${numTva || '[N° TVA INTRA]'}<br><br>
+            Email : ${emetteurEmail}<br>
+            Tél : ${emetteurTel}
+          </div>
+          <div style="text-align:right;min-width:220px;">
+            <div class="facture-title">FACTURE</div>
+            <div class="facture-info">N° <b>${numFacture || '2025-001'}</b></div>
+            <div class="facture-info">Date d'émission : <b>${dateFacture || '[DATE]'}</b></div>
+            <div class="facture-info">Date d'échéance : <b>${echeance || '[DATE + 30 jours]'}</b></div>
+            <div class="facture-info">Date de prestation : <b>${datePrestation || periode || '[PÉRIODE]'}</b></div>
+          </div>
+        </div>
+        <div class="facture-client-box">
+          <b>ADRESSÉ À :</b><br>
+          ${clientNom ? `<b>${clientNom}</b><br>` : '[RAISON SOCIALE CLIENT]<br>'}
+          ${clientAdresse ? `${clientAdresse}<br>` : '[ADRESSE CLIENT]<br>'}
+          ${clientVille ? `${clientVille}<br>` : '[CODE POSTAL VILLE CLIENT]<br>'}
+          ${clientSiret ? `SIRET : ${clientSiret}<br>` : 'SIRET : [SIRET CLIENT]<br>'}
+          ${clientTva ? `N° TVA : ${clientTva}<br>` : 'N° TVA : [N° TVA CLIENT si applicable]<br>'}
+        </div>
+                 <table class="facture-table">
+           <tr>
+             <th>Description des prestations</th>
+             <th>Période</th>
+             <th>Qté</th>
+             <th>Prix unit. HT</th>
+             <th>Prix unit. TTC</th>
+             <th>Total HT</th>
+             <th>Total TTC</th>
+           </tr>
+           ${prestations.length === 0 ? `<tr><td colspan='7' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
+             prestations.map(p => {
+               const prixHT = p.prix / 1.20; // Pour SASU, HT = TTC / 1.20
+               const totalHT = prixHT * (p.qte || 1);
+               const totalTTC = p.prix * (p.qte || 1);
+               return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}</td><td>${periode}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:right;'>${p.prix.toFixed(2)} €</td><td style='text-align:right;'>${totalHT.toFixed(2)} €</td><td style='text-align:right;'>${totalTTC.toFixed(2)} €</td></tr>`;
+             }).join('')}
+         </table>
+        <div style="margin: 20px 0;">
+          <b>INFORMATIONS TVA :</b><br>
+          • Assujetti à la TVA depuis le ${dateCreationSasu ? new Date(dateCreationSasu).toLocaleDateString('fr-FR') : '[DATE CRÉATION SASU]'}<br>
+          • Taux de TVA applicable : 20%<br>
+          • Facturation avec TVA obligatoire
+        </div>
+                 <div class="facture-total">
+           Total HT : ${totalHT.toFixed(2)} €<br>
+           TVA 20% : ${tva.toFixed(2)} €<br>
+           <span style="font-size:1.25em; font-weight:800;">TOTAL TTC : ${totalTTC.toFixed(2)} €</span>
+         </div>
+        <div class="facture-paiement-box">
+          <b>MODALITÉS DE PAIEMENT</b><br>
+          Échéance : 30 jours nets<br>
+          Mode : Virement bancaire<br>
+          Devise : Euro (EUR)<br><br>
+          <b>Coordonnées bancaires :</b><br>
+          IBAN : ${iban || '[IBAN SASU]'}<br>
+          BIC : ${bic || '[BIC SASU]'}<br>
+          Banque : ${banque || '[NOM BANQUE]'}
+        </div>
+        <div class="mentions">
+          <b>MENTIONS LÉGALES OBLIGATOIRES :</b><br>
+          • En cas de retard de paiement, indemnité forfaitaire de recouvrement : 40 €<br>
+          • Taux de pénalité de retard : 3 fois le taux de l'intérêt légal (soit 3,99% en 2025)<br>
+          • Aucun escompte accordé pour paiement anticipé<br>
+          • TVA sur les débits (encaissement)
+        </div>
+        <div style="text-align: center; margin-top: 30px; font-size: 0.9rem; color: #666;">
+          <b>${emetteurNom} SASU</b><br>
+          SASU au capital de ${capitalSocial || '[CAPITAL]'} € - RCS Lyon ${emetteurRcs || '[N° RCS]'} - SIRET ${emetteurSiret || '[SIRET]'} - N° TVA ${numTva || 'FR[N° TVA]'}
+        </div>
+      `;
+    }
+    document.querySelectorAll('#factureForm input, #factureForm select').forEach(input => {
       input.addEventListener('input', majApercu);
     });
     function imprimerFacture() {
@@ -256,6 +401,7 @@
     function initialiserFormulaire() {
       const aujourdhui = new Date().toISOString().split('T')[0];
       document.getElementById('dateFacture').value = aujourdhui;
+      document.getElementById('datePrestation').value = aujourdhui;
       
       // Charger les valeurs de configuration si disponibles
       if (typeof CONFIG !== 'undefined') {
@@ -269,8 +415,16 @@
         document.getElementById('iban').value = CONFIG.iban || '';
         document.getElementById('bic').value = CONFIG.bic || '';
         document.getElementById('banque').value = CONFIG.banque || '';
+        
+        // Valeurs spécifiques SASU
+        if (CONFIG.capitalSocial) document.getElementById('capitalSocial').value = CONFIG.capitalSocial;
+        if (CONFIG.numTva) document.getElementById('numTva').value = CONFIG.numTva;
+        if (CONFIG.dateCreationSasu) document.getElementById('dateCreationSasu').value = CONFIG.dateCreationSasu;
+        if (CONFIG.statutJuridique) document.getElementById('statutJuridique').value = CONFIG.statutJuridique;
       }
       
+      // Initialiser l'affichage des champs selon le statut
+      changerStatut();
       majApercu();
     }
     initialiserFormulaire();

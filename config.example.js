@@ -1,5 +1,8 @@
 // Exemple de configuration - Copier ce fichier en config.js et remplir vos informations
 const CONFIG = {
+  // Statut juridique
+  statutJuridique: "micro", // "micro" ou "sasu"
+  
   // Informations émetteur
   emetteurNom: "VOTRE_NOM_ENTREPRISE",
   emetteurContact: "VOTRE_NOM_PRENOM",
@@ -8,6 +11,11 @@ const CONFIG = {
   emetteurRcs: "VOTRE_RCS_OU_DISPENSE",
   emetteurEmail: "votre.email@exemple.com",
   emetteurTel: "VOTRE_TELEPHONE",
+  
+  // Informations spécifiques SASU (optionnel si statutJuridique = "sasu")
+  capitalSocial: "1000", // Capital social en euros
+  numTva: "FR12345678901", // N° TVA intracommunautaire
+  dateCreationSasu: "2024-01-01", // Date de création de la SASU
   
   // Informations bancaires
   iban: "VOTRE_IBAN",
