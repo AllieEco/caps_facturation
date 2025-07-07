@@ -19,7 +19,7 @@ Un générateur de **factures ET devis** **100% gratuit** et **conforme** pour t
 
 ## 🎯 Pourquoi choisir ce générateur ?
 
-### ✅ **Adapté à TOUS les statuts juridiques français**
+### ✅ **Adapté à quelques statuts juridiques français**
 - **Micro-entreprise** : TVA non applicable, mentions spécifiques
 - **SASU** : TVA 20% automatique, capital social, président, informations complètes
 - **EURL** : TVA 20% automatique, gérant, associé unique
@@ -290,17 +290,6 @@ const CONFIG = {
 - Pour les questions générales : [GitHub Discussions](https://github.com/AllieEco/caps_facturation/discussions)
 - Pour les bugs : [GitHub Issues](https://github.com/AllieEco/caps_facturation/issues)
 
-## 🏆 Avantages vs autres solutions
-
-| Fonctionnalité | Ce générateur | Solutions payantes | Autres outils gratuits |
-|---|---|---|---|
-| **Prix** | 🟢 100% gratuit | 🔴 15-50€/mois | 🟡 Limité ou avec pub |
-| **Sécurité** | 🟢 Données privées | 🔴 Stockage cloud | 🔴 Tracking utilisateur |
-| **Statuts juridiques** | 🟢 Micro/SASU/EURL | 🟡 Pas tous | 🔴 Limité |
-| **Personnalisation** | 🟢 Code modifiable | 🔴 Limité | 🔴 Impossible |
-| **Mentions légales** | 🟢 Conformes 2025 | 🟡 Pas toujours à jour | 🔴 Souvent obsolètes |
-| **Mode devis** | 🟢 Intégré complet | 🟡 Parfois séparé | 🔴 Rare |
-| **Export CSV** | 🟢 Inclus | 🟡 Option payante | 🔴 Pas disponible |
 
 ## 🌟 Contribuer au projet
 
