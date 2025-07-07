@@ -14,6 +14,7 @@
     h1 { color: #1a7ee7; font-size: 2.1rem; margin-bottom: 18px; letter-spacing: 1px; }
     label { font-weight: 500; margin-top: 12px; display: block; }
     input, textarea, select { width: 100%; padding: 8px 10px; margin-top: 4px; margin-bottom: 10px; border: 1px solid #c7e0f7; border-radius: 6px; font-size: 1rem; font-family: inherit; background: #fafdff; transition: border 0.2s; }
+    input[type="file"] { padding: 4px; background: #fff; cursor: pointer; }
     input:disabled { background: #f5f5f5; color: #999; border: 1px solid #ddd; cursor: not-allowed; }
     input:focus, textarea:focus { border: 1.5px solid #1a7ee7; outline: none; }
     .btn { background: #1a7ee7; color: #fff; border: none; border-radius: 6px; padding: 10px 22px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-top: 10px; box-shadow: 0 2px 8px rgba(26,126,231,0.08); transition: background 0.2s; }
@@ -48,6 +49,12 @@
       <h1>Nouvelle facture</h1>
       <form id="factureForm" autocomplete="off" onsubmit="return false;">
         <h3 style="color: #1a7ee7; margin-top: 20px; margin-bottom: 10px;">Informations émetteur</h3>
+        <label>Logo de l'entreprise (optionnel)</label>
+        <input type="file" id="logoEntreprise" accept="image/*" onchange="chargerLogo()">
+        <div id="logoPreview" style="margin-top: 10px; display: none;">
+          <img id="logoImage" style="max-width: 100px; max-height: 60px; border: 1px solid #ddd; border-radius: 4px;">
+          <button type="button" onclick="supprimerLogo()" style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Supprimer</button>
+        </div>
         <label>Statut juridique</label>
         <select id="statutJuridique" onchange="changerStatut()" required>
           <option value="micro">Micro-entreprise</option>
@@ -153,6 +160,30 @@
   <script src="config.js"></script>
   <script>
     let prestations = [];
+    let logoEntrepriseData = null;
+    
+    function chargerLogo() {
+      const fileInput = document.getElementById('logoEntreprise');
+      const file = fileInput.files[0];
+      
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          logoEntrepriseData = e.target.result;
+          document.getElementById('logoImage').src = logoEntrepriseData;
+          document.getElementById('logoPreview').style.display = 'block';
+          majApercu();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+    
+    function supprimerLogo() {
+      logoEntrepriseData = null;
+      document.getElementById('logoEntreprise').value = '';
+      document.getElementById('logoPreview').style.display = 'none';
+      majApercu();
+    }
     
     function changerStatut() {
       const statut = document.getElementById('statutJuridique').value;
@@ -345,6 +376,7 @@
       document.getElementById('factureApercu').innerHTML = `
         <div class="facture-header">
           <div class="facture-emetteur">
+            ${logoEntrepriseData ? `<img src="${logoEntrepriseData}" style="max-width: 120px; max-height: 80px; margin-bottom: 10px; display: block;"><br>` : ''}
             <b style="font-size:1.3rem;">${emetteurNom}</b><br>
             ${emetteurContact}<br>
             ${emetteurAdresse.replace(/\n/g, '<br>')}<br>
@@ -414,6 +446,7 @@
       document.getElementById('factureApercu').innerHTML = `
         <div class="facture-header">
           <div class="facture-emetteur">
+            ${logoEntrepriseData ? `<img src="${logoEntrepriseData}" style="max-width: 120px; max-height: 80px; margin-bottom: 10px; display: block;"><br>` : ''}
             <b style="font-size:1.3rem;">${emetteurNom}</b><br>
             <b>EURL au capital de ${capitalSocialEurl || '[CAPITAL]'} €</b><br><br>
             Siège social : ${emetteurAdresse.replace(/\n/g, '<br>')}<br><br>
@@ -507,6 +540,7 @@
       document.getElementById('factureApercu').innerHTML = `
         <div class="facture-header">
           <div class="facture-emetteur">
+            ${logoEntrepriseData ? `<img src="${logoEntrepriseData}" style="max-width: 120px; max-height: 80px; margin-bottom: 10px; display: block;"><br>` : ''}
             <b style="font-size:1.3rem;">${emetteurNom}</b><br>
             <b>SASU au capital de ${capitalSocial || '[CAPITAL]'} €</b><br><br>
             Siège social : ${emetteurAdresse.replace(/\n/g, '<br>')}<br><br>
@@ -700,6 +734,13 @@
         if (CONFIG.associeUniqueEurl) document.getElementById('associeUniqueEurl').value = CONFIG.associeUniqueEurl;
         
         if (CONFIG.statutJuridique) document.getElementById('statutJuridique').value = CONFIG.statutJuridique;
+        
+        // Chargement du logo par défaut s'il est défini
+        if (CONFIG.logoEntreprise) {
+          logoEntrepriseData = CONFIG.logoEntreprise;
+          document.getElementById('logoImage').src = logoEntrepriseData;
+          document.getElementById('logoPreview').style.display = 'block';
+        }
       }
       
       // Initialiser l'affichage des champs selon le statut

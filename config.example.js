@@ -12,6 +12,9 @@ const CONFIG = {
   emetteurEmail: "votre.email@exemple.com",
   emetteurTel: "VOTRE_TELEPHONE",
   
+  // Logo de l'entreprise (optionnel)
+  // logoEntreprise: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUg...", // Base64 de votre logo
+  
   // Informations spécifiques SASU (optionnel si statutJuridique = "sasu")
   capitalSocial: "1000", // Capital social en euros
   numTva: "FR12345678901", // N° TVA intracommunautaire
