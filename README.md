@@ -5,7 +5,7 @@
 
 ## 📸 Aperçu du générateur
 
-![image](https://github.com/user-attachments/assets/a9484c4e-f1ef-406f-9dd8-04254a818146)
+![image](https://github.com/user-attachments/assets/00e7df91-dc6d-4f89-b347-473fbcf9743c)
 
 *Interface moderne et intuitive avec aperçu en temps réel*
 
