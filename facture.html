@@ -56,13 +56,13 @@
     /* Toggle Devis/Facture */
     .mode-toggle-container { 
       display: flex; 
-      justify-content: center; 
-      margin: 20px auto 30px auto; 
-      padding: 20px 0;
-      background: linear-gradient(135deg, #f7fafd 0%, #e8f4fd 100%);
-      border-bottom: 1px solid #e1ecf7;
+      justify-content: flex-start; 
+      margin: 0 0 24px 0; 
+      padding: 0;
+      background: none;
+      border-bottom: none;
     }
-    .mode-toggle { position: relative; display: inline-block; }
+    .mode-toggle { position: relative; display: inline-block; margin-left: 0; }
     .mode-toggle-checkbox { display: none; }
     .mode-toggle-label { 
       display: block; 
@@ -145,24 +145,22 @@
   </style>
 </head>
 <body>
-  <!-- Toggle Devis/Facture -->
-  <div class="mode-toggle-container">
-    <div class="mode-toggle">
-      <input type="checkbox" id="modeToggle" class="mode-toggle-checkbox">
-      <label for="modeToggle" class="mode-toggle-label">
-        <span class="mode-toggle-inner"></span>
-        <span class="mode-toggle-switch"></span>
-      </label>
-      <div class="mode-labels">
-        <span class="mode-label-left">DEVIS</span>
-        <span class="mode-label-right">FACTURE</span>
-      </div>
-    </div>
-  </div>
-
   <div class="container">
     <div class="sync-indicator" id="syncIndicator">Aperçu synchronisé</div>
     <div class="form-section">
+      <div class="mode-toggle-container">
+        <div class="mode-toggle">
+          <input type="checkbox" id="modeToggle" class="mode-toggle-checkbox">
+          <label for="modeToggle" class="mode-toggle-label">
+            <span class="mode-toggle-inner"></span>
+            <span class="mode-toggle-switch"></span>
+          </label>
+          <div class="mode-labels">
+            <span class="mode-label-left">DEVIS</span>
+            <span class="mode-label-right">FACTURE</span>
+          </div>
+        </div>
+      </div>
       <h1 id="mainTitle">Nouveau devis</h1>
       <form id="factureForm" autocomplete="off" onsubmit="return false;">
         <h3 style="color: #1a7ee7; margin-top: 20px; margin-bottom: 10px;">Informations émetteur</h3>
