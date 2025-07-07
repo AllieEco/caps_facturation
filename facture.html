@@ -8,12 +8,14 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><style>.cls-1{fill:%23f4d03f;}.cls-2{fill:%23333;stroke:%23333;stroke-width:2;fill:none;}.cls-3{fill:%23333;}</style></defs><polygon class='cls-1' points='45,10 50,20 60,20 52,28 55,38 45,33 35,38 38,28 30,20 40,20'/><polygon class='cls-1' points='70,25 73,30 78,30 75,33 76,38 70,35 64,38 65,33 62,30 67,30'/><polygon class='cls-1' points='58,45 61,50 66,50 63,53 64,58 58,55 52,58 53,53 50,50 55,50'/><rect class='cls-2' x='15' y='25' width='45' height='60' rx='3'/><rect class='cls-3' x='20' y='35' width='25' height='2'/><rect class='cls-3' x='20' y='45' width='20' height='2'/><rect class='cls-3' x='20' y='55' width='25' height='2'/><rect class='cls-3' x='20' y='65' width='15' height='2'/><circle class='cls-2' cx='70' cy='60' r='15'/><text x='70' y='67' text-anchor='middle' class='cls-3' font-family='Arial' font-size='16' font-weight='bold'>$</text><path class='cls-2' d='M15,80 Q15,85 20,85 L75,85 Q80,85 80,80 L80,75 L15,75 Z'/></svg>" type="image/svg+xml">
   <style>
     body { font-family: 'Montserrat', Arial, sans-serif; background: #f7fafd; margin: 0; padding: 0; color: #222; }
-    .container { max-width: 1100px; margin: 30px auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); padding: 32px 24px; display: flex; gap: 40px; }
+    .container { max-width: 1100px; margin: 30px auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); padding: 32px 24px; display: flex; gap: 40px; align-items: flex-start; }
     .form-section { flex: 1; min-width: 320px; }
-    .facture-section { flex: 2; background: #f4f8fb; border-radius: 12px; padding: 24px 32px; min-width: 400px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .facture-section { flex: 2; background: #f4f8fb; border-radius: 12px; padding: 24px 32px; min-width: 400px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: sticky; top: 20px; max-height: calc(100vh - 60px); overflow-y: auto; }
     h1 { color: #1a7ee7; font-size: 2.1rem; margin-bottom: 18px; letter-spacing: 1px; }
     label { font-weight: 500; margin-top: 12px; display: block; }
     input, textarea, select { width: 100%; padding: 8px 10px; margin-top: 4px; margin-bottom: 10px; border: 1px solid #c7e0f7; border-radius: 6px; font-size: 1rem; font-family: inherit; background: #fafdff; transition: border 0.2s; }
+    input[type="file"] { padding: 4px; background: #fff; cursor: pointer; }
+    input[type="checkbox"] { width: auto; margin-right: 8px; cursor: pointer; }
     input:disabled { background: #f5f5f5; color: #999; border: 1px solid #ddd; cursor: not-allowed; }
     input:focus, textarea:focus { border: 1.5px solid #1a7ee7; outline: none; }
     .btn { background: #1a7ee7; color: #fff; border: none; border-radius: 6px; padding: 10px 22px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-top: 10px; box-shadow: 0 2px 8px rgba(26,126,231,0.08); transition: background 0.2s; }
@@ -22,7 +24,7 @@
     .prest-item { background: #eaf4fb; border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; font-size: 0.98rem; }
     .prest-item span { flex: 1; }
     .prest-item button { background: none; border: none; color: #e74c3c; font-size: 1.2rem; cursor: pointer; margin-left: 8px; }
-    @media (max-width: 900px) { .container { flex-direction: column; } .facture-section { min-width: unset; } }
+    @media (max-width: 900px) { .container { flex-direction: column; } .facture-section { min-width: unset; position: relative; top: auto; max-height: none; overflow-y: visible; } }
     .facture { background: #fff; border-radius: 10px; padding: 28px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); color: #222; font-size: 0.75rem; max-width: 700px; margin: auto; }
     .facture-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
     .facture-title { font-size: 1.6rem; font-weight: 700; background: linear-gradient(135deg, #ff6b9d, #c44569, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 1px; text-align: right; }
@@ -39,15 +41,131 @@
     .facture-paiement-box b { font-size: 0.8rem; }
     .mentions { font-size: 0.7rem; color: #222; margin-top: 24px; border-top: 1px solid #e3eaf1; padding-top: 12px; }
     .facture-footer { margin-top: 18px; font-size: 0.98rem; }
-    @media print { body, html { background: #fff !important; } .container { box-shadow: none !important; background: #fff !important; padding: 0 !important; margin: 0 !important; display: block !important; } .form-section, .prestations-list, .btn { display: none !important; } .facture-section { background: #fff !important; box-shadow: none !important; padding: 0 !important; min-width: unset !important; } .facture { box-shadow: none !important; margin: 0 auto !important; max-width: 100% !important; color: #222 !important; background: #fff !important; page-break-after: avoid; } }
+    .section-highlight { animation: highlight-pulse 2s ease-in-out; }
+    @keyframes highlight-pulse { 0% { box-shadow: 0 0 0 0 rgba(26, 126, 231, 0.4); } 50% { box-shadow: 0 0 0 10px rgba(26, 126, 231, 0.2); } 100% { box-shadow: 0 0 0 0 rgba(26, 126, 231, 0); } }
+    .sync-indicator { position: fixed; top: 20px; right: 20px; background: #1a7ee7; color: white; padding: 8px 12px; border-radius: 20px; font-size: 0.8rem; z-index: 1000; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+    .sync-indicator.show { opacity: 1; }
+    .sync-indicator::before { content: "📍"; margin-right: 5px; }
+    
+    /* Toggle Devis/Facture */
+    .mode-toggle-container { 
+      display: flex; 
+      justify-content: center; 
+      margin: 20px auto 30px auto; 
+      padding: 20px 0;
+      background: linear-gradient(135deg, #f7fafd 0%, #e8f4fd 100%);
+      border-bottom: 1px solid #e1ecf7;
+    }
+    .mode-toggle { position: relative; display: inline-block; }
+    .mode-toggle-checkbox { display: none; }
+    .mode-toggle-label { 
+      display: block; 
+      overflow: hidden; 
+      cursor: pointer; 
+      border: 2px solid #1a7ee7; 
+      border-radius: 25px; 
+      position: relative; 
+      box-shadow: 0 4px 12px rgba(26, 126, 231, 0.15);
+      transition: all 0.3s ease;
+    }
+    .mode-toggle-label:hover {
+      box-shadow: 0 6px 20px rgba(26, 126, 231, 0.25);
+      transform: translateY(-2px);
+    }
+    .mode-toggle-inner { 
+      display: block; 
+      width: 200%; 
+      margin-left: -100%; 
+      transition: margin 0.3s ease-in-out;
+    }
+    .mode-toggle-inner:before, .mode-toggle-inner:after { 
+      display: block; 
+      float: left; 
+      width: 50%; 
+      height: 40px; 
+      padding: 0; 
+      line-height: 40px; 
+      font-size: 14px; 
+      font-weight: 700; 
+      color: white; 
+      font-family: 'Montserrat', sans-serif; 
+      box-sizing: border-box; 
+    }
+    .mode-toggle-inner:before { 
+      content: "DEVIS"; 
+      padding-left: 18px; 
+      background: linear-gradient(135deg, #1a7ee7, #0f5bb8); 
+      color: #FFFFFF; 
+    }
+    .mode-toggle-inner:after { 
+      content: "FACTURE"; 
+      padding-right: 18px; 
+      background: linear-gradient(135deg, #e74c3c, #c0392b); 
+      color: #FFFFFF; 
+      text-align: right; 
+    }
+    .mode-toggle-switch { 
+      display: block; 
+      width: 24px; 
+      height: 24px; 
+      margin: 8px; 
+      background: #FFFFFF; 
+      position: absolute; 
+      top: 0; 
+      bottom: 0; 
+      right: 120px; 
+      border: 2px solid #1a7ee7; 
+      border-radius: 50%; 
+      transition: all 0.3s ease-in-out; 
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .mode-toggle-checkbox:checked + .mode-toggle-label .mode-toggle-inner { margin-left: 0; }
+    .mode-toggle-checkbox:checked + .mode-toggle-label .mode-toggle-switch { right: 8px; border-color: #e74c3c; }
+    .mode-labels { 
+      display: flex; 
+      justify-content: space-between; 
+      margin-top: 8px; 
+      font-size: 0.85rem; 
+      font-weight: 600; 
+      color: #666; 
+    }
+    .mode-label-left, .mode-label-right { width: 80px; text-align: center; }
+    .mode-toggle-checkbox:checked ~ .mode-labels .mode-label-left { color: #bbb; }
+    .mode-toggle-checkbox:checked ~ .mode-labels .mode-label-right { color: #e74c3c; }
+    .mode-toggle-checkbox:not(:checked) ~ .mode-labels .mode-label-left { color: #1a7ee7; }
+    .mode-toggle-checkbox:not(:checked) ~ .mode-labels .mode-label-right { color: #bbb; }
+    
+    @media print { body, html { background: #fff !important; } .container { box-shadow: none !important; background: #fff !important; padding: 0 !important; margin: 0 !important; display: block !important; } .form-section, .prestations-list, .btn, .mode-toggle-container { display: none !important; } .facture-section { background: #fff !important; box-shadow: none !important; padding: 0 !important; min-width: unset !important; } .facture { box-shadow: none !important; margin: 0 auto !important; max-width: 100% !important; color: #222 !important; background: #fff !important; page-break-after: avoid; } }
   </style>
 </head>
 <body>
+  <!-- Toggle Devis/Facture -->
+  <div class="mode-toggle-container">
+    <div class="mode-toggle">
+      <input type="checkbox" id="modeToggle" class="mode-toggle-checkbox">
+      <label for="modeToggle" class="mode-toggle-label">
+        <span class="mode-toggle-inner"></span>
+        <span class="mode-toggle-switch"></span>
+      </label>
+      <div class="mode-labels">
+        <span class="mode-label-left">DEVIS</span>
+        <span class="mode-label-right">FACTURE</span>
+      </div>
+    </div>
+  </div>
+
   <div class="container">
+    <div class="sync-indicator" id="syncIndicator">Aperçu synchronisé</div>
     <div class="form-section">
-      <h1>Nouvelle facture</h1>
+      <h1 id="mainTitle">Nouveau devis</h1>
       <form id="factureForm" autocomplete="off" onsubmit="return false;">
         <h3 style="color: #1a7ee7; margin-top: 20px; margin-bottom: 10px;">Informations émetteur</h3>
+        <label>Logo de l'entreprise (optionnel)</label>
+        <input type="file" id="logoEntreprise" accept="image/*" onchange="chargerLogo()">
+        <div id="logoPreview" style="margin-top: 10px; display: none;">
+          <img id="logoImage" style="max-width: 100px; max-height: 60px; border: 1px solid #ddd; border-radius: 4px;">
+          <button type="button" onclick="supprimerLogo()" style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Supprimer</button>
+        </div>
         <label>Statut juridique</label>
         <select id="statutJuridique" onchange="changerStatut()" required>
           <option value="micro">Micro-entreprise</option>
@@ -59,12 +177,28 @@
         <label>Contact</label>
         <input type="text" id="emetteurContact" value="" required>
         <label>Adresse</label>
-        <textarea id="emetteurAdresse" rows="2" required></textarea>
+        <input type="text" id="emetteurAdresse" placeholder="Numéro et nom de rue" required>
+        <label>Code postal</label>
+        <input type="text" id="emetteurCodePostal" placeholder="Code postal" required>
+        <label>Ville</label>
+        <input type="text" id="emetteurVille" placeholder="Ville" required>
         <label>SIRET</label>
         <input type="text" id="emetteurSiret" value="" required>
-        <label>RCS</label>
-        <input type="text" id="emetteurRcs" value="" required>
+        <div id="champsMicroRcs" style="display: none;">
+          <label>
+            <input type="checkbox" id="microAUnRcs" onchange="changerAffichageRcsMicro()"> 
+            Avez-vous un RCS ? (cochez si vous faites du commerce)
+          </label>
+        </div>
+        <div id="champsRcsStandard">
+          <label>RCS</label>
+          <input type="text" id="emetteurRcs" value="" required>
+          <label>Ville RCS</label>
+          <input type="text" id="emetteurVilleRcs" placeholder="Ville d'immatriculation" required>
+        </div>
         <div id="champsSasu" style="display: none;">
+          <label>Président</label>
+          <input type="text" id="presidentSasu" placeholder="Prénom NOM">
           <label>Capital social (€)</label>
           <input type="number" id="capitalSocial" min="0" step="0.01">
           <label>N° TVA intracommunautaire</label>
@@ -88,11 +222,31 @@
         <input type="email" id="emetteurEmail" value="" required>
         <label>Téléphone</label>
         <input type="tel" id="emetteurTel" value="" required>
-        <h3 style="color: #1a7ee7; margin-top: 20px; margin-bottom: 10px;">Informations facture</h3>
-        <label>Numéro de facture</label>
-        <input type="text" id="numFacture" value="F001" required>
-        <label>Date</label>
+        <h3 style="color: #1a7ee7; margin-top: 20px; margin-bottom: 10px;" id="infoDocumentTitle">Informations devis</h3>
+        <label id="numeroDocumentLabel">Numéro de devis</label>
+        <input type="text" id="numFacture" value="D001" required>
+        <label id="dateDocumentLabel">Date</label>
         <input type="date" id="dateFacture" required>
+        <div id="devisValidite" style="display: block;">
+          <label>Validité du devis (jours)</label>
+          <input type="number" id="validiteDevis" value="30" min="1" max="365" required>
+        </div>
+        <div id="devisAcompte" style="display: block;">
+          <label>
+            <input type="checkbox" id="demanderAcompte" onchange="changerAffichageAcompte()"> 
+            Voulez-vous demander un acompte ?
+          </label>
+          <div id="champsAcompte" style="display: none; margin-top: 10px;">
+            <label>Pourcentage d'acompte (%)</label>
+            <input type="number" id="pourcentageAcompte" value="40" min="10" max="90" step="5" onchange="majApercu()">
+          </div>
+        </div>
+        <div id="devisPlanning" style="display: block;">
+          <label>Démarrage (texte libre)</label>
+          <input type="text" id="demarrageDevis" value="2 semaines après signature" placeholder="Ex: 1 semaine après validation">
+          <label>Durée estimée (texte libre)</label>
+          <input type="text" id="dureeEstimee" value="" placeholder="Ex: 5 jours ouvrés, 2 semaines, 1 mois...">
+        </div>
         <h3 style="color: #1a7ee7; margin-top: 20px; margin-bottom: 10px;">Informations client</h3>
         <label>Nom du client</label>
         <input type="text" id="clientNom" required>
@@ -119,7 +273,7 @@
           <input type="number" id="prixPresta" placeholder="Prix TTC (€)" min="0" step="0.01" style="flex: 1;" oninput="calculerHTDepuisTTC()" disabled>
         </div>
         <div id="infoTVA" style="font-size: 0.9rem; color: #666; margin-top: 5px; display: none;">
-          Pour les SASU : vous pouvez saisir soit le prix HT soit le prix TTC, l'autre sera calculé automatiquement.
+          Le prix TTC n'est pas calculé pour les micro entreprises au vu de leur statut juridique.
         </div>
         <div id="infoMicro" style="font-size: 0.9rem; color: #666; margin-top: 5px;">
           Pour les micro-entreprises : saisissez uniquement le prix HT (TVA non applicable).
@@ -128,13 +282,23 @@
         <button class="btn" type="button" onclick="ajouterPrestation()">Ajouter</button>
         <div class="prestations-list" id="prestationsList"></div>
         <h3 style="color: #1a7ee7; margin-top: 20px; margin-bottom: 10px;">Informations bancaires</h3>
+        <label>Mode de paiement</label>
+        <select id="modePaiement" required>
+          <option value="virement">Virement bancaire</option>
+          <option value="cheque">Chèque</option>
+          <option value="carte">Carte bancaire</option>
+          <option value="espece">Espèce</option>
+        </select>
         <label>IBAN</label>
         <input type="text" id="iban" value="" required>
         <label>BIC</label>
         <input type="text" id="bic" value="" required>
         <label>Banque</label>
         <input type="text" id="banque" value="" required>
-        <button class="btn" type="button" onclick="imprimerFacture()">Enregistrer en PDF</button>
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+          <button class="btn" type="button" onclick="imprimerDocument()" id="btnImprimer">Enregistrer en PDF</button>
+          <button class="btn" type="button" onclick="exporterCSV()" style="background-color: #27ae60;" id="btnExporter">Exporter en CSV</button>
+        </div>
       </form>
     </div>
     <div class="facture-section">
@@ -146,12 +310,100 @@
   <script src="config.js"></script>
   <script>
     let prestations = [];
+    let logoEntrepriseData = null;
+    let isFactureMode = false; // false = devis, true = facture
+    
+    function chargerLogo() {
+      const fileInput = document.getElementById('logoEntreprise');
+      const file = fileInput.files[0];
+      
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          logoEntrepriseData = e.target.result;
+          document.getElementById('logoImage').src = logoEntrepriseData;
+          document.getElementById('logoPreview').style.display = 'block';
+          majApercu();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+    
+    function supprimerLogo() {
+      logoEntrepriseData = null;
+      document.getElementById('logoEntreprise').value = '';
+      document.getElementById('logoPreview').style.display = 'none';
+      majApercu();
+    }
+    
+    function toggleMode() {
+      const modeToggle = document.getElementById('modeToggle');
+      isFactureMode = modeToggle.checked;
+      
+      // Mise à jour des libellés
+      const mainTitle = document.getElementById('mainTitle');
+      const infoDocumentTitle = document.getElementById('infoDocumentTitle');
+      const numeroDocumentLabel = document.getElementById('numeroDocumentLabel');
+      const dateDocumentLabel = document.getElementById('dateDocumentLabel');
+      const devisValidite = document.getElementById('devisValidite');
+      const devisAcompte = document.getElementById('devisAcompte');
+      const btnImprimer = document.getElementById('btnImprimer');
+      const btnExporter = document.getElementById('btnExporter');
+      const numFacture = document.getElementById('numFacture');
+      
+      if (isFactureMode) {
+        // Mode Facture
+        mainTitle.textContent = 'Nouvelle facture';
+        infoDocumentTitle.textContent = 'Informations facture';
+        numeroDocumentLabel.textContent = 'Numéro de facture';
+        dateDocumentLabel.textContent = 'Date';
+        devisValidite.style.display = 'none';
+        devisAcompte.style.display = 'none';
+        document.getElementById('devisPlanning').style.display = 'none';
+        btnImprimer.textContent = 'Enregistrer facture en PDF';
+        btnExporter.textContent = 'Exporter facture en CSV';
+        if (numFacture.value.startsWith('D')) {
+          numFacture.value = 'F' + numFacture.value.substring(1);
+        }
+      } else {
+        // Mode Devis
+        mainTitle.textContent = 'Nouveau devis';
+        infoDocumentTitle.textContent = 'Informations devis';
+        numeroDocumentLabel.textContent = 'Numéro de devis';
+        dateDocumentLabel.textContent = 'Date';
+        devisValidite.style.display = 'block';
+        devisAcompte.style.display = 'block';
+        document.getElementById('devisPlanning').style.display = 'block';
+        btnImprimer.textContent = 'Enregistrer devis en PDF';
+        btnExporter.textContent = 'Exporter devis en CSV';
+        if (numFacture.value.startsWith('F')) {
+          numFacture.value = 'D' + numFacture.value.substring(1);
+        }
+      }
+      
+      majApercu();
+    }
+    
+    function changerAffichageAcompte() {
+      const demanderAcompte = document.getElementById('demanderAcompte').checked;
+      const champsAcompte = document.getElementById('champsAcompte');
+      
+      if (demanderAcompte) {
+        champsAcompte.style.display = 'block';
+      } else {
+        champsAcompte.style.display = 'none';
+      }
+      
+      majApercu();
+    }
     
     function changerStatut() {
       const statut = document.getElementById('statutJuridique').value;
       const champsSasu = document.getElementById('champsSasu');
       const champsEurl = document.getElementById('champsEurl');
       const champsClientSasu = document.getElementById('champsClientSasu');
+      const champsMicroRcs = document.getElementById('champsMicroRcs');
+      const champsRcsStandard = document.getElementById('champsRcsStandard');
       const prixTTCInput = document.getElementById('prixPresta');
       const infoTVA = document.getElementById('infoTVA');
       const infoMicro = document.getElementById('infoMicro');
@@ -160,24 +412,53 @@
         champsSasu.style.display = 'block';
         champsEurl.style.display = 'none';
         champsClientSasu.style.display = 'block';
+        champsMicroRcs.style.display = 'none';
+        champsRcsStandard.style.display = 'block';
         prixTTCInput.disabled = false;
         infoTVA.style.display = 'block';
         infoMicro.style.display = 'none';
+        
+        // Réinitialiser les champs RCS pour SASU
+        const emetteurRcs = document.getElementById('emetteurRcs');
+        const emetteurVilleRcs = document.getElementById('emetteurVilleRcs');
+        if (emetteurRcs.value === 'Dispensé d\'immatriculation au RCS') {
+          emetteurRcs.value = '';
+        }
+        emetteurRcs.required = true;
+        emetteurVilleRcs.required = true;
+        
       } else if (statut === 'eurl') {
         champsSasu.style.display = 'none';
         champsEurl.style.display = 'block';
         champsClientSasu.style.display = 'block';
+        champsMicroRcs.style.display = 'none';
+        champsRcsStandard.style.display = 'block';
         prixTTCInput.disabled = false;
         infoTVA.style.display = 'block';
         infoMicro.style.display = 'none';
+        
+        // Réinitialiser les champs RCS pour EURL
+        const emetteurRcs = document.getElementById('emetteurRcs');
+        const emetteurVilleRcs = document.getElementById('emetteurVilleRcs');
+        if (emetteurRcs.value === 'Dispensé d\'immatriculation au RCS') {
+          emetteurRcs.value = '';
+        }
+        emetteurRcs.required = true;
+        emetteurVilleRcs.required = true;
+        
       } else {
         champsSasu.style.display = 'none';
         champsEurl.style.display = 'none';
         champsClientSasu.style.display = 'none';
+        champsMicroRcs.style.display = 'block';
+        champsRcsStandard.style.display = 'none';
         prixTTCInput.disabled = true;
         prixTTCInput.value = '';
         infoTVA.style.display = 'none';
         infoMicro.style.display = 'block';
+        
+        // Initialiser l'affichage des champs RCS pour micro-entreprise
+        changerAffichageRcsMicro();
       }
       
       // Recalculer les prix dans les champs de saisie si des valeurs sont présentes
@@ -192,6 +473,31 @@
       
       // Rafraîchir l'affichage des prestations avec les bons labels
       afficherPrestations();
+      majApercu();
+    }
+    
+    function changerAffichageRcsMicro() {
+      const microAUnRcs = document.getElementById('microAUnRcs').checked;
+      const champsRcsStandard = document.getElementById('champsRcsStandard');
+      const emetteurRcs = document.getElementById('emetteurRcs');
+      const emetteurVilleRcs = document.getElementById('emetteurVilleRcs');
+      
+      if (microAUnRcs) {
+        // Afficher les champs RCS
+        champsRcsStandard.style.display = 'block';
+        emetteurRcs.value = '';
+        emetteurVilleRcs.value = '';
+        emetteurRcs.required = true;
+        emetteurVilleRcs.required = true;
+      } else {
+        // Masquer les champs RCS et remplir automatiquement
+        champsRcsStandard.style.display = 'none';
+        emetteurRcs.value = 'Dispensé d\'immatriculation au RCS';
+        emetteurVilleRcs.value = '';
+        emetteurRcs.required = false;
+        emetteurVilleRcs.required = false;
+      }
+      
       majApercu();
     }
     
@@ -304,11 +610,15 @@
       const iban = document.getElementById('iban').value;
       const bic = document.getElementById('bic').value;
       const banque = document.getElementById('banque').value;
+      const modePaiement = document.getElementById('modePaiement').value;
       const emetteurNom = document.getElementById('emetteurNom').value;
       const emetteurContact = document.getElementById('emetteurContact').value;
       const emetteurAdresse = document.getElementById('emetteurAdresse').value;
+      const emetteurCodePostal = document.getElementById('emetteurCodePostal').value;
+      const emetteurVille = document.getElementById('emetteurVille').value;
       const emetteurSiret = document.getElementById('emetteurSiret').value;
       const emetteurRcs = document.getElementById('emetteurRcs').value;
+      const emetteurVilleRcs = document.getElementById('emetteurVilleRcs').value;
       const emetteurEmail = document.getElementById('emetteurEmail').value;
       const emetteurTel = document.getElementById('emetteurTel').value;
       
@@ -321,27 +631,46 @@
       
       const totalPrix = prestations.reduce((acc, p) => acc + (p.prix * (p.qte || 1)), 0);
       
-      if (statutJuridique === 'sasu') {
-        // Pour SASU, totalPrix = TTC
-        genererFactureSASU(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
-      } else if (statutJuridique === 'eurl') {
-        // Pour EURL, totalPrix = TTC
-        genererFactureEURL(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
+      if (isFactureMode) {
+        // Mode Facture
+        if (statutJuridique === 'sasu') {
+          // Pour SASU, totalPrix = TTC
+          genererFactureSASU(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalPrix);
+        } else if (statutJuridique === 'eurl') {
+          // Pour EURL, totalPrix = TTC
+          genererFactureEURL(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalPrix);
+        } else {
+          // Pour micro-entreprise, totalPrix = HT
+          genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalPrix);
+        }
       } else {
-        // Pour micro-entreprise, totalPrix = HT
-        genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
+        // Mode Devis
+        const validiteDevis = document.getElementById('validiteDevis').value;
+        if (statutJuridique === 'sasu') {
+          // Pour SASU, totalPrix = TTC
+          genererDevisSASU(numFacture, dateFacture, validiteDevis, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalPrix);
+        } else if (statutJuridique === 'eurl') {
+          // Pour EURL, totalPrix = TTC
+          genererDevisEURL(numFacture, dateFacture, validiteDevis, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalPrix);
+        } else {
+          // Pour micro-entreprise, totalPrix = HT
+          genererDevisMicro(numFacture, dateFacture, validiteDevis, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalPrix);
+        }
       }
     }
     
-    function genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalHT) {
+    function genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalHT) {
       document.getElementById('factureApercu').innerHTML = `
         <div class="facture-header">
           <div class="facture-emetteur">
+            ${logoEntrepriseData ? `<img src="${logoEntrepriseData}" style="max-width: 120px; max-height: 80px; margin-bottom: 10px; display: block;"><br>` : ''}
             <b style="font-size:1.3rem;">${emetteurNom}</b><br>
+            <i style="font-size:0.9rem; color: #666;">Entrepreneur Individuel</i><br>
             ${emetteurContact}<br>
-            ${emetteurAdresse.replace(/\n/g, '<br>')}<br>
+            ${emetteurAdresse}<br>
+            ${emetteurCodePostal} ${emetteurVille}<br>
             SIRET : ${emetteurSiret}<br>
-            ${emetteurRcs}<br>
+            ${emetteurRcs === 'Dispensé d\'immatriculation au RCS' ? emetteurRcs : (emetteurVilleRcs ? `RCS ${emetteurVilleRcs} : ${emetteurRcs}` : emetteurRcs)}<br>
             Email : ${emetteurEmail}<br>
             Tél : ${emetteurTel}
           </div>
@@ -378,11 +707,8 @@
         <div class="facture-paiement-box">
           <b>MODALITÉS DE PAIEMENT</b><br>
           Échéance : 30 jours à réception<br>
-          <b>Mode de paiement :</b> Virement bancaire<br>
-          <b>RIB :</b><br>
-          IBAN : ${iban || '[VOTRE IBAN]'}<br>
-          BIC : ${bic || '[VOTRE BIC]'}<br>
-          Banque : ${banque || '[NOM DE VOTRE BANQUE]'}
+          <b>Mode de paiement :</b> ${modePaiement === 'virement' ? 'Virement bancaire' : modePaiement === 'cheque' ? 'Chèque' : modePaiement === 'carte' ? 'Carte bancaire' : 'Espèce'}<br>
+          ${modePaiement === 'virement' ? `<b>RIB :</b><br>IBAN : ${iban || '[VOTRE IBAN]'}<br>BIC : ${bic || '[VOTRE BIC]'}<br>Banque : ${banque || '[NOM DE VOTRE BANQUE]'}` : ''}
         </div>
         <div class="mentions">
           <b>Mentions légales obligatoires :</b><br>
@@ -394,7 +720,153 @@
       `;
     }
     
-    function genererFactureEURL(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalTTC) {
+    function genererDevisMicro(numFacture, dateFacture, validiteDevis, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalHT) {
+      let dateEcheance = '';
+      if (dateFacture && validiteDevis) {
+        const d = new Date(dateFacture);
+        d.setDate(d.getDate() + parseInt(validiteDevis));
+        dateEcheance = d.toLocaleDateString('fr-FR');
+      }
+      
+      // Gestion de l'acompte
+      const demanderAcompte = document.getElementById('demanderAcompte').checked;
+      const pourcentageAcompte = parseInt(document.getElementById('pourcentageAcompte').value) || 40;
+      const montantAcompte = demanderAcompte ? (totalHT * pourcentageAcompte / 100) : 0;
+      const solde = demanderAcompte ? (totalHT - montantAcompte) : totalHT;
+      
+      // Gestion du planning personnalisé
+      const demarrageDevis = document.getElementById('demarrageDevis').value || '2 semaines après signature';
+      const dureeEstimee = document.getElementById('dureeEstimee').value || `${prestations.length > 0 ? Math.max(...prestations.map(p => p.qte || 1)) : 'X'} jour${prestations.length > 0 && Math.max(...prestations.map(p => p.qte || 1)) > 1 ? 's' : ''}`;
+      
+      document.getElementById('factureApercu').innerHTML = `
+        <div class="facture-header">
+          <div class="facture-emetteur">
+            ${logoEntrepriseData ? `<img src="${logoEntrepriseData}" style="max-width: 120px; max-height: 80px; margin-bottom: 10px; display: block;"><br>` : ''}
+            <b style="font-size:1.4rem;">${emetteurNom}</b><br>
+            <i style="font-size:0.9rem; color: #666;">Entrepreneur Individuel</i><br>
+            ${emetteurContact}<br><br>
+            ${emetteurAdresse}<br>
+            ${emetteurCodePostal} ${emetteurVille}<br><br>
+            SIRET : ${emetteurSiret || '[À COMPLÉTER]'}<br>
+            ${emetteurRcs === 'Dispensé d\'immatriculation au RCS' ? emetteurRcs : (emetteurVilleRcs ? `RCS ${emetteurVilleRcs} : ${emetteurRcs}` : emetteurRcs)}<br><br>
+            Email : ${emetteurEmail}<br>
+            Tél : ${emetteurTel}
+          </div>
+          <div style="text-align:right;min-width:220px;">
+            <div class="facture-title">DEVIS</div>
+            <div class="facture-info">N° <b>${numFacture || 'D001'}</b></div>
+            <div class="facture-info">Date : <b>${dateFacture || '[DATE]'}</b></div>
+            <div class="facture-info">Projet : <b>${periode || '[NOM PROJET]'}</b></div>
+          </div>
+        </div>
+        
+        <div class="facture-client-box">
+          <b>CLIENT :</b><br>
+          ${clientNom ? `<b>${clientNom}</b><br>` : '[NOM DU CLIENT]<br>'}
+          ${clientAdresse ? `${clientAdresse}<br>` : '[ADRESSE CLIENT]<br>'}
+          ${clientVille ? `${clientVille}<br>` : '[CODE POSTAL VILLE]<br>'}
+          <br>Contact : [NOM CONTACT]<br>
+          Email : [EMAIL CLIENT]<br>
+          Tél : [TÉLÉPHONE CLIENT]<br>
+          ${clientSiret ? `SIRET : ${clientSiret}<br>` : ''}
+        </div>
+        
+        <div style="background: #fff3cd; border: 2px solid #f0ad4e; border-radius: 8px; padding: 15px; margin: 20px 0; text-align: center;">
+          <b style="font-size: 1.1rem; color: #8a6d3b;">⏰ DEVIS VALABLE ${validiteDevis || 30} JOURS</b><br>
+          À partir du ${dateFacture || '[DATE]'} jusqu'au ${dateEcheance || '[DATE + ' + (validiteDevis || 30) + ' jours]'}
+        </div>
+        
+        <div style="margin: 20px 0;">
+          <b style="font-size: 1.1rem; color: #1a7ee7;">PRESTATIONS PROPOSÉES :</b>
+        </div>
+        
+        <table class="facture-table">
+          <tr>
+            <th style="width: 45%;">Description détaillée</th>
+            <th style="width: 15%;">Durée estimée</th>
+            <th style="width: 8%;">Qté</th>
+            <th style="width: 16%;">Prix unitaire</th>
+            <th style="width: 16%;">Total</th>
+          </tr>
+          ${prestations.length === 0 ? `<tr><td colspan='5' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
+            prestations.map(p => {
+              const prixHT = p.prix; // Pour micro-entreprise, le prix stocké est HT
+              const totalHT = prixHT * (p.qte || 1);
+              return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}<br><i style="color: #666;">Livrable : Document détaillé</i></td><td style='text-align:center;'>${p.qte || 1} jour${(p.qte || 1) > 1 ? 's' : ''}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:right;'>${totalHT.toFixed(2)} €</td></tr>`;
+            }).join('')}
+        </table>
+        
+        <div style="margin: 20px 0; text-align: right;">
+          <div style="display: inline-block; text-align: left; background: #f8f9fa; padding: 15px; border-radius: 6px; border-left: 4px solid #1a7ee7;">
+            <b>TOTAL PRESTATIONS :</b><br>
+            <span style="font-size: 1.1rem;">${totalHT.toFixed(2)} €</span><br><br>
+            <b>TVA :</b> Non applicable<br><br>
+            <span style="font-size: 1.3rem; font-weight: 800; color: #1a7ee7;">TOTAL PROJET : ${totalHT.toFixed(2)} €</span>
+          </div>
+        </div>
+        
+        <div style="background: #f4f8fb; border-radius: 8px; padding: 20px; margin: 25px 0;">
+          <b style="font-size: 1.1rem; color: #1a7ee7;">CONDITIONS D'EXÉCUTION :</b><br><br>
+          
+          <b>📅 Planning :</b><br>
+          • Démarrage : ${demarrageDevis}<br>
+          • Durée estimée : ${dureeEstimee}<br>
+          • Livraison : selon planning convenu<br><br>
+          
+          <b>💰 Modalités de paiement :</b><br>
+          ${demanderAcompte ? `• Acompte de ${pourcentageAcompte}% à la commande (${montantAcompte.toFixed(2)} €)<br>• Solde ${100 - pourcentageAcompte}% à la livraison (${solde.toFixed(2)} €)<br>` : '• Paiement intégral à la livraison<br>'}
+          • Règlement par ${modePaiement === 'virement' ? 'virement bancaire uniquement' : modePaiement === 'cheque' ? 'chèque' : modePaiement === 'carte' ? 'carte bancaire' : 'espèce'}<br>
+          ${modePaiement === 'virement' ? `• IBAN : ${iban || '[VOTRE IBAN]'}<br>• BIC : ${bic || '[VOTRE BIC]'}<br>• Banque : ${banque || '[NOM BANQUE]'}<br>` : ''}<br>
+          
+          <b>🎯 Livrables garantis :</b><br>
+          • Documentation complète des prestations<br>
+          • Support et conseils inclus<br>
+          • Garantie de satisfaction<br>
+        </div>
+        
+        <div class="mentions">
+          <b>MENTIONS LÉGALES :</b><br>
+          • TVA non applicable, art. 293 B du CGI<br>
+          • Devis valable ${validiteDevis || 30} jours à compter de la date d'émission<br>
+          • Prix fermes et définitifs en euros<br>
+          • Règlement par ${modePaiement === 'virement' ? 'virement bancaire uniquement' : modePaiement === 'cheque' ? 'chèque' : modePaiement === 'carte' ? 'carte bancaire' : 'espèce'}<br>
+          • Pénalités de retard : 3 fois le taux de l'intérêt légal<br>
+          • Indemnité forfaitaire de recouvrement : 40 €<br>
+          • En cas de litige, seuls les tribunaux français sont compétents
+        </div>
+        
+        <div style="background: #d4edda; border: 2px solid #c3e6cb; border-radius: 8px; padding: 20px; margin: 25px 0;">
+          <b style="font-size: 1.1rem; color: #155724;">✅ ACCEPTATION DU DEVIS :</b><br><br>
+          <b>Pour valider ce devis, veuillez :</b><br>
+          ☐ Cocher les prestations souhaitées<br>
+          ☐ Signer et cacheter ci-dessous<br>
+          ☐ Retourner par email : ${emetteurEmail}<br>
+          ${demanderAcompte ? `☐ Verser l'acompte de ${pourcentageAcompte}% (${montantAcompte.toFixed(2)} €) sous 8 jours<br>` : '☐ Prévoir le paiement intégral à la livraison<br>'}<br>
+          
+          <b>TOTAL ACCEPTÉ :</b> _______ €<br><br>
+          
+          Le ___/___/_____ à ____________<br><br>
+          
+          <b>Signature et cachet :</b><br>
+          <div style="border: 1px dashed #6c757d; height: 80px; margin: 10px 0; display: flex; align-items: center; justify-content: center; color: #6c757d; font-style: italic;">
+            Signature du client et cachet de l'entreprise
+          </div>
+          
+          <b>Mention "Bon pour accord"</b><br>
+          <i>Nom et qualité du signataire</i>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+          <b style="color: #1a7ee7;">Merci de votre confiance !</b><br>
+          Questions ? Contactez-moi au ${emetteurTel}<br><br>
+          <i style="font-size: 0.9rem; color: #666;">
+            ${emetteurNom} - ${emetteurContact} - SIRET ${emetteurSiret || '[À COMPLÉTER]'} - ${emetteurEmail}
+          </i>
+        </div>
+      `;
+    }
+    
+    function genererFactureEURL(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalTTC) {
       const capitalSocialEurl = document.getElementById('capitalSocialEurl').value;
       const numTvaEurl = document.getElementById('numTvaEurl').value;
       const dateCreationEurl = document.getElementById('dateCreationEurl').value;
@@ -409,11 +881,13 @@
       document.getElementById('factureApercu').innerHTML = `
         <div class="facture-header">
           <div class="facture-emetteur">
+            ${logoEntrepriseData ? `<img src="${logoEntrepriseData}" style="max-width: 120px; max-height: 80px; margin-bottom: 10px; display: block;"><br>` : ''}
             <b style="font-size:1.3rem;">${emetteurNom}</b><br>
             <b>EURL au capital de ${capitalSocialEurl || '[CAPITAL]'} €</b><br><br>
-            Siège social : ${emetteurAdresse.replace(/\n/g, '<br>')}<br><br>
+            Siège social : ${emetteurAdresse}<br>
+            ${emetteurCodePostal} ${emetteurVille}<br><br>
             SIRET : ${emetteurSiret || '[SIRET EURL]'}<br>
-            RCS Lyon : ${emetteurRcs || '[N° RCS]'}<br>
+            RCS ${emetteurVilleRcs || '[VILLE RCS]'} : ${emetteurRcs || '[N° RCS]'}<br>
             N° TVA : ${numTvaEurl || '[N° TVA INTRA]'}<br><br>
             Gérant : ${gerantEurl || '[NOM GÉRANT]'}<br>
             Associé unique : ${associeUniqueEurl || '[NOM ASSOCIÉ]'}<br><br>
@@ -469,14 +943,8 @@
         <div class="facture-paiement-box">
           <b>MODALITÉS DE PAIEMENT</b><br>
           Échéance : 30 jours nets à réception<br>
-          Mode : Virement bancaire uniquement<br>
-          Devise : Euro (EUR)<br>
-          Domiciliation bancaire : France<br><br>
-          <b>Coordonnées bancaires EURL :</b><br>
-          IBAN : ${iban || '[IBAN EURL]'}<br>
-          BIC : ${bic || '[BIC EURL]'}<br>
-          Banque : ${banque || '[NOM BANQUE]'}<br>
-          Titulaire : ${emetteurNom} EURL
+          Mode : ${modePaiement === 'virement' ? 'Virement bancaire uniquement' : modePaiement === 'cheque' ? 'Chèque' : modePaiement === 'carte' ? 'Carte bancaire' : 'Espèce'}<br>
+          ${modePaiement === 'virement' ? `Devise : Euro (EUR)<br>Domiciliation bancaire : France<br><br><b>Coordonnées bancaires EURL :</b><br>IBAN : ${iban || '[IBAN EURL]'}<br>BIC : ${bic || '[BIC EURL]'}<br>Banque : ${banque || '[NOM BANQUE]'}<br>Titulaire : ${emetteurNom} EURL` : ''}
         </div>
         <div class="mentions">
           <b>MENTIONS LÉGALES OBLIGATOIRES EURL :</b><br>
@@ -489,16 +957,187 @@
         </div>
         <div style="text-align: center; margin-top: 30px; font-size: 0.9rem; color: #666;">
           <b>${emetteurNom} EURL</b><br>
-          EURL au capital de ${capitalSocialEurl || '[CAPITAL]'} € - RCS Lyon ${emetteurRcs || '[N° RCS]'} - SIRET ${emetteurSiret || '[SIRET]'} - N° TVA ${numTvaEurl || 'FR[N° TVA]'}<br>
+          EURL au capital de ${capitalSocialEurl || '[CAPITAL]'} € - RCS ${emetteurVilleRcs || '[VILLE RCS]'} ${emetteurRcs || '[N° RCS]'} - SIRET ${emetteurSiret || '[SIRET]'} - N° TVA ${numTvaEurl || 'FR[N° TVA]'}<br>
           Gérant : ${gerantEurl || '[NOM GÉRANT]'} - Associé unique : ${associeUniqueEurl || '[NOM ASSOCIÉ]'}
         </div>
       `;
     }
     
-    function genererFactureSASU(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalTTC) {
+    function genererDevisEURL(numFacture, dateFacture, validiteDevis, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalTTC) {
+      const capitalSocialEurl = document.getElementById('capitalSocialEurl').value;
+      const numTvaEurl = document.getElementById('numTvaEurl').value;
+      const dateCreationEurl = document.getElementById('dateCreationEurl').value;
+      const gerantEurl = document.getElementById('gerantEurl').value;
+      const associeUniqueEurl = document.getElementById('associeUniqueEurl').value;
+      const clientTva = document.getElementById('clientTva').value;
+      const datePrestation = document.getElementById('datePrestation').value;
+      
+      const totalHT = totalTTC / 1.20; // Calcul HT à partir du TTC
+      const tva = totalTTC - totalHT; // TVA = TTC - HT
+      
+      let dateEcheance = '';
+      if (dateFacture && validiteDevis) {
+        const d = new Date(dateFacture);
+        d.setDate(d.getDate() + parseInt(validiteDevis));
+        dateEcheance = d.toLocaleDateString('fr-FR');
+      }
+      
+      // Gestion de l'acompte
+      const demanderAcompte = document.getElementById('demanderAcompte').checked;
+      const pourcentageAcompte = parseInt(document.getElementById('pourcentageAcompte').value) || 40;
+      const montantAcompte = demanderAcompte ? (totalTTC * pourcentageAcompte / 100) : 0;
+      const solde = demanderAcompte ? (totalTTC - montantAcompte) : totalTTC;
+      
+      // Gestion du planning personnalisé
+      const demarrageDevis = document.getElementById('demarrageDevis').value || '2 semaines après signature';
+      const dureeEstimee = document.getElementById('dureeEstimee').value || `${prestations.length > 0 ? Math.max(...prestations.map(p => p.qte || 1)) : 'X'} jour${prestations.length > 0 && Math.max(...prestations.map(p => p.qte || 1)) > 1 ? 's' : ''}`;
+      
+      document.getElementById('factureApercu').innerHTML = `
+        <div class="facture-header">
+          <div class="facture-emetteur">
+            ${logoEntrepriseData ? `<img src="${logoEntrepriseData}" style="max-width: 120px; max-height: 80px; margin-bottom: 10px; display: block;"><br>` : ''}
+            <b style="font-size:1.4rem;">${emetteurNom}</b><br>
+            <b>EURL au capital de ${capitalSocialEurl || '[CAPITAL]'} €</b><br><br>
+            Siège social : ${emetteurAdresse}<br>
+            ${emetteurCodePostal} ${emetteurVille}<br><br>
+            SIRET : ${emetteurSiret || '[SIRET EURL]'}<br>
+            RCS ${emetteurVilleRcs || '[VILLE RCS]'} : ${emetteurRcs || '[N° RCS]'}<br>
+            N° TVA : ${numTvaEurl || '[N° TVA INTRA]'}<br><br>
+            Gérant : ${gerantEurl || '[NOM GÉRANT]'}<br>
+            Associé unique : ${associeUniqueEurl || '[NOM ASSOCIÉ]'}<br><br>
+            Email : ${emetteurEmail}<br>
+            Tél : ${emetteurTel}
+          </div>
+          <div style="text-align:right;min-width:220px;">
+            <div class="facture-title">DEVIS</div>
+            <div class="facture-info">N° <b>${numFacture || 'D001'}</b></div>
+            <div class="facture-info">Date : <b>${dateFacture || '[DATE]'}</b></div>
+            <div class="facture-info">Projet : <b>${periode || '[NOM PROJET]'}</b></div>
+          </div>
+        </div>
+        
+        <div class="facture-client-box">
+          <b>CLIENT :</b><br>
+          ${clientNom ? `<b>${clientNom}</b><br>` : '[RAISON SOCIALE CLIENT]<br>'}
+          ${clientAdresse ? `${clientAdresse}<br>` : '[ADRESSE CLIENT]<br>'}
+          ${clientVille ? `${clientVille}<br>` : '[CODE POSTAL VILLE CLIENT]<br>'}
+          <br>Contact : [NOM CONTACT]<br>
+          Email : [EMAIL CLIENT]<br>
+          Tél : [TÉLÉPHONE CLIENT]<br>
+          ${clientSiret ? `SIRET : ${clientSiret}<br>` : ''}
+          ${clientTva ? `N° TVA : ${clientTva}<br>` : ''}
+        </div>
+        
+        <div style="background: #fff3cd; border: 2px solid #f0ad4e; border-radius: 8px; padding: 15px; margin: 20px 0; text-align: center;">
+          <b style="font-size: 1.1rem; color: #8a6d3b;">⏰ DEVIS VALABLE ${validiteDevis || 30} JOURS</b><br>
+          À partir du ${dateFacture || '[DATE]'} jusqu'au ${dateEcheance || '[DATE + ' + (validiteDevis || 30) + ' jours]'}
+        </div>
+        
+        <div style="margin: 20px 0;">
+          <b style="font-size: 1.1rem; color: #1a7ee7;">PRESTATIONS PROPOSÉES :</b>
+        </div>
+        
+        <table class="facture-table">
+          <tr>
+            <th style="width: 40%;">Description détaillée</th>
+            <th style="width: 12%;">Durée estimée</th>
+            <th style="width: 6%;">Qté</th>
+            <th style="width: 14%;">Prix unit. HT</th>
+            <th style="width: 14%;">Prix unit. TTC</th>
+            <th style="width: 14%;">Total TTC</th>
+          </tr>
+          ${prestations.length === 0 ? `<tr><td colspan='6' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
+            prestations.map(p => {
+              const prixHT = p.prix / 1.20; // Pour EURL, HT = TTC / 1.20
+              const totalTTC = p.prix * (p.qte || 1);
+              return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}<br><i style="color: #666;">Livrable : Document détaillé</i></td><td style='text-align:center;'>${p.qte || 1} jour${(p.qte || 1) > 1 ? 's' : ''}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:right;'>${p.prix.toFixed(2)} €</td><td style='text-align:right;'>${totalTTC.toFixed(2)} €</td></tr>`;
+            }).join('')}
+        </table>
+        
+        <div style="margin: 20px 0; text-align: right;">
+          <div style="display: inline-block; text-align: left; background: #f8f9fa; padding: 15px; border-radius: 6px; border-left: 4px solid #1a7ee7;">
+            <b>TOTAL HT :</b> ${totalHT.toFixed(2)} €<br>
+            <b>TVA 20% :</b> ${tva.toFixed(2)} €<br><br>
+            <span style="font-size: 1.3rem; font-weight: 800; color: #1a7ee7;">TOTAL TTC : ${totalTTC.toFixed(2)} €</span>
+          </div>
+        </div>
+        
+        <div style="background: #f4f8fb; border-radius: 8px; padding: 20px; margin: 25px 0;">
+          <b style="font-size: 1.1rem; color: #1a7ee7;">CONDITIONS D'EXÉCUTION :</b><br><br>
+          
+          <b>📅 Planning :</b><br>
+          • Démarrage : ${demarrageDevis}<br>
+          • Durée estimée : ${dureeEstimee}<br>
+          • Livraison : selon planning convenu<br><br>
+          
+          <b>💰 Modalités de paiement :</b><br>
+          ${demanderAcompte ? `• Acompte de ${pourcentageAcompte}% à la commande (${montantAcompte.toFixed(2)} € TTC)<br>• Solde ${100 - pourcentageAcompte}% à la livraison (${solde.toFixed(2)} € TTC)<br>` : '• Paiement intégral à la livraison<br>'}
+          • Règlement par ${modePaiement === 'virement' ? 'virement bancaire uniquement' : modePaiement === 'cheque' ? 'chèque' : modePaiement === 'carte' ? 'carte bancaire' : 'espèce'}<br>
+          ${modePaiement === 'virement' ? `• IBAN : ${iban || '[IBAN EURL]'}<br>• BIC : ${bic || '[BIC EURL]'}<br>• Banque : ${banque || '[NOM BANQUE]'}<br>• Titulaire : ${emetteurNom} EURL<br>` : ''}<br>
+          
+          <b>🎯 Livrables garantis :</b><br>
+          • Documentation complète des prestations<br>
+          • Support et conseils inclus<br>
+          • Garantie conforme aux obligations légales EURL<br>
+          • Clause de réserve de propriété jusqu'au paiement intégral<br>
+        </div>
+        
+        <div style="background: #e8f4fd; border-radius: 8px; padding: 15px; margin: 20px 0;">
+          <b>INFORMATIONS TVA :</b><br>
+          • EURL assujettie à la TVA depuis le ${dateCreationEurl ? new Date(dateCreationEurl).toLocaleDateString('fr-FR') : '[DATE CRÉATION]'}<br>
+          • Régime réel normal - Déclarations mensuelles<br>
+          • Taux de TVA applicable : 20% (services aux entreprises)<br>
+          • TVA sur les débits (facturation)
+        </div>
+        
+        <div class="mentions">
+          <b>MENTIONS LÉGALES :</b><br>
+          • TVA 20% applicable - Régime réel normal<br>
+          • Devis valable ${validiteDevis || 30} jours à compter de la date d'émission<br>
+          • Prix fermes et définitifs en euros, TVA incluse<br>
+          • Règlement par ${modePaiement === 'virement' ? 'virement bancaire exclusivement' : modePaiement === 'cheque' ? 'chèque' : modePaiement === 'carte' ? 'carte bancaire' : 'espèce'}<br>
+          • Pénalités de retard : 3 fois le taux de l'intérêt légal<br>
+          • Indemnité forfaitaire de recouvrement : 40 €<br>
+          • Règlement des litiges : médiation prioritaire, juridiction française
+        </div>
+        
+        <div style="background: #d4edda; border: 2px solid #c3e6cb; border-radius: 8px; padding: 20px; margin: 25px 0;">
+          <b style="font-size: 1.1rem; color: #155724;">✅ ACCEPTATION DU DEVIS :</b><br><br>
+          <b>Pour valider ce devis, veuillez :</b><br>
+          ☐ Cocher les prestations souhaitées<br>
+          ☐ Signer et cacheter ci-dessous<br>
+          ☐ Retourner par email : ${emetteurEmail}<br>
+          ${demanderAcompte ? `☐ Verser l'acompte de ${pourcentageAcompte}% (${montantAcompte.toFixed(2)} € TTC) sous 8 jours<br>` : '☐ Prévoir le paiement intégral à la livraison<br>'}<br>
+          
+          <b>TOTAL ACCEPTÉ TTC :</b> _______ €<br><br>
+          
+          Le ___/___/_____ à ____________<br><br>
+          
+          <b>Signature et cachet :</b><br>
+          <div style="border: 1px dashed #6c757d; height: 80px; margin: 10px 0; display: flex; align-items: center; justify-content: center; color: #6c757d; font-style: italic;">
+            Signature du client et cachet de l'entreprise
+          </div>
+          
+          <b>Mention "Bon pour accord"</b><br>
+          <i>Nom et qualité du signataire</i>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+          <b style="color: #1a7ee7;">Merci de votre confiance !</b><br>
+          Questions ? Contactez-moi au ${emetteurTel}<br><br>
+          <i style="font-size: 0.9rem; color: #666;">
+            ${emetteurNom} EURL - Capital ${capitalSocialEurl || '[CAPITAL]'} € - RCS ${emetteurVilleRcs || '[VILLE RCS]'} ${emetteurRcs || '[N° RCS]'}<br>
+            SIRET ${emetteurSiret || '[SIRET]'} - N° TVA ${numTvaEurl || 'FR[N° TVA]'} - ${emetteurEmail}
+          </i>
+        </div>
+      `;
+    }
+    
+    function genererFactureSASU(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalTTC) {
       const capitalSocial = document.getElementById('capitalSocial').value;
       const numTva = document.getElementById('numTva').value;
       const dateCreationSasu = document.getElementById('dateCreationSasu').value;
+      const presidentSasu = document.getElementById('presidentSasu').value;
       const clientTva = document.getElementById('clientTva').value;
       const datePrestation = document.getElementById('datePrestation').value;
       
@@ -508,11 +1147,14 @@
       document.getElementById('factureApercu').innerHTML = `
         <div class="facture-header">
           <div class="facture-emetteur">
+            ${logoEntrepriseData ? `<img src="${logoEntrepriseData}" style="max-width: 120px; max-height: 80px; margin-bottom: 10px; display: block;"><br>` : ''}
             <b style="font-size:1.3rem;">${emetteurNom}</b><br>
             <b>SASU au capital de ${capitalSocial || '[CAPITAL]'} €</b><br><br>
-            Siège social : ${emetteurAdresse.replace(/\n/g, '<br>')}<br><br>
+            Président : ${presidentSasu || '[PRÉNOM NOM]'}<br><br>
+            Siège social : ${emetteurAdresse}<br>
+            ${emetteurCodePostal} ${emetteurVille}<br><br>
             SIRET : ${emetteurSiret || '[SIRET SASU]'}<br>
-            RCS Lyon : ${emetteurRcs || '[N° RCS]'}<br>
+            RCS ${emetteurVilleRcs || '[VILLE RCS]'} : ${emetteurRcs || '[N° RCS]'}<br>
             N° TVA : ${numTva || '[N° TVA INTRA]'}<br><br>
             Email : ${emetteurEmail}<br>
             Tél : ${emetteurTel}
@@ -565,12 +1207,8 @@
         <div class="facture-paiement-box">
           <b>MODALITÉS DE PAIEMENT</b><br>
           Échéance : 30 jours nets<br>
-          Mode : Virement bancaire<br>
-          Devise : Euro (EUR)<br><br>
-          <b>Coordonnées bancaires :</b><br>
-          IBAN : ${iban || '[IBAN SASU]'}<br>
-          BIC : ${bic || '[BIC SASU]'}<br>
-          Banque : ${banque || '[NOM BANQUE]'}
+          Mode : ${modePaiement === 'virement' ? 'Virement bancaire' : modePaiement === 'cheque' ? 'Chèque' : modePaiement === 'carte' ? 'Carte bancaire' : 'Espèce'}<br>
+          ${modePaiement === 'virement' ? `Devise : Euro (EUR)<br><br><b>Coordonnées bancaires :</b><br>IBAN : ${iban || '[IBAN SASU]'}<br>BIC : ${bic || '[BIC SASU]'}<br>Banque : ${banque || '[NOM BANQUE]'}` : ''}
         </div>
         <div class="mentions">
           <b>MENTIONS LÉGALES OBLIGATOIRES :</b><br>
@@ -581,14 +1219,193 @@
         </div>
         <div style="text-align: center; margin-top: 30px; font-size: 0.9rem; color: #666;">
           <b>${emetteurNom} SASU</b><br>
-          SASU au capital de ${capitalSocial || '[CAPITAL]'} € - RCS Lyon ${emetteurRcs || '[N° RCS]'} - SIRET ${emetteurSiret || '[SIRET]'} - N° TVA ${numTva || 'FR[N° TVA]'}
+          SASU au capital de ${capitalSocial || '[CAPITAL]'} € - RCS ${emetteurVilleRcs || '[VILLE RCS]'} ${emetteurRcs || '[N° RCS]'} - SIRET ${emetteurSiret || '[SIRET]'} - N° TVA ${numTva || 'FR[N° TVA]'}<br>
+          Président : ${presidentSasu || '[PRÉNOM NOM]'}
         </div>
       `;
     }
+    
+    function genererDevisSASU(numFacture, dateFacture, validiteDevis, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalTTC) {
+      const capitalSocial = document.getElementById('capitalSocial').value;
+      const numTva = document.getElementById('numTva').value;
+      const dateCreationSasu = document.getElementById('dateCreationSasu').value;
+      const presidentSasu = document.getElementById('presidentSasu').value;
+      const clientTva = document.getElementById('clientTva').value;
+      const datePrestation = document.getElementById('datePrestation').value;
+      
+      const totalHT = totalTTC / 1.20; // Calcul HT à partir du TTC
+      const tva = totalTTC - totalHT; // TVA = TTC - HT
+      
+      let dateEcheance = '';
+      if (dateFacture && validiteDevis) {
+        const d = new Date(dateFacture);
+        d.setDate(d.getDate() + parseInt(validiteDevis));
+        dateEcheance = d.toLocaleDateString('fr-FR');
+      }
+      
+      // Gestion de l'acompte
+      const demanderAcompte = document.getElementById('demanderAcompte').checked;
+      const pourcentageAcompte = parseInt(document.getElementById('pourcentageAcompte').value) || 40;
+      const montantAcompte = demanderAcompte ? (totalTTC * pourcentageAcompte / 100) : 0;
+      const solde = demanderAcompte ? (totalTTC - montantAcompte) : totalTTC;
+      
+      // Gestion du planning personnalisé
+      const demarrageDevis = document.getElementById('demarrageDevis').value || '2 semaines après signature';
+      const dureeEstimee = document.getElementById('dureeEstimee').value || `${prestations.length > 0 ? Math.max(...prestations.map(p => p.qte || 1)) : 'X'} jour${prestations.length > 0 && Math.max(...prestations.map(p => p.qte || 1)) > 1 ? 's' : ''}`;
+      
+      document.getElementById('factureApercu').innerHTML = `
+        <div class="facture-header">
+          <div class="facture-emetteur">
+            ${logoEntrepriseData ? `<img src="${logoEntrepriseData}" style="max-width: 120px; max-height: 80px; margin-bottom: 10px; display: block;"><br>` : ''}
+            <b style="font-size:1.4rem;">${emetteurNom}</b><br>
+            <b>SASU au capital de ${capitalSocial || '[CAPITAL]'} €</b><br><br>
+            Président : ${presidentSasu || '[PRÉNOM NOM]'}<br><br>
+            Siège social : ${emetteurAdresse}<br>
+            ${emetteurCodePostal} ${emetteurVille}<br><br>
+            SIRET : ${emetteurSiret || '[SIRET SASU]'}<br>
+            RCS ${emetteurVilleRcs || '[VILLE RCS]'} : ${emetteurRcs || '[N° RCS]'}<br>
+            N° TVA : ${numTva || '[N° TVA INTRA]'}<br><br>
+            Email : ${emetteurEmail}<br>
+            Tél : ${emetteurTel}
+          </div>
+          <div style="text-align:right;min-width:220px;">
+            <div class="facture-title">DEVIS</div>
+            <div class="facture-info">N° <b>${numFacture || 'D001'}</b></div>
+            <div class="facture-info">Date : <b>${dateFacture || '[DATE]'}</b></div>
+            <div class="facture-info">Projet : <b>${periode || '[NOM PROJET]'}</b></div>
+          </div>
+        </div>
+        
+        <div class="facture-client-box">
+          <b>CLIENT :</b><br>
+          ${clientNom ? `<b>${clientNom}</b><br>` : '[RAISON SOCIALE CLIENT]<br>'}
+          ${clientAdresse ? `${clientAdresse}<br>` : '[ADRESSE CLIENT]<br>'}
+          ${clientVille ? `${clientVille}<br>` : '[CODE POSTAL VILLE CLIENT]<br>'}
+          <br>Contact : [NOM CONTACT]<br>
+          Email : [EMAIL CLIENT]<br>
+          Tél : [TÉLÉPHONE CLIENT]<br>
+          ${clientSiret ? `SIRET : ${clientSiret}<br>` : ''}
+          ${clientTva ? `N° TVA : ${clientTva}<br>` : ''}
+        </div>
+        
+        <div style="background: #fff3cd; border: 2px solid #f0ad4e; border-radius: 8px; padding: 15px; margin: 20px 0; text-align: center;">
+          <b style="font-size: 1.1rem; color: #8a6d3b;">⏰ DEVIS VALABLE ${validiteDevis || 30} JOURS</b><br>
+          À partir du ${dateFacture || '[DATE]'} jusqu'au ${dateEcheance || '[DATE + ' + (validiteDevis || 30) + ' jours]'}
+        </div>
+        
+        <div style="margin: 20px 0;">
+          <b style="font-size: 1.1rem; color: #1a7ee7;">PRESTATIONS PROPOSÉES :</b>
+        </div>
+        
+        <table class="facture-table">
+          <tr>
+            <th style="width: 40%;">Description détaillée</th>
+            <th style="width: 12%;">Durée estimée</th>
+            <th style="width: 6%;">Qté</th>
+            <th style="width: 14%;">Prix unit. HT</th>
+            <th style="width: 14%;">Prix unit. TTC</th>
+            <th style="width: 14%;">Total TTC</th>
+          </tr>
+          ${prestations.length === 0 ? `<tr><td colspan='6' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
+            prestations.map(p => {
+              const prixHT = p.prix / 1.20; // Pour SASU, HT = TTC / 1.20
+              const totalTTC = p.prix * (p.qte || 1);
+              return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}<br><i style="color: #666;">Livrable : Document détaillé</i></td><td style='text-align:center;'>${p.qte || 1} jour${(p.qte || 1) > 1 ? 's' : ''}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:right;'>${p.prix.toFixed(2)} €</td><td style='text-align:right;'>${totalTTC.toFixed(2)} €</td></tr>`;
+            }).join('')}
+        </table>
+        
+        <div style="margin: 20px 0; text-align: right;">
+          <div style="display: inline-block; text-align: left; background: #f8f9fa; padding: 15px; border-radius: 6px; border-left: 4px solid #1a7ee7;">
+            <b>TOTAL HT :</b> ${totalHT.toFixed(2)} €<br>
+            <b>TVA 20% :</b> ${tva.toFixed(2)} €<br><br>
+            <span style="font-size: 1.3rem; font-weight: 800; color: #1a7ee7;">TOTAL TTC : ${totalTTC.toFixed(2)} €</span>
+          </div>
+        </div>
+        
+        <div style="background: #f4f8fb; border-radius: 8px; padding: 20px; margin: 25px 0;">
+          <b style="font-size: 1.1rem; color: #1a7ee7;">CONDITIONS D'EXÉCUTION :</b><br><br>
+          
+          <b>📅 Planning :</b><br>
+          • Démarrage : ${demarrageDevis}<br>
+          • Durée estimée : ${dureeEstimee}<br>
+          • Livraison : selon planning convenu<br><br>
+          
+          <b>💰 Modalités de paiement :</b><br>
+          ${demanderAcompte ? `• Acompte de ${pourcentageAcompte}% à la commande (${montantAcompte.toFixed(2)} € TTC)<br>• Solde ${100 - pourcentageAcompte}% à la livraison (${solde.toFixed(2)} € TTC)<br>` : '• Paiement intégral à la livraison<br>'}
+          • Règlement par ${modePaiement === 'virement' ? 'virement bancaire' : modePaiement === 'cheque' ? 'chèque' : modePaiement === 'carte' ? 'carte bancaire' : 'espèce'}<br>
+          ${modePaiement === 'virement' ? `• IBAN : ${iban || '[IBAN SASU]'}<br>• BIC : ${bic || '[BIC SASU]'}<br>• Banque : ${banque || '[NOM BANQUE]'}<br>` : ''}<br>
+          
+          <b>🎯 Livrables garantis :</b><br>
+          • Documentation complète des prestations<br>
+          • Support et conseils inclus<br>
+          • Garantie conforme aux obligations légales SASU<br>
+          • Clause de réserve de propriété jusqu'au paiement intégral<br>
+        </div>
+        
+        <div style="background: #e8f4fd; border-radius: 8px; padding: 15px; margin: 20px 0;">
+          <b>INFORMATIONS TVA :</b><br>
+          • Assujetti à la TVA depuis le ${dateCreationSasu ? new Date(dateCreationSasu).toLocaleDateString('fr-FR') : '[DATE CRÉATION SASU]'}<br>
+          • Taux de TVA applicable : 20%<br>
+          • Facturation avec TVA obligatoire
+        </div>
+        
+        <div class="mentions">
+          <b>MENTIONS LÉGALES :</b><br>
+          • TVA 20% applicable - Facturation obligatoire<br>
+          • Devis valable ${validiteDevis || 30} jours à compter de la date d'émission<br>
+          • Prix fermes et définitifs en euros, TVA incluse<br>
+          • Règlement par ${modePaiement === 'virement' ? 'virement bancaire' : modePaiement === 'cheque' ? 'chèque' : modePaiement === 'carte' ? 'carte bancaire' : 'espèce'}<br>
+          • Pénalités de retard : 3 fois le taux de l'intérêt légal<br>
+          • Indemnité forfaitaire de recouvrement : 40 €<br>
+          • Règlement des litiges : médiation prioritaire, juridiction française
+        </div>
+        
+        <div style="background: #d4edda; border: 2px solid #c3e6cb; border-radius: 8px; padding: 20px; margin: 25px 0;">
+          <b style="font-size: 1.1rem; color: #155724;">✅ ACCEPTATION DU DEVIS :</b><br><br>
+          <b>Pour valider ce devis, veuillez :</b><br>
+          ☐ Cocher les prestations souhaitées<br>
+          ☐ Signer et cacheter ci-dessous<br>
+          ☐ Retourner par email : ${emetteurEmail}<br>
+          ${demanderAcompte ? `☐ Verser l'acompte de ${pourcentageAcompte}% (${montantAcompte.toFixed(2)} € TTC) sous 8 jours<br>` : '☐ Prévoir le paiement intégral à la livraison<br>'}<br>
+          
+          <b>TOTAL ACCEPTÉ TTC :</b> _______ €<br><br>
+          
+          Le ___/___/_____ à ____________<br><br>
+          
+          <b>Signature et cachet :</b><br>
+          <div style="border: 1px dashed #6c757d; height: 80px; margin: 10px 0; display: flex; align-items: center; justify-content: center; color: #6c757d; font-style: italic;">
+            Signature du client et cachet de l'entreprise
+          </div>
+          
+          <b>Mention "Bon pour accord"</b><br>
+          <i>Nom et qualité du signataire</i>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+          <b style="color: #1a7ee7;">Merci de votre confiance !</b><br>
+          Questions ? Contactez-moi au ${emetteurTel}<br><br>
+          <i style="font-size: 0.9rem; color: #666;">
+            ${emetteurNom} SASU - Capital ${capitalSocial || '[CAPITAL]'} € - RCS ${emetteurVilleRcs || '[VILLE RCS]'} ${emetteurRcs || '[N° RCS]'}<br>
+            SIRET ${emetteurSiret || '[SIRET]'} - N° TVA ${numTva || 'FR[N° TVA]'} - Président : ${presidentSasu || '[PRÉNOM NOM]'} - ${emetteurEmail}
+          </i>
+        </div>
+      `;
+    }
+    
     document.querySelectorAll('#factureForm input, #factureForm select').forEach(input => {
       input.addEventListener('input', majApercu);
     });
-    function imprimerFacture() {
+    
+    // Ajouter l'écouteur pour le champ de validité du devis
+    document.getElementById('validiteDevis').addEventListener('input', majApercu);
+    
+    // Ajouter l'écouteur pour le champ d'acompte
+    document.getElementById('pourcentageAcompte').addEventListener('input', majApercu);
+    
+    // Ajouter les écouteurs pour les champs de planning personnalisé
+    document.getElementById('demarrageDevis').addEventListener('input', majApercu);
+    document.getElementById('dureeEstimee').addEventListener('input', majApercu);
+    function imprimerDocument() {
       majApercu();
       const element = document.getElementById('factureApercu');
       if (!element || !element.innerHTML.trim()) {
@@ -662,30 +1479,298 @@
           }
         }
         
-        const numFacture = document.getElementById('numFacture').value || 'F001';
+        const numFacture = document.getElementById('numFacture').value || (isFactureMode ? 'F001' : 'D001');
         const clientNom = document.getElementById('clientNom').value || 'CLIENT';
         // Nettoyer le nom du client pour le nom de fichier (supprimer espaces et caractères spéciaux)
         const clientNomClean = clientNom.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-        const filename = `${numFacture}${clientNomClean}.pdf`;
+        const docType = isFactureMode ? 'FACTURE' : 'DEVIS';
+        const filename = `${docType}_${numFacture}_${clientNomClean}.pdf`;
         pdf.save(filename);
       }).catch(err => {
         console.error('Erreur lors de la génération du PDF:', err);
         alert('Erreur lors de la génération du PDF. Veuillez réessayer.');
       });
     }
+    
+    function exporterCSV() {
+      const statutJuridique = document.getElementById('statutJuridique').value;
+      const numFacture = document.getElementById('numFacture').value || (isFactureMode ? 'F001' : 'D001');
+      const dateFacture = document.getElementById('dateFacture').value || '';
+      const clientNom = document.getElementById('clientNom').value || '';
+      const clientAdresse = document.getElementById('clientAdresse').value || '';
+      const clientVille = document.getElementById('clientVille').value || '';
+      const clientSiret = document.getElementById('clientSiret').value || '';
+      const periode = document.getElementById('periode').value || '';
+      const emetteurNom = document.getElementById('emetteurNom').value || '';
+      const emetteurContact = document.getElementById('emetteurContact').value || '';
+      const emetteurAdresse = document.getElementById('emetteurAdresse').value || '';
+      const emetteurCodePostal = document.getElementById('emetteurCodePostal').value || '';
+      const emetteurVille = document.getElementById('emetteurVille').value || '';
+      const emetteurSiret = document.getElementById('emetteurSiret').value || '';
+      const emetteurEmail = document.getElementById('emetteurEmail').value || '';
+      const emetteurTel = document.getElementById('emetteurTel').value || '';
+      const iban = document.getElementById('iban').value || '';
+      const bic = document.getElementById('bic').value || '';
+      const banque = document.getElementById('banque').value || '';
+      const modePaiement = document.getElementById('modePaiement').value || '';
+      const validiteDevis = document.getElementById('validiteDevis').value || '';
+      
+      // Calculer les totaux
+      const totalPrix = prestations.reduce((acc, p) => acc + (p.prix * (p.qte || 1)), 0);
+      let totalHT, totalTTC, totalTVA;
+      
+      if (statutJuridique === 'sasu' || statutJuridique === 'eurl') {
+        totalTTC = totalPrix;
+        totalHT = totalTTC / 1.20;
+        totalTVA = totalTTC - totalHT;
+      } else {
+        totalHT = totalPrix;
+        totalTTC = totalPrix; // Pour micro-entreprise, TTC = HT
+        totalTVA = 0;
+      }
+      
+      // Créer le contenu CSV avec BOM UTF-8 pour les caractères accentués français
+      let csvContent = '\uFEFF'; // BOM UTF-8 pour Excel
+      
+      // En-tête avec informations générales
+      const docType = isFactureMode ? 'FACTURE' : 'DEVIS';
+      csvContent += `INFORMATIONS ${docType}\n`;
+      csvContent += 'Type,Valeur\n';
+      csvContent += `Numéro de ${docType.toLowerCase()},${numFacture}\n`;
+      csvContent += `Date de ${docType.toLowerCase()},${dateFacture}\n`;
+      csvContent += `Statut juridique,${statutJuridique.toUpperCase()}\n`;
+      csvContent += `Période ${isFactureMode ? 'facturée' : 'prévue'},${periode}\n`;
+      if (!isFactureMode) {
+        csvContent += `Validité du devis,${validiteDevis} jours\n`;
+      }
+      csvContent += '\n';
+      
+      // Informations émetteur
+      csvContent += 'INFORMATIONS ÉMETTEUR\n';
+      csvContent += 'Type,Valeur\n';
+      csvContent += `Nom entreprise,${emetteurNom}\n`;
+      csvContent += `Contact,${emetteurContact}\n`;
+      csvContent += `Adresse,${emetteurAdresse}\n`;
+      csvContent += `Code postal,${emetteurCodePostal}\n`;
+      csvContent += `Ville,${emetteurVille}\n`;
+      csvContent += `SIRET,${emetteurSiret}\n`;
+      csvContent += `Email,${emetteurEmail}\n`;
+      csvContent += `Téléphone,${emetteurTel}\n`;
+      csvContent += '\n';
+      
+      // Informations client
+      csvContent += 'INFORMATIONS CLIENT\n';
+      csvContent += 'Type,Valeur\n';
+      csvContent += `Nom client,${clientNom}\n`;
+      csvContent += `Adresse client,${clientAdresse}\n`;
+      csvContent += `Ville client,${clientVille}\n`;
+      csvContent += `SIRET client,${clientSiret}\n`;
+      csvContent += '\n';
+      
+      // Prestations
+      csvContent += 'PRESTATIONS\n';
+      if (statutJuridique === 'sasu' || statutJuridique === 'eurl') {
+        csvContent += 'Titre,Description,Quantité,Prix unitaire HT,Prix unitaire TTC,Total HT,Total TTC\n';
+      } else {
+        csvContent += 'Titre,Description,Quantité,Prix unitaire HT,Total HT\n';
+      }
+      
+      prestations.forEach(p => {
+        const titre = `"${p.titre.replace(/"/g, '""')}"`;
+        const desc = `"${p.desc.replace(/"/g, '""')}"`;
+        const qte = p.qte || 1;
+        
+        if (statutJuridique === 'sasu' || statutJuridique === 'eurl') {
+          const prixHT = p.prix / 1.20;
+          const prixTTC = p.prix;
+          const totalHT = prixHT * qte;
+          const totalTTC = prixTTC * qte;
+          csvContent += `${titre},${desc},${qte},${prixHT.toFixed(2)},${prixTTC.toFixed(2)},${totalHT.toFixed(2)},${totalTTC.toFixed(2)}\n`;
+        } else {
+          const prixHT = p.prix;
+          const totalHT = prixHT * qte;
+          csvContent += `${titre},${desc},${qte},${prixHT.toFixed(2)},${totalHT.toFixed(2)}\n`;
+        }
+      });
+      
+      csvContent += '\n';
+      
+      // Totaux
+      csvContent += 'TOTAUX\n';
+      csvContent += 'Type,Montant\n';
+      csvContent += `Total HT,${totalHT.toFixed(2)}\n`;
+      if (statutJuridique === 'sasu' || statutJuridique === 'eurl') {
+        csvContent += `TVA 20%,${totalTVA.toFixed(2)}\n`;
+      } else {
+        csvContent += `TVA,Non applicable\n`;
+      }
+      csvContent += `Total TTC,${totalTTC.toFixed(2)}\n`;
+      csvContent += '\n';
+      
+      // Informations bancaires
+      csvContent += 'INFORMATIONS BANCAIRES\n';
+      csvContent += 'Type,Valeur\n';
+      csvContent += `Mode de paiement,${modePaiement}\n`;
+      csvContent += `IBAN,${iban}\n`;
+      csvContent += `BIC,${bic}\n`;
+      csvContent += `Banque,${banque}\n`;
+      
+      // Créer et télécharger le fichier CSV avec encodage UTF-8 explicite
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+      const link = document.createElement('a');
+      
+      if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        
+        const clientNomClean = clientNom.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+        const docType = isFactureMode ? 'FACTURE' : 'DEVIS';
+        const filename = `${docType}_${numFacture}_${clientNomClean}.csv`;
+        link.setAttribute('download', filename);
+        
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        console.log('Fichier CSV exporté:', filename);
+      } else {
+        alert('Votre navigateur ne supporte pas le téléchargement de fichiers CSV.');
+      }
+    }
+    
+    // Fonctionnalité de scroll synchronisé
+    function initScrollSynchronise() {
+      // Mapping des sections du formulaire vers les sections de l'aperçu
+      const sectionMapping = {
+        'emetteurNom': '.facture-emetteur',
+        'emetteurContact': '.facture-emetteur',
+        'emetteurAdresse': '.facture-emetteur',
+        'emetteurCodePostal': '.facture-emetteur',
+        'emetteurVille': '.facture-emetteur',
+        'emetteurSiret': '.facture-emetteur',
+        'emetteurRcs': '.facture-emetteur',
+        'emetteurVilleRcs': '.facture-emetteur',
+        'emetteurEmail': '.facture-emetteur',
+        'emetteurTel': '.facture-emetteur',
+        'numFacture': '.facture-title',
+        'dateFacture': '.facture-info',
+        'clientNom': '.facture-client-box',
+        'clientAdresse': '.facture-client-box',
+        'clientVille': '.facture-client-box',
+        'clientSiret': '.facture-client-box',
+        'periode': '.facture-table',
+        'titrePresta': '.facture-table',
+        'descPresta': '.facture-table',
+        'prixHT': '.facture-table',
+        'prixPresta': '.facture-table',
+        'qtePresta': '.facture-table',
+        'modePaiement': '.facture-paiement-box',
+        'iban': '.facture-paiement-box',
+        'bic': '.facture-paiement-box',
+        'banque': '.facture-paiement-box'
+      };
+      
+      // Ajouter des écouteurs d'événements focus sur tous les champs
+      Object.keys(sectionMapping).forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+          field.addEventListener('focus', () => {
+            scrollToPreviewSection(sectionMapping[fieldId]);
+          });
+        }
+      });
+      
+      // Scroll automatique lors du clic sur les boutons d'ajout de prestation
+      const addPrestationBtn = document.querySelector('button[onclick="ajouterPrestation()"]');
+      if (addPrestationBtn) {
+        addPrestationBtn.addEventListener('click', () => {
+          setTimeout(() => {
+            scrollToPreviewSection('.facture-table');
+          }, 300);
+        });
+      }
+    }
+    
+    function scrollToPreviewSection(selector) {
+      const factureSection = document.querySelector('.facture-section');
+      const targetElement = document.querySelector(selector);
+      const syncIndicator = document.getElementById('syncIndicator');
+      
+      if (factureSection && targetElement) {
+        // Vérifier si on est sur mobile (moins de 900px)
+        const isMobile = window.innerWidth <= 900;
+        
+        if (isMobile) {
+          // Sur mobile, juste faire un highlight sans scroll
+          highlightActiveSection(selector);
+          return;
+        }
+        
+        // Afficher l'indicateur de synchronisation
+        if (syncIndicator) {
+          syncIndicator.classList.add('show');
+          setTimeout(() => {
+            syncIndicator.classList.remove('show');
+          }, 2000);
+        }
+        
+        const factureRect = factureSection.getBoundingClientRect();
+        const targetRect = targetElement.getBoundingClientRect();
+        
+        // Calculer la position relative dans l'aperçu
+        const relativeTop = targetRect.top - factureRect.top;
+        const scrollTop = factureSection.scrollTop + relativeTop - 50; // 50px de marge
+        
+        // Scroll fluide vers la section cible
+        factureSection.scrollTo({
+          top: Math.max(0, scrollTop),
+          behavior: 'smooth'
+        });
+        
+        // Ajouter un highlight visuel après un court délai
+        setTimeout(() => {
+          highlightActiveSection(selector);
+        }, 200);
+      }
+    }
+    
+    // Améliorer l'expérience avec un indicateur visuel
+    function highlightActiveSection(selector) {
+      // Supprimer les anciens highlights
+      document.querySelectorAll('.section-highlight').forEach(el => {
+        el.classList.remove('section-highlight');
+      });
+      
+      // Ajouter le highlight à la section active
+      const targetElement = document.querySelector(selector);
+      if (targetElement) {
+        targetElement.classList.add('section-highlight');
+        setTimeout(() => {
+          targetElement.classList.remove('section-highlight');
+        }, 2000);
+      }
+    }
+    
     // Initialisation
     function initialiserFormulaire() {
       const aujourdhui = new Date().toISOString().split('T')[0];
       document.getElementById('dateFacture').value = aujourdhui;
       document.getElementById('datePrestation').value = aujourdhui;
       
+      // Ajouter l'écouteur d'événement pour le toggle
+      document.getElementById('modeToggle').addEventListener('change', toggleMode);
+      
       // Charger les valeurs de configuration si disponibles
       if (typeof CONFIG !== 'undefined') {
         document.getElementById('emetteurNom').value = CONFIG.emetteurNom || '';
         document.getElementById('emetteurContact').value = CONFIG.emetteurContact || '';
         document.getElementById('emetteurAdresse').value = CONFIG.emetteurAdresse || '';
+        document.getElementById('emetteurCodePostal').value = CONFIG.emetteurCodePostal || '';
+        document.getElementById('emetteurVille').value = CONFIG.emetteurVille || '';
         document.getElementById('emetteurSiret').value = CONFIG.emetteurSiret || '';
         document.getElementById('emetteurRcs').value = CONFIG.emetteurRcs || '';
+        document.getElementById('emetteurVilleRcs').value = CONFIG.emetteurVilleRcs || '';
         document.getElementById('emetteurEmail').value = CONFIG.emetteurEmail || '';
         document.getElementById('emetteurTel').value = CONFIG.emetteurTel || '';
         document.getElementById('iban').value = CONFIG.iban || '';
@@ -696,6 +1781,7 @@
         if (CONFIG.capitalSocial) document.getElementById('capitalSocial').value = CONFIG.capitalSocial;
         if (CONFIG.numTva) document.getElementById('numTva').value = CONFIG.numTva;
         if (CONFIG.dateCreationSasu) document.getElementById('dateCreationSasu').value = CONFIG.dateCreationSasu;
+        if (CONFIG.presidentSasu) document.getElementById('presidentSasu').value = CONFIG.presidentSasu;
         
         // Valeurs spécifiques EURL
         if (CONFIG.capitalSocialEurl) document.getElementById('capitalSocialEurl').value = CONFIG.capitalSocialEurl;
@@ -705,11 +1791,26 @@
         if (CONFIG.associeUniqueEurl) document.getElementById('associeUniqueEurl').value = CONFIG.associeUniqueEurl;
         
         if (CONFIG.statutJuridique) document.getElementById('statutJuridique').value = CONFIG.statutJuridique;
+        
+        // Chargement du logo par défaut s'il est défini
+        if (CONFIG.logoEntreprise) {
+          logoEntrepriseData = CONFIG.logoEntreprise;
+          document.getElementById('logoImage').src = logoEntrepriseData;
+          document.getElementById('logoPreview').style.display = 'block';
+        }
+        
+        // Configuration spécifique micro-entreprise RCS
+        if (CONFIG.microAUnRcs !== undefined) {
+          document.getElementById('microAUnRcs').checked = CONFIG.microAUnRcs;
+        }
       }
       
       // Initialiser l'affichage des champs selon le statut
       changerStatut();
       majApercu();
+      
+      // Initialiser le scroll synchronisé
+      initScrollSynchronise();
     }
     initialiserFormulaire();
   </script>

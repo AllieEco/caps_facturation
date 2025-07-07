@@ -6,11 +6,18 @@ const CONFIG = {
   // Informations émetteur
   emetteurNom: "VOTRE_NOM_ENTREPRISE",
   emetteurContact: "VOTRE_NOM_PRENOM",
-  emetteurAdresse: "VOTRE_ADRESSE\nVOTRE_CODE_POSTAL VOTRE_VILLE",
+  emetteurAdresse: "VOTRE_ADRESSE",
+  emetteurCodePostal: "VOTRE_CODE_POSTAL",
+  emetteurVille: "VOTRE_VILLE",
   emetteurSiret: "VOTRE_SIRET",
   emetteurRcs: "VOTRE_RCS_OU_DISPENSE",
+  emetteurVilleRcs: "VOTRE_VILLE_RCS",
+  microAUnRcs: false, // true si la micro-entreprise a un RCS (commerce), false si dispensée (services)
   emetteurEmail: "votre.email@exemple.com",
   emetteurTel: "VOTRE_TELEPHONE",
+  
+  // Logo de l'entreprise (optionnel)
+  // logoEntreprise: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUg...", // Base64 de votre logo
   
   // Informations spécifiques SASU (optionnel si statutJuridique = "sasu")
   capitalSocial: "1000", // Capital social en euros
