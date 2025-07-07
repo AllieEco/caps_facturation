@@ -3,6 +3,13 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub stars](https://img.shields.io/github/stars/AllieEco/caps_facturation.svg?style=social)](https://github.com/AllieEco/caps_facturation/stargazers)
 
+## 📸 Aperçu du générateur
+
+![image](https://github.com/user-attachments/assets/a9484c4e-f1ef-406f-9dd8-04254a818146)
+
+
+*Interface moderne et intuitive avec aperçu en temps réel*
+
 Un générateur de factures **100% gratuit** et **conforme** pour tous les entrepreneurs français. Créez des factures professionnelles en quelques clics, peu importe votre statut juridique !
 
 ## 🎯 Pourquoi choisir ce générateur ?
@@ -256,19 +263,10 @@ Ce projet est **gratuit et open source**. Vous pouvez aider en :
 - 📝 **Améliorant la documentation**
 - 🔄 **Partageant avec d'autres entrepreneurs**
 
-## 📸 Aperçu du générateur
-
-![Aperçu du générateur de factures](https://github.com/user-attachments/assets/208d91a5-4734-4991-8433-425cdcbc29bb)
-
-*Interface moderne et intuitive avec aperçu en temps réel*
 
 ## 📜 Licence
 
 Ce projet est sous licence MIT - vous pouvez l'utiliser librement pour votre entreprise.
-
-## 📱 Captures d'écran
-
-![image](https://github.com/user-attachments/assets/208d91a5-4734-4991-8433-425cdcbc29bb)
 
 
 
