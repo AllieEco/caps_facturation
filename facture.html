@@ -15,6 +15,7 @@
     label { font-weight: 500; margin-top: 12px; display: block; }
     input, textarea, select { width: 100%; padding: 8px 10px; margin-top: 4px; margin-bottom: 10px; border: 1px solid #c7e0f7; border-radius: 6px; font-size: 1rem; font-family: inherit; background: #fafdff; transition: border 0.2s; }
     input[type="file"] { padding: 4px; background: #fff; cursor: pointer; }
+    input[type="checkbox"] { width: auto; margin-right: 8px; cursor: pointer; }
     input:disabled { background: #f5f5f5; color: #999; border: 1px solid #ddd; cursor: not-allowed; }
     input:focus, textarea:focus { border: 1.5px solid #1a7ee7; outline: none; }
     .btn { background: #1a7ee7; color: #fff; border: none; border-radius: 6px; padding: 10px 22px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-top: 10px; box-shadow: 0 2px 8px rgba(26,126,231,0.08); transition: background 0.2s; }
@@ -73,8 +74,18 @@
         <input type="text" id="emetteurVille" placeholder="Ville" required>
         <label>SIRET</label>
         <input type="text" id="emetteurSiret" value="" required>
-        <label>RCS</label>
-        <input type="text" id="emetteurRcs" value="" required>
+        <div id="champsMicroRcs" style="display: none;">
+          <label>
+            <input type="checkbox" id="microAUnRcs" onchange="changerAffichageRcsMicro()"> 
+            Avez-vous un RCS ? (cochez si vous faites du commerce)
+          </label>
+        </div>
+        <div id="champsRcsStandard">
+          <label>RCS</label>
+          <input type="text" id="emetteurRcs" value="" required>
+          <label>Ville RCS</label>
+          <input type="text" id="emetteurVilleRcs" placeholder="Ville d'immatriculation" required>
+        </div>
         <div id="champsSasu" style="display: none;">
           <label>Capital social (€)</label>
           <input type="number" id="capitalSocial" min="0" step="0.01">
@@ -130,7 +141,7 @@
           <input type="number" id="prixPresta" placeholder="Prix TTC (€)" min="0" step="0.01" style="flex: 1;" oninput="calculerHTDepuisTTC()" disabled>
         </div>
         <div id="infoTVA" style="font-size: 0.9rem; color: #666; margin-top: 5px; display: none;">
-          Pour les SASU : vous pouvez saisir soit le prix HT soit le prix TTC, l'autre sera calculé automatiquement.
+          Le prix TTC n'est pas calculé pour les micro entreprises au vu de leur statut juridique.
         </div>
         <div id="infoMicro" style="font-size: 0.9rem; color: #666; margin-top: 5px;">
           Pour les micro-entreprises : saisissez uniquement le prix HT (TVA non applicable).
@@ -194,6 +205,8 @@
       const champsSasu = document.getElementById('champsSasu');
       const champsEurl = document.getElementById('champsEurl');
       const champsClientSasu = document.getElementById('champsClientSasu');
+      const champsMicroRcs = document.getElementById('champsMicroRcs');
+      const champsRcsStandard = document.getElementById('champsRcsStandard');
       const prixTTCInput = document.getElementById('prixPresta');
       const infoTVA = document.getElementById('infoTVA');
       const infoMicro = document.getElementById('infoMicro');
@@ -202,24 +215,53 @@
         champsSasu.style.display = 'block';
         champsEurl.style.display = 'none';
         champsClientSasu.style.display = 'block';
+        champsMicroRcs.style.display = 'none';
+        champsRcsStandard.style.display = 'block';
         prixTTCInput.disabled = false;
         infoTVA.style.display = 'block';
         infoMicro.style.display = 'none';
+        
+        // Réinitialiser les champs RCS pour SASU
+        const emetteurRcs = document.getElementById('emetteurRcs');
+        const emetteurVilleRcs = document.getElementById('emetteurVilleRcs');
+        if (emetteurRcs.value === 'Dispensé d\'immatriculation au RCS') {
+          emetteurRcs.value = '';
+        }
+        emetteurRcs.required = true;
+        emetteurVilleRcs.required = true;
+        
       } else if (statut === 'eurl') {
         champsSasu.style.display = 'none';
         champsEurl.style.display = 'block';
         champsClientSasu.style.display = 'block';
+        champsMicroRcs.style.display = 'none';
+        champsRcsStandard.style.display = 'block';
         prixTTCInput.disabled = false;
         infoTVA.style.display = 'block';
         infoMicro.style.display = 'none';
+        
+        // Réinitialiser les champs RCS pour EURL
+        const emetteurRcs = document.getElementById('emetteurRcs');
+        const emetteurVilleRcs = document.getElementById('emetteurVilleRcs');
+        if (emetteurRcs.value === 'Dispensé d\'immatriculation au RCS') {
+          emetteurRcs.value = '';
+        }
+        emetteurRcs.required = true;
+        emetteurVilleRcs.required = true;
+        
       } else {
         champsSasu.style.display = 'none';
         champsEurl.style.display = 'none';
         champsClientSasu.style.display = 'none';
+        champsMicroRcs.style.display = 'block';
+        champsRcsStandard.style.display = 'none';
         prixTTCInput.disabled = true;
         prixTTCInput.value = '';
         infoTVA.style.display = 'none';
         infoMicro.style.display = 'block';
+        
+        // Initialiser l'affichage des champs RCS pour micro-entreprise
+        changerAffichageRcsMicro();
       }
       
       // Recalculer les prix dans les champs de saisie si des valeurs sont présentes
@@ -234,6 +276,31 @@
       
       // Rafraîchir l'affichage des prestations avec les bons labels
       afficherPrestations();
+      majApercu();
+    }
+    
+    function changerAffichageRcsMicro() {
+      const microAUnRcs = document.getElementById('microAUnRcs').checked;
+      const champsRcsStandard = document.getElementById('champsRcsStandard');
+      const emetteurRcs = document.getElementById('emetteurRcs');
+      const emetteurVilleRcs = document.getElementById('emetteurVilleRcs');
+      
+      if (microAUnRcs) {
+        // Afficher les champs RCS
+        champsRcsStandard.style.display = 'block';
+        emetteurRcs.value = '';
+        emetteurVilleRcs.value = '';
+        emetteurRcs.required = true;
+        emetteurVilleRcs.required = true;
+      } else {
+        // Masquer les champs RCS et remplir automatiquement
+        champsRcsStandard.style.display = 'none';
+        emetteurRcs.value = 'Dispensé d\'immatriculation au RCS';
+        emetteurVilleRcs.value = '';
+        emetteurRcs.required = false;
+        emetteurVilleRcs.required = false;
+      }
+      
       majApercu();
     }
     
@@ -354,6 +421,7 @@
       const emetteurVille = document.getElementById('emetteurVille').value;
       const emetteurSiret = document.getElementById('emetteurSiret').value;
       const emetteurRcs = document.getElementById('emetteurRcs').value;
+      const emetteurVilleRcs = document.getElementById('emetteurVilleRcs').value;
       const emetteurEmail = document.getElementById('emetteurEmail').value;
       const emetteurTel = document.getElementById('emetteurTel').value;
       
@@ -368,17 +436,17 @@
       
       if (statutJuridique === 'sasu') {
         // Pour SASU, totalPrix = TTC
-        genererFactureSASU(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
+        genererFactureSASU(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalPrix);
       } else if (statutJuridique === 'eurl') {
         // Pour EURL, totalPrix = TTC
-        genererFactureEURL(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
+        genererFactureEURL(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalPrix);
       } else {
         // Pour micro-entreprise, totalPrix = HT
-        genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
+        genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalPrix);
       }
     }
     
-    function genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalHT) {
+    function genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalHT) {
       document.getElementById('factureApercu').innerHTML = `
         <div class="facture-header">
           <div class="facture-emetteur">
@@ -388,7 +456,7 @@
             ${emetteurAdresse}<br>
             ${emetteurCodePostal} ${emetteurVille}<br>
             SIRET : ${emetteurSiret}<br>
-            ${emetteurRcs}<br>
+            ${emetteurRcs === 'Dispensé d\'immatriculation au RCS' ? emetteurRcs : (emetteurVilleRcs ? `RCS ${emetteurVilleRcs} : ${emetteurRcs}` : emetteurRcs)}<br>
             Email : ${emetteurEmail}<br>
             Tél : ${emetteurTel}
           </div>
@@ -438,7 +506,7 @@
       `;
     }
     
-    function genererFactureEURL(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalTTC) {
+    function genererFactureEURL(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalTTC) {
       const capitalSocialEurl = document.getElementById('capitalSocialEurl').value;
       const numTvaEurl = document.getElementById('numTvaEurl').value;
       const dateCreationEurl = document.getElementById('dateCreationEurl').value;
@@ -459,7 +527,7 @@
             Siège social : ${emetteurAdresse}<br>
             ${emetteurCodePostal} ${emetteurVille}<br><br>
             SIRET : ${emetteurSiret || '[SIRET EURL]'}<br>
-            RCS Lyon : ${emetteurRcs || '[N° RCS]'}<br>
+            RCS ${emetteurVilleRcs || '[VILLE RCS]'} : ${emetteurRcs || '[N° RCS]'}<br>
             N° TVA : ${numTvaEurl || '[N° TVA INTRA]'}<br><br>
             Gérant : ${gerantEurl || '[NOM GÉRANT]'}<br>
             Associé unique : ${associeUniqueEurl || '[NOM ASSOCIÉ]'}<br><br>
@@ -529,13 +597,13 @@
         </div>
         <div style="text-align: center; margin-top: 30px; font-size: 0.9rem; color: #666;">
           <b>${emetteurNom} EURL</b><br>
-          EURL au capital de ${capitalSocialEurl || '[CAPITAL]'} € - RCS Lyon ${emetteurRcs || '[N° RCS]'} - SIRET ${emetteurSiret || '[SIRET]'} - N° TVA ${numTvaEurl || 'FR[N° TVA]'}<br>
+          EURL au capital de ${capitalSocialEurl || '[CAPITAL]'} € - RCS ${emetteurVilleRcs || '[VILLE RCS]'} ${emetteurRcs || '[N° RCS]'} - SIRET ${emetteurSiret || '[SIRET]'} - N° TVA ${numTvaEurl || 'FR[N° TVA]'}<br>
           Gérant : ${gerantEurl || '[NOM GÉRANT]'} - Associé unique : ${associeUniqueEurl || '[NOM ASSOCIÉ]'}
         </div>
       `;
     }
     
-    function genererFactureSASU(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalTTC) {
+    function genererFactureSASU(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalTTC) {
       const capitalSocial = document.getElementById('capitalSocial').value;
       const numTva = document.getElementById('numTva').value;
       const dateCreationSasu = document.getElementById('dateCreationSasu').value;
@@ -554,7 +622,7 @@
             Siège social : ${emetteurAdresse}<br>
             ${emetteurCodePostal} ${emetteurVille}<br><br>
             SIRET : ${emetteurSiret || '[SIRET SASU]'}<br>
-            RCS Lyon : ${emetteurRcs || '[N° RCS]'}<br>
+            RCS ${emetteurVilleRcs || '[VILLE RCS]'} : ${emetteurRcs || '[N° RCS]'}<br>
             N° TVA : ${numTva || '[N° TVA INTRA]'}<br><br>
             Email : ${emetteurEmail}<br>
             Tél : ${emetteurTel}
@@ -619,7 +687,7 @@
         </div>
         <div style="text-align: center; margin-top: 30px; font-size: 0.9rem; color: #666;">
           <b>${emetteurNom} SASU</b><br>
-          SASU au capital de ${capitalSocial || '[CAPITAL]'} € - RCS Lyon ${emetteurRcs || '[N° RCS]'} - SIRET ${emetteurSiret || '[SIRET]'} - N° TVA ${numTva || 'FR[N° TVA]'}
+          SASU au capital de ${capitalSocial || '[CAPITAL]'} € - RCS ${emetteurVilleRcs || '[VILLE RCS]'} ${emetteurRcs || '[N° RCS]'} - SIRET ${emetteurSiret || '[SIRET]'} - N° TVA ${numTva || 'FR[N° TVA]'}
         </div>
       `;
     }
@@ -726,6 +794,7 @@
         document.getElementById('emetteurVille').value = CONFIG.emetteurVille || '';
         document.getElementById('emetteurSiret').value = CONFIG.emetteurSiret || '';
         document.getElementById('emetteurRcs').value = CONFIG.emetteurRcs || '';
+        document.getElementById('emetteurVilleRcs').value = CONFIG.emetteurVilleRcs || '';
         document.getElementById('emetteurEmail').value = CONFIG.emetteurEmail || '';
         document.getElementById('emetteurTel').value = CONFIG.emetteurTel || '';
         document.getElementById('iban').value = CONFIG.iban || '';
@@ -751,6 +820,11 @@
           logoEntrepriseData = CONFIG.logoEntreprise;
           document.getElementById('logoImage').src = logoEntrepriseData;
           document.getElementById('logoPreview').style.display = 'block';
+        }
+        
+        // Configuration spécifique micro-entreprise RCS
+        if (CONFIG.microAUnRcs !== undefined) {
+          document.getElementById('microAUnRcs').checked = CONFIG.microAUnRcs;
         }
       }
       

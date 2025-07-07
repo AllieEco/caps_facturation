@@ -11,6 +11,8 @@ const CONFIG = {
   emetteurVille: "VOTRE_VILLE",
   emetteurSiret: "VOTRE_SIRET",
   emetteurRcs: "VOTRE_RCS_OU_DISPENSE",
+  emetteurVilleRcs: "VOTRE_VILLE_RCS",
+  microAUnRcs: false, // true si la micro-entreprise a un RCS (commerce), false si dispensée (services)
   emetteurEmail: "votre.email@exemple.com",
   emetteurTel: "VOTRE_TELEPHONE",
   
