@@ -81,6 +81,13 @@ Un générateur de factures **100% gratuit** et **conforme** pour tous les entre
 - **Nom de fichier automatique** : [N°Facture][NomClient].pdf
 - **Multi-pages** : Gestion automatique des factures longues
 
+### 📊 **Export CSV pour comptabilité**
+- **Export complet** : Toutes les données de la facture au format CSV
+- **Organisé par sections** : Informations facture, émetteur, client, prestations, totaux
+- **Compatible Excel** : Ouvrez directement dans Excel ou LibreOffice
+- **Nom de fichier automatique** : [N°Facture][NomClient].csv
+- **Encodage UTF-8** : Support des caractères spéciaux français
+
 ### 🔧 **Configuration et sauvegarde**
 - **Configuration unique** : Entrez vos informations une fois, elles sont sauvegardées
 - **Pré-remplissage automatique** : Vos données d'entreprise se remplissent automatiquement
@@ -169,9 +176,10 @@ const CONFIG = {
 - **Quantité** : Nombre d'unités (heures, jours, pièces...)
 - Cliquez sur "Ajouter" pour ajouter la prestation
 
-#### **Étape 5 : Génération du PDF**
+#### **Étape 5 : Génération du PDF et export CSV**
 - Vérifiez l'aperçu à droite
-- Cliquez sur "Enregistrer en PDF"
+- Cliquez sur "Enregistrer en PDF" pour générer la facture PDF
+- Cliquez sur "Exporter en CSV" pour créer un fichier CSV avec toutes les données
 - Votre facture est prête !
 
 ## 🔒 Sécurité et confidentialité

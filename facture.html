@@ -163,7 +163,10 @@
         <input type="text" id="bic" value="" required>
         <label>Banque</label>
         <input type="text" id="banque" value="" required>
-        <button class="btn" type="button" onclick="imprimerFacture()">Enregistrer en PDF</button>
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+          <button class="btn" type="button" onclick="imprimerFacture()">Enregistrer en PDF</button>
+          <button class="btn" type="button" onclick="exporterCSV()" style="background-color: #27ae60;">Exporter en CSV</button>
+        </div>
       </form>
     </div>
     <div class="facture-section">
@@ -779,6 +782,148 @@
         alert('Erreur lors de la génération du PDF. Veuillez réessayer.');
       });
     }
+    
+    function exporterCSV() {
+      const statutJuridique = document.getElementById('statutJuridique').value;
+      const numFacture = document.getElementById('numFacture').value || 'F001';
+      const dateFacture = document.getElementById('dateFacture').value || '';
+      const clientNom = document.getElementById('clientNom').value || '';
+      const clientAdresse = document.getElementById('clientAdresse').value || '';
+      const clientVille = document.getElementById('clientVille').value || '';
+      const clientSiret = document.getElementById('clientSiret').value || '';
+      const periode = document.getElementById('periode').value || '';
+      const emetteurNom = document.getElementById('emetteurNom').value || '';
+      const emetteurContact = document.getElementById('emetteurContact').value || '';
+      const emetteurAdresse = document.getElementById('emetteurAdresse').value || '';
+      const emetteurCodePostal = document.getElementById('emetteurCodePostal').value || '';
+      const emetteurVille = document.getElementById('emetteurVille').value || '';
+      const emetteurSiret = document.getElementById('emetteurSiret').value || '';
+      const emetteurEmail = document.getElementById('emetteurEmail').value || '';
+      const emetteurTel = document.getElementById('emetteurTel').value || '';
+      const iban = document.getElementById('iban').value || '';
+      const bic = document.getElementById('bic').value || '';
+      const banque = document.getElementById('banque').value || '';
+      const modePaiement = document.getElementById('modePaiement').value || '';
+      
+      // Calculer les totaux
+      const totalPrix = prestations.reduce((acc, p) => acc + (p.prix * (p.qte || 1)), 0);
+      let totalHT, totalTTC, totalTVA;
+      
+      if (statutJuridique === 'sasu' || statutJuridique === 'eurl') {
+        totalTTC = totalPrix;
+        totalHT = totalTTC / 1.20;
+        totalTVA = totalTTC - totalHT;
+      } else {
+        totalHT = totalPrix;
+        totalTTC = totalPrix; // Pour micro-entreprise, TTC = HT
+        totalTVA = 0;
+      }
+      
+      // Créer le contenu CSV avec BOM UTF-8 pour les caractères accentués français
+      let csvContent = '\uFEFF'; // BOM UTF-8 pour Excel
+      
+      // En-tête avec informations générales
+      csvContent += 'INFORMATIONS FACTURE\n';
+      csvContent += 'Type,Valeur\n';
+      csvContent += `Numéro de facture,${numFacture}\n`;
+      csvContent += `Date de facture,${dateFacture}\n`;
+      csvContent += `Statut juridique,${statutJuridique.toUpperCase()}\n`;
+      csvContent += `Période facturée,${periode}\n`;
+      csvContent += '\n';
+      
+      // Informations émetteur
+      csvContent += 'INFORMATIONS ÉMETTEUR\n';
+      csvContent += 'Type,Valeur\n';
+      csvContent += `Nom entreprise,${emetteurNom}\n`;
+      csvContent += `Contact,${emetteurContact}\n`;
+      csvContent += `Adresse,${emetteurAdresse}\n`;
+      csvContent += `Code postal,${emetteurCodePostal}\n`;
+      csvContent += `Ville,${emetteurVille}\n`;
+      csvContent += `SIRET,${emetteurSiret}\n`;
+      csvContent += `Email,${emetteurEmail}\n`;
+      csvContent += `Téléphone,${emetteurTel}\n`;
+      csvContent += '\n';
+      
+      // Informations client
+      csvContent += 'INFORMATIONS CLIENT\n';
+      csvContent += 'Type,Valeur\n';
+      csvContent += `Nom client,${clientNom}\n`;
+      csvContent += `Adresse client,${clientAdresse}\n`;
+      csvContent += `Ville client,${clientVille}\n`;
+      csvContent += `SIRET client,${clientSiret}\n`;
+      csvContent += '\n';
+      
+      // Prestations
+      csvContent += 'PRESTATIONS\n';
+      if (statutJuridique === 'sasu' || statutJuridique === 'eurl') {
+        csvContent += 'Titre,Description,Quantité,Prix unitaire HT,Prix unitaire TTC,Total HT,Total TTC\n';
+      } else {
+        csvContent += 'Titre,Description,Quantité,Prix unitaire HT,Total HT\n';
+      }
+      
+      prestations.forEach(p => {
+        const titre = `"${p.titre.replace(/"/g, '""')}"`;
+        const desc = `"${p.desc.replace(/"/g, '""')}"`;
+        const qte = p.qte || 1;
+        
+        if (statutJuridique === 'sasu' || statutJuridique === 'eurl') {
+          const prixHT = p.prix / 1.20;
+          const prixTTC = p.prix;
+          const totalHT = prixHT * qte;
+          const totalTTC = prixTTC * qte;
+          csvContent += `${titre},${desc},${qte},${prixHT.toFixed(2)},${prixTTC.toFixed(2)},${totalHT.toFixed(2)},${totalTTC.toFixed(2)}\n`;
+        } else {
+          const prixHT = p.prix;
+          const totalHT = prixHT * qte;
+          csvContent += `${titre},${desc},${qte},${prixHT.toFixed(2)},${totalHT.toFixed(2)}\n`;
+        }
+      });
+      
+      csvContent += '\n';
+      
+      // Totaux
+      csvContent += 'TOTAUX\n';
+      csvContent += 'Type,Montant\n';
+      csvContent += `Total HT,${totalHT.toFixed(2)}\n`;
+      if (statutJuridique === 'sasu' || statutJuridique === 'eurl') {
+        csvContent += `TVA 20%,${totalTVA.toFixed(2)}\n`;
+      } else {
+        csvContent += `TVA,Non applicable\n`;
+      }
+      csvContent += `Total TTC,${totalTTC.toFixed(2)}\n`;
+      csvContent += '\n';
+      
+      // Informations bancaires
+      csvContent += 'INFORMATIONS BANCAIRES\n';
+      csvContent += 'Type,Valeur\n';
+      csvContent += `Mode de paiement,${modePaiement}\n`;
+      csvContent += `IBAN,${iban}\n`;
+      csvContent += `BIC,${bic}\n`;
+      csvContent += `Banque,${banque}\n`;
+      
+      // Créer et télécharger le fichier CSV avec encodage UTF-8 explicite
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+      const link = document.createElement('a');
+      
+      if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        
+        const clientNomClean = clientNom.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+        const filename = `${numFacture}${clientNomClean}.csv`;
+        link.setAttribute('download', filename);
+        
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        console.log('Fichier CSV exporté:', filename);
+      } else {
+        alert('Votre navigateur ne supporte pas le téléchargement de fichiers CSV.');
+      }
+    }
+    
     // Initialisation
     function initialiserFormulaire() {
       const aujourdhui = new Date().toISOString().split('T')[0];
