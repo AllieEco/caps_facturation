@@ -47,6 +47,12 @@
     .sync-indicator.show { opacity: 1; }
     .sync-indicator::before { content: "📍"; margin-right: 5px; }
     
+    /* Styles pour les livrables */
+    .livrable-item { display: flex; align-items: center; margin-bottom: 8px; }
+    .livrable-input { flex: 1; margin-bottom: 0; }
+    .btn-remove-livrable { font-size: 1.2rem; font-weight: bold; }
+    .btn-remove-livrable:hover { background: #c0392b !important; }
+    
     /* Toggle Devis/Facture */
     .mode-toggle-container { 
       display: flex; 
@@ -246,6 +252,23 @@
           <input type="text" id="demarrageDevis" value="2 semaines après signature" placeholder="Ex: 1 semaine après validation">
           <label>Durée estimée (texte libre)</label>
           <input type="text" id="dureeEstimee" value="" placeholder="Ex: 5 jours ouvrés, 2 semaines, 1 mois...">
+          
+          <label>Livrables garantis</label>
+          <div id="livrablesContainer">
+            <div class="livrable-item">
+              <input type="text" class="livrable-input" placeholder="Ex: Documentation complète des prestations" value="Documentation complète des prestations">
+              <button type="button" class="btn-remove-livrable" onclick="supprimerLivrable(this)" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-left: 5px;">×</button>
+            </div>
+            <div class="livrable-item">
+              <input type="text" class="livrable-input" placeholder="Ex: Support et conseils inclus" value="Support et conseils inclus">
+              <button type="button" class="btn-remove-livrable" onclick="supprimerLivrable(this)" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-left: 5px;">×</button>
+            </div>
+            <div class="livrable-item">
+              <input type="text" class="livrable-input" placeholder="Ex: Garantie de satisfaction" value="Garantie de satisfaction">
+              <button type="button" class="btn-remove-livrable" onclick="supprimerLivrable(this)" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-left: 5px;">×</button>
+            </div>
+          </div>
+          <button type="button" class="btn" onclick="ajouterLivrable()" style="background-color: #27ae60; margin-top: 10px;">+ Ajouter un livrable</button>
         </div>
         <h3 style="color: #1a7ee7; margin-top: 20px; margin-bottom: 10px;">Informations client</h3>
         <label>Nom du client</label>
@@ -584,6 +607,40 @@
       afficherPrestations();
       majApercu();
     }
+    
+    function ajouterLivrable() {
+      const container = document.getElementById('livrablesContainer');
+      const newLivrable = document.createElement('div');
+      newLivrable.className = 'livrable-item';
+      newLivrable.innerHTML = `
+        <input type="text" class="livrable-input" placeholder="Ex: Nouveau livrable" value="">
+        <button type="button" class="btn-remove-livrable" onclick="supprimerLivrable(this)" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-left: 5px;">×</button>
+      `;
+      container.appendChild(newLivrable);
+      
+      // Ajouter l'écouteur d'événement pour la mise à jour de l'aperçu
+      const input = newLivrable.querySelector('.livrable-input');
+      input.addEventListener('input', majApercu);
+      
+      majApercu();
+    }
+    
+    function supprimerLivrable(button) {
+      const livrableItem = button.parentElement;
+      livrableItem.remove();
+      majApercu();
+    }
+    
+    function getLivrables() {
+      const livrables = [];
+      const inputs = document.querySelectorAll('.livrable-input');
+      inputs.forEach(input => {
+        if (input.value.trim()) {
+          livrables.push(input.value.trim());
+        }
+      });
+      return livrables;
+    }
     function afficherPrestations() {
       const list = document.getElementById('prestationsList');
       const statutJuridique = document.getElementById('statutJuridique').value;
@@ -819,9 +876,7 @@
           ${modePaiement === 'virement' ? `• IBAN : ${iban || '[VOTRE IBAN]'}<br>• BIC : ${bic || '[VOTRE BIC]'}<br>• Banque : ${banque || '[NOM BANQUE]'}<br>` : ''}<br>
           
           <b>🎯 Livrables garantis :</b><br>
-          • Documentation complète des prestations<br>
-          • Support et conseils inclus<br>
-          • Garantie de satisfaction<br>
+          ${getLivrables().map(livrable => `• ${livrable}`).join('<br>') || '• Aucun livrable spécifié'}
         </div>
         
         <div class="mentions">
@@ -1075,10 +1130,7 @@
           ${modePaiement === 'virement' ? `• IBAN : ${iban || '[IBAN EURL]'}<br>• BIC : ${bic || '[BIC EURL]'}<br>• Banque : ${banque || '[NOM BANQUE]'}<br>• Titulaire : ${emetteurNom} EURL<br>` : ''}<br>
           
           <b>🎯 Livrables garantis :</b><br>
-          • Documentation complète des prestations<br>
-          • Support et conseils inclus<br>
-          • Garantie conforme aux obligations légales EURL<br>
-          • Clause de réserve de propriété jusqu'au paiement intégral<br>
+          ${getLivrables().map(livrable => `• ${livrable}`).join('<br>') || '• Aucun livrable spécifié'}
         </div>
         
         <div style="background: #e8f4fd; border-radius: 8px; padding: 15px; margin: 20px 0;">
@@ -1334,10 +1386,7 @@
           ${modePaiement === 'virement' ? `• IBAN : ${iban || '[IBAN SASU]'}<br>• BIC : ${bic || '[BIC SASU]'}<br>• Banque : ${banque || '[NOM BANQUE]'}<br>` : ''}<br>
           
           <b>🎯 Livrables garantis :</b><br>
-          • Documentation complète des prestations<br>
-          • Support et conseils inclus<br>
-          • Garantie conforme aux obligations légales SASU<br>
-          • Clause de réserve de propriété jusqu'au paiement intégral<br>
+          ${getLivrables().map(livrable => `• ${livrable}`).join('<br>') || '• Aucun livrable spécifié'}
         </div>
         
         <div style="background: #e8f4fd; border-radius: 8px; padding: 15px; margin: 20px 0;">
@@ -1402,6 +1451,11 @@
     // Ajouter les écouteurs pour les champs de planning personnalisé
     document.getElementById('demarrageDevis').addEventListener('input', majApercu);
     document.getElementById('dureeEstimee').addEventListener('input', majApercu);
+    
+    // Ajouter les écouteurs pour les champs de livrables existants
+    document.querySelectorAll('.livrable-input').forEach(input => {
+      input.addEventListener('input', majApercu);
+    });
     function imprimerDocument() {
       majApercu();
       const element = document.getElementById('factureApercu');
@@ -1511,6 +1565,7 @@
       const banque = document.getElementById('banque').value || '';
       const modePaiement = document.getElementById('modePaiement').value || '';
       const validiteDevis = document.getElementById('validiteDevis').value || '';
+      const livrables = getLivrables();
       
       // Calculer les totaux
       const totalPrix = prestations.reduce((acc, p) => acc + (p.prix * (p.qte || 1)), 0);
@@ -1539,6 +1594,7 @@
       csvContent += `Période ${isFactureMode ? 'facturée' : 'prévue'},${periode}\n`;
       if (!isFactureMode) {
         csvContent += `Validité du devis,${validiteDevis} jours\n`;
+        csvContent += `Livrables garantis,"${livrables.join('; ')}"\n`;
       }
       csvContent += '\n';
       
