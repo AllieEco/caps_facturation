@@ -258,11 +258,19 @@ Ce projet est **gratuit et open source**. Vous pouvez aider en :
 
 Ce projet est sous licence MIT - vous pouvez l'utiliser librement pour votre entreprise.
 
-## 🏆 Développé par des entrepreneurs, pour des entrepreneurs
+## 📱 Captures d'écran
 
-Ce générateur a été créé par **AllieEco** pour simplifier la vie des entrepreneurs français. 
+![image](https://github.com/user-attachments/assets/208d91a5-4734-4991-8433-425cdcbc29bb)
 
-**Gratuit aujourd'hui, gratuit demain, gratuit pour toujours !**
+
+
+---
+
+## ⚖️ Mentions légales
+
+Ce générateur est conçu pour les **entrepreneurs français** (micro-entreprises, SASU et EURL). Il respecte la réglementation en vigueur mais nous vous recommandons de vérifier la conformité avec votre situation fiscale spécifique.
+
+**Développé avec ❤️ pour les entrepreneurs français**
 
 ---
 
