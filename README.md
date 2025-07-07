@@ -5,7 +5,8 @@
 
 ## 📸 Aperçu du générateur
 
-![Aperçu du générateur de factures](https://github.com/user-attachments/assets/208d91a5-4734-4991-8433-425cdcbc29bb)
+![image](https://github.com/user-attachments/assets/a9484c4e-f1ef-406f-9dd8-04254a818146)
+
 
 *Interface moderne et intuitive avec aperçu en temps réel*
 
