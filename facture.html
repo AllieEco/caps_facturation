@@ -128,6 +128,13 @@
         <button class="btn" type="button" onclick="ajouterPrestation()">Ajouter</button>
         <div class="prestations-list" id="prestationsList"></div>
         <h3 style="color: #1a7ee7; margin-top: 20px; margin-bottom: 10px;">Informations bancaires</h3>
+        <label>Mode de paiement</label>
+        <select id="modePaiement" required>
+          <option value="virement">Virement bancaire</option>
+          <option value="cheque">Chèque</option>
+          <option value="carte">Carte bancaire</option>
+          <option value="espece">Espèce</option>
+        </select>
         <label>IBAN</label>
         <input type="text" id="iban" value="" required>
         <label>BIC</label>
@@ -304,6 +311,7 @@
       const iban = document.getElementById('iban').value;
       const bic = document.getElementById('bic').value;
       const banque = document.getElementById('banque').value;
+      const modePaiement = document.getElementById('modePaiement').value;
       const emetteurNom = document.getElementById('emetteurNom').value;
       const emetteurContact = document.getElementById('emetteurContact').value;
       const emetteurAdresse = document.getElementById('emetteurAdresse').value;
@@ -323,17 +331,17 @@
       
       if (statutJuridique === 'sasu') {
         // Pour SASU, totalPrix = TTC
-        genererFactureSASU(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
+        genererFactureSASU(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
       } else if (statutJuridique === 'eurl') {
         // Pour EURL, totalPrix = TTC
-        genererFactureEURL(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
+        genererFactureEURL(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
       } else {
         // Pour micro-entreprise, totalPrix = HT
-        genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
+        genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
       }
     }
     
-    function genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalHT) {
+    function genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalHT) {
       document.getElementById('factureApercu').innerHTML = `
         <div class="facture-header">
           <div class="facture-emetteur">
@@ -378,11 +386,8 @@
         <div class="facture-paiement-box">
           <b>MODALITÉS DE PAIEMENT</b><br>
           Échéance : 30 jours à réception<br>
-          <b>Mode de paiement :</b> Virement bancaire<br>
-          <b>RIB :</b><br>
-          IBAN : ${iban || '[VOTRE IBAN]'}<br>
-          BIC : ${bic || '[VOTRE BIC]'}<br>
-          Banque : ${banque || '[NOM DE VOTRE BANQUE]'}
+          <b>Mode de paiement :</b> ${modePaiement === 'virement' ? 'Virement bancaire' : modePaiement === 'cheque' ? 'Chèque' : modePaiement === 'carte' ? 'Carte bancaire' : 'Espèce'}<br>
+          ${modePaiement === 'virement' ? `<b>RIB :</b><br>IBAN : ${iban || '[VOTRE IBAN]'}<br>BIC : ${bic || '[VOTRE BIC]'}<br>Banque : ${banque || '[NOM DE VOTRE BANQUE]'}` : ''}
         </div>
         <div class="mentions">
           <b>Mentions légales obligatoires :</b><br>
@@ -394,7 +399,7 @@
       `;
     }
     
-    function genererFactureEURL(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalTTC) {
+    function genererFactureEURL(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalTTC) {
       const capitalSocialEurl = document.getElementById('capitalSocialEurl').value;
       const numTvaEurl = document.getElementById('numTvaEurl').value;
       const dateCreationEurl = document.getElementById('dateCreationEurl').value;
@@ -469,14 +474,8 @@
         <div class="facture-paiement-box">
           <b>MODALITÉS DE PAIEMENT</b><br>
           Échéance : 30 jours nets à réception<br>
-          Mode : Virement bancaire uniquement<br>
-          Devise : Euro (EUR)<br>
-          Domiciliation bancaire : France<br><br>
-          <b>Coordonnées bancaires EURL :</b><br>
-          IBAN : ${iban || '[IBAN EURL]'}<br>
-          BIC : ${bic || '[BIC EURL]'}<br>
-          Banque : ${banque || '[NOM BANQUE]'}<br>
-          Titulaire : ${emetteurNom} EURL
+          Mode : ${modePaiement === 'virement' ? 'Virement bancaire uniquement' : modePaiement === 'cheque' ? 'Chèque' : modePaiement === 'carte' ? 'Carte bancaire' : 'Espèce'}<br>
+          ${modePaiement === 'virement' ? `Devise : Euro (EUR)<br>Domiciliation bancaire : France<br><br><b>Coordonnées bancaires EURL :</b><br>IBAN : ${iban || '[IBAN EURL]'}<br>BIC : ${bic || '[BIC EURL]'}<br>Banque : ${banque || '[NOM BANQUE]'}<br>Titulaire : ${emetteurNom} EURL` : ''}
         </div>
         <div class="mentions">
           <b>MENTIONS LÉGALES OBLIGATOIRES EURL :</b><br>
@@ -495,7 +494,7 @@
       `;
     }
     
-    function genererFactureSASU(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalTTC) {
+    function genererFactureSASU(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalTTC) {
       const capitalSocial = document.getElementById('capitalSocial').value;
       const numTva = document.getElementById('numTva').value;
       const dateCreationSasu = document.getElementById('dateCreationSasu').value;
@@ -565,12 +564,8 @@
         <div class="facture-paiement-box">
           <b>MODALITÉS DE PAIEMENT</b><br>
           Échéance : 30 jours nets<br>
-          Mode : Virement bancaire<br>
-          Devise : Euro (EUR)<br><br>
-          <b>Coordonnées bancaires :</b><br>
-          IBAN : ${iban || '[IBAN SASU]'}<br>
-          BIC : ${bic || '[BIC SASU]'}<br>
-          Banque : ${banque || '[NOM BANQUE]'}
+          Mode : ${modePaiement === 'virement' ? 'Virement bancaire' : modePaiement === 'cheque' ? 'Chèque' : modePaiement === 'carte' ? 'Carte bancaire' : 'Espèce'}<br>
+          ${modePaiement === 'virement' ? `Devise : Euro (EUR)<br><br><b>Coordonnées bancaires :</b><br>IBAN : ${iban || '[IBAN SASU]'}<br>BIC : ${bic || '[BIC SASU]'}<br>Banque : ${banque || '[NOM BANQUE]'}` : ''}
         </div>
         <div class="mentions">
           <b>MENTIONS LÉGALES OBLIGATOIRES :</b><br>
