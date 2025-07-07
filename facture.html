@@ -8,9 +8,9 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><style>.cls-1{fill:%23f4d03f;}.cls-2{fill:%23333;stroke:%23333;stroke-width:2;fill:none;}.cls-3{fill:%23333;}</style></defs><polygon class='cls-1' points='45,10 50,20 60,20 52,28 55,38 45,33 35,38 38,28 30,20 40,20'/><polygon class='cls-1' points='70,25 73,30 78,30 75,33 76,38 70,35 64,38 65,33 62,30 67,30'/><polygon class='cls-1' points='58,45 61,50 66,50 63,53 64,58 58,55 52,58 53,53 50,50 55,50'/><rect class='cls-2' x='15' y='25' width='45' height='60' rx='3'/><rect class='cls-3' x='20' y='35' width='25' height='2'/><rect class='cls-3' x='20' y='45' width='20' height='2'/><rect class='cls-3' x='20' y='55' width='25' height='2'/><rect class='cls-3' x='20' y='65' width='15' height='2'/><circle class='cls-2' cx='70' cy='60' r='15'/><text x='70' y='67' text-anchor='middle' class='cls-3' font-family='Arial' font-size='16' font-weight='bold'>$</text><path class='cls-2' d='M15,80 Q15,85 20,85 L75,85 Q80,85 80,80 L80,75 L15,75 Z'/></svg>" type="image/svg+xml">
   <style>
     body { font-family: 'Montserrat', Arial, sans-serif; background: #f7fafd; margin: 0; padding: 0; color: #222; }
-    .container { max-width: 1100px; margin: 30px auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); padding: 32px 24px; display: flex; gap: 40px; }
+    .container { max-width: 1100px; margin: 30px auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); padding: 32px 24px; display: flex; gap: 40px; align-items: flex-start; }
     .form-section { flex: 1; min-width: 320px; }
-    .facture-section { flex: 2; background: #f4f8fb; border-radius: 12px; padding: 24px 32px; min-width: 400px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .facture-section { flex: 2; background: #f4f8fb; border-radius: 12px; padding: 24px 32px; min-width: 400px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: sticky; top: 20px; max-height: calc(100vh - 60px); overflow-y: auto; }
     h1 { color: #1a7ee7; font-size: 2.1rem; margin-bottom: 18px; letter-spacing: 1px; }
     label { font-weight: 500; margin-top: 12px; display: block; }
     input, textarea, select { width: 100%; padding: 8px 10px; margin-top: 4px; margin-bottom: 10px; border: 1px solid #c7e0f7; border-radius: 6px; font-size: 1rem; font-family: inherit; background: #fafdff; transition: border 0.2s; }
@@ -24,7 +24,7 @@
     .prest-item { background: #eaf4fb; border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; font-size: 0.98rem; }
     .prest-item span { flex: 1; }
     .prest-item button { background: none; border: none; color: #e74c3c; font-size: 1.2rem; cursor: pointer; margin-left: 8px; }
-    @media (max-width: 900px) { .container { flex-direction: column; } .facture-section { min-width: unset; } }
+    @media (max-width: 900px) { .container { flex-direction: column; } .facture-section { min-width: unset; position: relative; top: auto; max-height: none; overflow-y: visible; } }
     .facture { background: #fff; border-radius: 10px; padding: 28px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); color: #222; font-size: 0.75rem; max-width: 700px; margin: auto; }
     .facture-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
     .facture-title { font-size: 1.6rem; font-weight: 700; background: linear-gradient(135deg, #ff6b9d, #c44569, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 1px; text-align: right; }
@@ -41,11 +41,17 @@
     .facture-paiement-box b { font-size: 0.8rem; }
     .mentions { font-size: 0.7rem; color: #222; margin-top: 24px; border-top: 1px solid #e3eaf1; padding-top: 12px; }
     .facture-footer { margin-top: 18px; font-size: 0.98rem; }
+    .section-highlight { animation: highlight-pulse 2s ease-in-out; }
+    @keyframes highlight-pulse { 0% { box-shadow: 0 0 0 0 rgba(26, 126, 231, 0.4); } 50% { box-shadow: 0 0 0 10px rgba(26, 126, 231, 0.2); } 100% { box-shadow: 0 0 0 0 rgba(26, 126, 231, 0); } }
+    .sync-indicator { position: fixed; top: 20px; right: 20px; background: #1a7ee7; color: white; padding: 8px 12px; border-radius: 20px; font-size: 0.8rem; z-index: 1000; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+    .sync-indicator.show { opacity: 1; }
+    .sync-indicator::before { content: "📍"; margin-right: 5px; }
     @media print { body, html { background: #fff !important; } .container { box-shadow: none !important; background: #fff !important; padding: 0 !important; margin: 0 !important; display: block !important; } .form-section, .prestations-list, .btn { display: none !important; } .facture-section { background: #fff !important; box-shadow: none !important; padding: 0 !important; min-width: unset !important; } .facture { box-shadow: none !important; margin: 0 auto !important; max-width: 100% !important; color: #222 !important; background: #fff !important; page-break-after: avoid; } }
   </style>
 </head>
 <body>
   <div class="container">
+    <div class="sync-indicator" id="syncIndicator">Aperçu synchronisé</div>
     <div class="form-section">
       <h1>Nouvelle facture</h1>
       <form id="factureForm" autocomplete="off" onsubmit="return false;">
@@ -924,6 +930,119 @@
       }
     }
     
+    // Fonctionnalité de scroll synchronisé
+    function initScrollSynchronise() {
+      // Mapping des sections du formulaire vers les sections de l'aperçu
+      const sectionMapping = {
+        'emetteurNom': '.facture-emetteur',
+        'emetteurContact': '.facture-emetteur',
+        'emetteurAdresse': '.facture-emetteur',
+        'emetteurCodePostal': '.facture-emetteur',
+        'emetteurVille': '.facture-emetteur',
+        'emetteurSiret': '.facture-emetteur',
+        'emetteurRcs': '.facture-emetteur',
+        'emetteurVilleRcs': '.facture-emetteur',
+        'emetteurEmail': '.facture-emetteur',
+        'emetteurTel': '.facture-emetteur',
+        'numFacture': '.facture-title',
+        'dateFacture': '.facture-info',
+        'clientNom': '.facture-client-box',
+        'clientAdresse': '.facture-client-box',
+        'clientVille': '.facture-client-box',
+        'clientSiret': '.facture-client-box',
+        'periode': '.facture-table',
+        'titrePresta': '.facture-table',
+        'descPresta': '.facture-table',
+        'prixHT': '.facture-table',
+        'prixPresta': '.facture-table',
+        'qtePresta': '.facture-table',
+        'modePaiement': '.facture-paiement-box',
+        'iban': '.facture-paiement-box',
+        'bic': '.facture-paiement-box',
+        'banque': '.facture-paiement-box'
+      };
+      
+      // Ajouter des écouteurs d'événements focus sur tous les champs
+      Object.keys(sectionMapping).forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+          field.addEventListener('focus', () => {
+            scrollToPreviewSection(sectionMapping[fieldId]);
+          });
+        }
+      });
+      
+      // Scroll automatique lors du clic sur les boutons d'ajout de prestation
+      const addPrestationBtn = document.querySelector('button[onclick="ajouterPrestation()"]');
+      if (addPrestationBtn) {
+        addPrestationBtn.addEventListener('click', () => {
+          setTimeout(() => {
+            scrollToPreviewSection('.facture-table');
+          }, 300);
+        });
+      }
+    }
+    
+    function scrollToPreviewSection(selector) {
+      const factureSection = document.querySelector('.facture-section');
+      const targetElement = document.querySelector(selector);
+      const syncIndicator = document.getElementById('syncIndicator');
+      
+      if (factureSection && targetElement) {
+        // Vérifier si on est sur mobile (moins de 900px)
+        const isMobile = window.innerWidth <= 900;
+        
+        if (isMobile) {
+          // Sur mobile, juste faire un highlight sans scroll
+          highlightActiveSection(selector);
+          return;
+        }
+        
+        // Afficher l'indicateur de synchronisation
+        if (syncIndicator) {
+          syncIndicator.classList.add('show');
+          setTimeout(() => {
+            syncIndicator.classList.remove('show');
+          }, 2000);
+        }
+        
+        const factureRect = factureSection.getBoundingClientRect();
+        const targetRect = targetElement.getBoundingClientRect();
+        
+        // Calculer la position relative dans l'aperçu
+        const relativeTop = targetRect.top - factureRect.top;
+        const scrollTop = factureSection.scrollTop + relativeTop - 50; // 50px de marge
+        
+        // Scroll fluide vers la section cible
+        factureSection.scrollTo({
+          top: Math.max(0, scrollTop),
+          behavior: 'smooth'
+        });
+        
+        // Ajouter un highlight visuel après un court délai
+        setTimeout(() => {
+          highlightActiveSection(selector);
+        }, 200);
+      }
+    }
+    
+    // Améliorer l'expérience avec un indicateur visuel
+    function highlightActiveSection(selector) {
+      // Supprimer les anciens highlights
+      document.querySelectorAll('.section-highlight').forEach(el => {
+        el.classList.remove('section-highlight');
+      });
+      
+      // Ajouter le highlight à la section active
+      const targetElement = document.querySelector(selector);
+      if (targetElement) {
+        targetElement.classList.add('section-highlight');
+        setTimeout(() => {
+          targetElement.classList.remove('section-highlight');
+        }, 2000);
+      }
+    }
+    
     // Initialisation
     function initialiserFormulaire() {
       const aujourdhui = new Date().toISOString().split('T')[0];
@@ -976,6 +1095,9 @@
       // Initialiser l'affichage des champs selon le statut
       changerStatut();
       majApercu();
+      
+      // Initialiser le scroll synchronisé
+      initScrollSynchronise();
     }
     initialiserFormulaire();
   </script>
