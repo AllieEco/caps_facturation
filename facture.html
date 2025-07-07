@@ -66,7 +66,11 @@
         <label>Contact</label>
         <input type="text" id="emetteurContact" value="" required>
         <label>Adresse</label>
-        <textarea id="emetteurAdresse" rows="2" required></textarea>
+        <input type="text" id="emetteurAdresse" placeholder="Numéro et nom de rue" required>
+        <label>Code postal</label>
+        <input type="text" id="emetteurCodePostal" placeholder="Code postal" required>
+        <label>Ville</label>
+        <input type="text" id="emetteurVille" placeholder="Ville" required>
         <label>SIRET</label>
         <input type="text" id="emetteurSiret" value="" required>
         <label>RCS</label>
@@ -346,6 +350,8 @@
       const emetteurNom = document.getElementById('emetteurNom').value;
       const emetteurContact = document.getElementById('emetteurContact').value;
       const emetteurAdresse = document.getElementById('emetteurAdresse').value;
+      const emetteurCodePostal = document.getElementById('emetteurCodePostal').value;
+      const emetteurVille = document.getElementById('emetteurVille').value;
       const emetteurSiret = document.getElementById('emetteurSiret').value;
       const emetteurRcs = document.getElementById('emetteurRcs').value;
       const emetteurEmail = document.getElementById('emetteurEmail').value;
@@ -362,24 +368,25 @@
       
       if (statutJuridique === 'sasu') {
         // Pour SASU, totalPrix = TTC
-        genererFactureSASU(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
+        genererFactureSASU(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
       } else if (statutJuridique === 'eurl') {
         // Pour EURL, totalPrix = TTC
-        genererFactureEURL(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
+        genererFactureEURL(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
       } else {
         // Pour micro-entreprise, totalPrix = HT
-        genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
+        genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalPrix);
       }
     }
     
-    function genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalHT) {
+    function genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalHT) {
       document.getElementById('factureApercu').innerHTML = `
         <div class="facture-header">
           <div class="facture-emetteur">
             ${logoEntrepriseData ? `<img src="${logoEntrepriseData}" style="max-width: 120px; max-height: 80px; margin-bottom: 10px; display: block;"><br>` : ''}
             <b style="font-size:1.3rem;">${emetteurNom}</b><br>
             ${emetteurContact}<br>
-            ${emetteurAdresse.replace(/\n/g, '<br>')}<br>
+            ${emetteurAdresse}<br>
+            ${emetteurCodePostal} ${emetteurVille}<br>
             SIRET : ${emetteurSiret}<br>
             ${emetteurRcs}<br>
             Email : ${emetteurEmail}<br>
@@ -431,7 +438,7 @@
       `;
     }
     
-    function genererFactureEURL(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalTTC) {
+    function genererFactureEURL(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalTTC) {
       const capitalSocialEurl = document.getElementById('capitalSocialEurl').value;
       const numTvaEurl = document.getElementById('numTvaEurl').value;
       const dateCreationEurl = document.getElementById('dateCreationEurl').value;
@@ -449,7 +456,8 @@
             ${logoEntrepriseData ? `<img src="${logoEntrepriseData}" style="max-width: 120px; max-height: 80px; margin-bottom: 10px; display: block;"><br>` : ''}
             <b style="font-size:1.3rem;">${emetteurNom}</b><br>
             <b>EURL au capital de ${capitalSocialEurl || '[CAPITAL]'} €</b><br><br>
-            Siège social : ${emetteurAdresse.replace(/\n/g, '<br>')}<br><br>
+            Siège social : ${emetteurAdresse}<br>
+            ${emetteurCodePostal} ${emetteurVille}<br><br>
             SIRET : ${emetteurSiret || '[SIRET EURL]'}<br>
             RCS Lyon : ${emetteurRcs || '[N° RCS]'}<br>
             N° TVA : ${numTvaEurl || '[N° TVA INTRA]'}<br><br>
@@ -527,7 +535,7 @@
       `;
     }
     
-    function genererFactureSASU(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalTTC) {
+    function genererFactureSASU(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurEmail, emetteurTel, totalTTC) {
       const capitalSocial = document.getElementById('capitalSocial').value;
       const numTva = document.getElementById('numTva').value;
       const dateCreationSasu = document.getElementById('dateCreationSasu').value;
@@ -543,7 +551,8 @@
             ${logoEntrepriseData ? `<img src="${logoEntrepriseData}" style="max-width: 120px; max-height: 80px; margin-bottom: 10px; display: block;"><br>` : ''}
             <b style="font-size:1.3rem;">${emetteurNom}</b><br>
             <b>SASU au capital de ${capitalSocial || '[CAPITAL]'} €</b><br><br>
-            Siège social : ${emetteurAdresse.replace(/\n/g, '<br>')}<br><br>
+            Siège social : ${emetteurAdresse}<br>
+            ${emetteurCodePostal} ${emetteurVille}<br><br>
             SIRET : ${emetteurSiret || '[SIRET SASU]'}<br>
             RCS Lyon : ${emetteurRcs || '[N° RCS]'}<br>
             N° TVA : ${numTva || '[N° TVA INTRA]'}<br><br>
@@ -713,6 +722,8 @@
         document.getElementById('emetteurNom').value = CONFIG.emetteurNom || '';
         document.getElementById('emetteurContact').value = CONFIG.emetteurContact || '';
         document.getElementById('emetteurAdresse').value = CONFIG.emetteurAdresse || '';
+        document.getElementById('emetteurCodePostal').value = CONFIG.emetteurCodePostal || '';
+        document.getElementById('emetteurVille').value = CONFIG.emetteurVille || '';
         document.getElementById('emetteurSiret').value = CONFIG.emetteurSiret || '';
         document.getElementById('emetteurRcs').value = CONFIG.emetteurRcs || '';
         document.getElementById('emetteurEmail').value = CONFIG.emetteurEmail || '';

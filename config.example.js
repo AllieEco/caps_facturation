@@ -6,7 +6,9 @@ const CONFIG = {
   // Informations émetteur
   emetteurNom: "VOTRE_NOM_ENTREPRISE",
   emetteurContact: "VOTRE_NOM_PRENOM",
-  emetteurAdresse: "VOTRE_ADRESSE\nVOTRE_CODE_POSTAL VOTRE_VILLE",
+  emetteurAdresse: "VOTRE_ADRESSE",
+  emetteurCodePostal: "VOTRE_CODE_POSTAL",
+  emetteurVille: "VOTRE_VILLE",
   emetteurSiret: "VOTRE_SIRET",
   emetteurRcs: "VOTRE_RCS_OU_DISPENSE",
   emetteurEmail: "votre.email@exemple.com",
