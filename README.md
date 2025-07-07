@@ -158,7 +158,8 @@ Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de 
 
 ## 📱 Captures d'écran
 
-![image](https://github.com/user-attachments/assets/208d91a5-4734-4991-8433-425cdcbc29bb)
+![image](https://github.com/user-attachments/assets/6e34f016-4512-42db-ba87-c3ba649b76a9)
+
 
 
 
