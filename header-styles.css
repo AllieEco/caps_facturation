@@ -1,0 +1,75 @@
+/* Styles harmonisés pour le header de toutes les pages */
+.main-header {
+  width: 100%;
+  height: 3cm;
+  background: #f7fafd;
+  box-shadow: 0 4px 18px 0 rgba(26,126,231,0.08);
+  border: none;
+  margin: 0;
+  padding: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-logo {
+  height: 57px;
+  max-height: 57px;
+  margin-left: 96px;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-right: 18px;
+  vertical-align: middle;
+  display: inline-block;
+  cursor: pointer;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.header-logo:hover {
+  transform: scale(1.1);
+  filter: brightness(1.1) drop-shadow(0 4px 8px rgba(26,126,231,0.3));
+}
+
+.header-buttons {
+  display: flex;
+  gap: 16px;
+  margin-right: 96px;
+}
+
+.header-button {
+  background: #1a7ee7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: 'Montserrat', Arial, sans-serif;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.header-button:hover {
+  background: #1766b8;
+}
+
+.header-button.active {
+  background: #0f5bb8;
+}
+
+/* Responsive design pour le header */
+@media (max-width: 768px) {
+  .header-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .header-logo {
+    margin-left: 20px;
+  }
+  .header-buttons {
+    margin-right: 20px;
+  }
+} 

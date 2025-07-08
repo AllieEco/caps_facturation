@@ -10,14 +10,29 @@
 
 *Interface moderne et intuitive avec navigation multi-pages*
 
-Une **suite de gestion comptable complète** **100% gratuite** et **conforme** pour tous les entrepreneurs français. Générez des factures, gérez vos recettes, et suivez vos achats en toute simplicité !
+Une **suite de gestion comptable complète** **100% gratuite** et **conforme** pour tous les entrepreneurs français. **Tableau de bord intelligent**, générateur de factures, gestion des recettes et suivi des achats en toute simplicité !
 
-## 🆕 **NOUVELLE VERSION 4.0 : Support SARL + Gestion clients !**
+## 🎯 **Nouveau : Tableau de bord comptable intelligent !**
+
+**Votre vue d'ensemble financière en temps réel** avec :
+- **📊 Statistiques dynamiques** : CA, dépenses, bénéfice/déficit automatique
+- **📈 Graphiques interactifs** : Évolution sur 12 mois et répartition des paiements
+- **🎯 Indicateurs intelligents** : Détection automatique bénéfice/déficit avec émojis adaptatifs
+- **⏰ Filtres temporels** : Analyse par période (mois, trimestre, année)
+- **🔄 Mise à jour automatique** : Synchronisation toutes les 5 secondes
+- **📱 Interface responsive** : Parfait sur mobile et desktop
+
+## 🆕 **NOUVELLE VERSION 4.2 : Footers harmonisés !**
+- **🎯 Footers unifiés** : "Made with ❤️ by AllieEco" sur toutes les pages
+- **📊 Tableau de bord comptable** : Vue d'ensemble financière en temps réel
+- **📈 Indicateurs intelligents** : Bénéfice/déficit automatique avec émojis adaptatifs
+- **📊 Graphiques interactifs** : Évolution du CA et répartition des paiements
+- **🎯 Headers unifiés** : Navigation cohérente sur toutes les pages
 - **🏢 Support SARL complet** : Nouveau statut juridique avec toutes les spécificités
 - **👥 Gestion clients intelligente** : Distinction automatique particuliers/entreprises
 - **🧾 Générateur de factures/devis** : Créez des documents professionnels
 - **📊 Livre de recette** : Suivez toutes vos recettes et statistiques
-- **🛒 Registre d'achat** : Gérez vos achats professionnels (bientôt disponible)
+- **🛒 Registre d'achat** : Gérez vos achats professionnels avec catégorisation
 - **🔄 Navigation intuitive** : Basculez entre les modules d'un simple clic
 - **📱 Interface responsive** : Fonctionne sur tous les appareils
 
@@ -36,6 +51,7 @@ Une **suite de gestion comptable complète** **100% gratuite** et **conforme** p
 - **Documents adaptés** : Mentions selon le type de client
 
 ### ✅ **Suite complète de gestion**
+- **Tableau de bord** : Vue d'ensemble financière en temps réel
 - **Facturation** : Créez factures et devis professionnels
 - **Comptabilité** : Suivez vos recettes et dépenses
 - **Statistiques** : Tableaux de bord et analyses
@@ -47,15 +63,62 @@ Une **suite de gestion comptable complète** **100% gratuite** et **conforme** p
 - Navigation claire entre les modules
 - Formulaires guidés étape par étape
 
+### ✅ **Tableau de bord intelligent**
+- **Vue d'ensemble instantanée** : Tous vos indicateurs financiers en un coup d'œil
+- **Détection automatique** : Bénéfice ou déficit avec indicateurs visuels adaptatifs
+- **Graphiques professionnels** : Évolution du CA et répartition des paiements
+- **Filtres temporels** : Analyse par période pour optimiser votre stratégie
+- **Mise à jour temps réel** : Données synchronisées automatiquement
+
 ### ✅ **100% gratuit et sécurisé**
 - Aucun abonnement, aucune limite
 - Vos données restent sur votre ordinateur
 - Pas de compte à créer
 - Code open source vérifiable
 
-## 🚀 Les 3 modules de la suite
+## 🚀 Les 4 modules de la suite
 
-### 1️⃣ **🧾 Générateur de Factures/Devis**
+### 1️⃣ **📊 Tableau de Bord Comptable**
+
+#### **Vue d'ensemble financière**
+- **Statistiques en temps réel** : Chiffre d'affaires, dépenses, bénéfice/déficit, nombre de factures
+- **Indicateurs dynamiques** : Évolution mensuelle et pourcentages de marge
+- **Graphiques interactifs** : Évolution du CA et répartition des paiements
+- **Activité récente** : Dernières factures et achats enregistrés
+
+#### **Fonctionnalités principales**
+
+**📈 Statistiques financières**
+- **Chiffre d'affaires** : Total des recettes avec évolution mensuelle
+- **Dépenses** : Total des achats avec suivi des variations
+- **Bénéfice/Déficit net** : Calcul automatique avec affichage adaptatif
+  - 📈 **Bénéfice** : Affichage en vert avec émoji positif
+  - 📉 **Déficit** : Affichage en rouge avec émoji négatif
+- **Nombre de factures** : Compteur avec moyenne par facture
+
+**📊 Graphiques et visualisations**
+- **Évolution du CA** : Graphique linéaire sur 12 mois
+- **Répartition des paiements** : Graphique circulaire par mode de paiement
+- **Données interactives** : Hover et animations fluides
+
+**⏰ Filtres temporels**
+- **Tout** : Vue complète de toutes les données
+- **Cette année** : Données de l'année en cours
+- **Ce mois** : Données du mois actuel
+- **Ce trimestre** : Données du trimestre en cours
+
+**🔄 Mise à jour automatique**
+- **Synchronisation** : Données mises à jour toutes les 5 secondes
+- **Temps réel** : Changements instantanés lors de l'ajout de données
+- **Persistance** : Sauvegarde automatique dans le navigateur
+
+#### **Indicateurs intelligents**
+- **Détection automatique** : Bénéfice ou déficit selon le résultat
+- **Calculs de marge** : Pourcentage de rentabilité
+- **Évolution mensuelle** : Comparaison avec le mois précédent
+- **Moyennes** : Montant moyen par facture
+
+### 2️⃣ **🧾 Générateur de Factures/Devis**
 
 #### **Fonctionnalités principales**
 - **Mode DEVIS/FACTURE** : Bascule d'un simple clic
@@ -135,27 +198,43 @@ Une **suite de gestion comptable complète** **100% gratuite** et **conforme** p
 - **Suppression sécurisée** : Gestion des recettes avec confirmation
 - **Vider le livre** : Remise à zéro avec double confirmation
 
-### 3️⃣ **🛒 Registre d'Achat** *(Bientôt disponible)*
+### 3️⃣ **🛒 Registre d'Achat**
 
-#### **Fonctionnalités prévues**
+#### **Fonctionnalités principales**
 - **📋 Suivi des achats** : Enregistrement complet des dépenses
+- **🏷️ Catégorisation** : Organisation par type d'achat (fournitures, équipement, services...)
 - **🧾 Gestion des factures** : Organisation par fournisseur
 - **📊 Analyse des dépenses** : Statistiques par période et catégorie
 - **💾 Export comptable** : Données CSV pour votre comptable
 - **🔍 Recherche avancée** : Filtres intelligents
 - **📈 Tableaux de bord** : Visualisation des coûts
+- **💰 Calcul automatique** : TVA et montants TTC
+- **📅 Suivi des paiements** : Dates d'achat et de paiement
+- **✅ Déductibilité fiscale** : Gestion de la déductibilité
 
 ## 🔄 Navigation entre les modules
 
-### **Header unifié**
+### **Header et Footer unifiés et harmonisés** ✅
 - **Logo cliquable** : Retour rapide à l'accueil
 - **3 boutons principaux** : Accès direct à chaque module
-- **Indicateur actif** : Bouton surligné pour la page courante
+- **Indicateur actif automatique** : Bouton surligné pour la page courante
+- **Footer uniformisé** : "Made with ❤️ by AllieEco" sur toutes les pages
 - **Design responsive** : Adapté mobile et desktop
+- **Styles centralisés** : Cohérence parfaite sur toutes les pages
+
+### **Fichiers de support**
+- **`header-styles.css`** : Styles harmonisés pour tous les headers
+- **`header-template.html`** : Template HTML réutilisable
+- **`header-script.js`** : Gestion automatique de l'état actif
+- **`footer-styles.css`** : Styles harmonisés pour tous les footers
+- **`footer-template.html`** : Template HTML réutilisable
+- **`footer-script.js`** : Gestion automatique de l'insertion du footer
 
 ### **Liens rapides**
+- **Tableau de bord** → **Devis/Facture** : Créez une nouvelle facture depuis les actions rapides
 - **Devis/Facture** → **Livre de recette** : Enregistrez directement vos factures
 - **Livre de recette** → **Devis/Facture** : Créez une nouvelle facture
+- **Registre d'achat** → **Tableau de bord** : Consultez l'impact sur vos finances
 - **Navigation cohérente** : Même design sur tous les modules
 
 ## 📱 **Compatible tous appareils**
@@ -171,9 +250,10 @@ Une **suite de gestion comptable complète** **100% gratuite** et **conforme** p
 1. Cliquez sur "Code" → "Download ZIP" sur GitHub
 2. Décompressez le fichier sur votre ordinateur
 3. Vous obtenez les fichiers :
+   - `index.html` : **Tableau de bord principal** (page d'accueil)
    - `facture.html` : Générateur de factures/devis
    - `livre_recette.html` : Livre de recette
-   - `registre_achat.html` : Registre d'achat (placeholder)
+   - `registre_achat.html` : Registre d'achat
    - `config.example.js` : Configuration par défaut
 
 #### **Configuration initiale**
@@ -224,11 +304,42 @@ const CONFIG = {
 ```
 
 ### 2️⃣ **Lancement de la suite**
-- Ouvrez le fichier `facture.html` dans votre navigateur web
+- Ouvrez le fichier `index.html` dans votre navigateur web pour accéder au tableau de bord
+- Ou ouvrez directement `facture.html` pour commencer par la facturation
 - Vos informations sont automatiquement pré-remplies
 - Utilisez les boutons du header pour naviguer entre les modules
 
-### 3️⃣ **Utilisation du générateur de factures/devis**
+### 3️⃣ **Utilisation du tableau de bord**
+
+#### **Accès au tableau de bord**
+- Ouvrez `index.html` dans votre navigateur
+- Consultez vos statistiques financières en temps réel
+- Utilisez les filtres temporels pour analyser différentes périodes
+
+#### **Comprendre les indicateurs**
+- **Chiffre d'affaires** : Total de vos recettes (vert)
+- **Dépenses** : Total de vos achats (rouge)
+- **Bénéfice/Déficit** : Résultat net avec indicateur visuel
+  - 📈 Vert : Vous êtes en bénéfice
+  - 📉 Rouge : Vous êtes en déficit
+- **Nombre de factures** : Volume d'activité
+
+#### **Analyser les graphiques**
+- **Évolution du CA** : Tendance sur 12 mois
+- **Répartition des paiements** : Répartition par mode de paiement
+- **Cliquez sur les graphiques** pour plus de détails
+
+#### **Suivre l'activité récente**
+- **Dernières factures** : 10 dernières factures émises
+- **Derniers achats** : 10 derniers achats enregistrés
+- **Montants** : Affichage avec signe (+ pour recettes, - pour dépenses)
+
+#### **Actions rapides**
+- **Créer une facture** : Accès direct au générateur de factures
+- **Livre de recette** : Consulter toutes les recettes
+- **Registre d'achat** : Gérer les dépenses et achats
+
+### 4️⃣ **Utilisation du générateur de factures/devis**
 
 #### **Étape 1 : Choisir le type de document**
 - **Toggle DEVIS/FACTURE** : Cliquez sur l'interrupteur
@@ -303,6 +414,18 @@ const CONFIG = {
 2. **Analyser** : Consulter les statistiques du tableau de bord
 3. **Export** : Télécharger le CSV pour votre comptable
 
+### **Analyse de rentabilité**
+1. **Tableau de bord** : Consulter la section bénéfice/déficit
+2. **Filtres temporels** : Analyser par période (mois, trimestre, année)
+3. **Graphiques** : Visualiser l'évolution du chiffre d'affaires
+4. **Actions** : Identifier les périodes de déficit pour ajuster la stratégie
+
+### **Suivi de l'activité**
+1. **Activité récente** : Voir les dernières factures et achats
+2. **Statistiques** : Comprendre le volume d'activité
+3. **Moyennes** : Analyser le montant moyen par facture
+4. **Tendances** : Observer l'évolution sur 12 mois
+
 ### **Gestion des acomptes**
 1. **Devis avec acompte** : Cocher "demander un acompte"
 2. **Acompte reçu** : Enregistrer dans le livre de recette
@@ -331,12 +454,19 @@ const CONFIG = {
 
 ```
 caps_facturation/
+├── index.html           # Tableau de bord principal (page d'accueil)
 ├── facture.html          # Générateur de factures/devis
 ├── livre_recette.html    # Livre de recette
-├── registre_achat.html   # Registre d'achat (à venir)
+├── registre_achat.html   # Registre d'achat
 ├── config.example.js     # Configuration par défaut
 ├── config.js            # Votre configuration (à créer)
 ├── logo_capslock.png    # Logo de l'application
+├── header-styles.css    # Styles harmonisés du header
+├── header-template.html # Template HTML du header
+├── header-script.js     # Script de gestion du header
+├── footer-styles.css    # Styles harmonisés du footer
+├── footer-template.html # Template HTML du footer
+├── footer-script.js     # Script de gestion du footer
 ├── LICENSE              # Licence MIT
 └── README.md           # Ce fichier
 ```
@@ -394,6 +524,20 @@ Ce projet est sous licence MIT. Vous êtes libre de :
 
 ## 🔄 Historique des versions
 
+### Version 4.2 - 🎨 FOOTERS HARMONISÉS
+- **🎯 Footers unifiés** : "Made with ❤️ by AllieEco" sur toutes les pages
+- **📱 Design responsive** : Adaptation mobile optimisée
+- **🔧 Styles centralisés** : Fichiers CSS et JS dédiés
+- **⚡ Insertion automatique** : Gestion intelligente du footer
+- **📋 Templates réutilisables** : Structure HTML standardisée
+
+### Version 4.1 - 🎨 HEADERS HARMONISÉS
+- **🎯 Headers unifiés** : Cohérence parfaite sur toutes les pages
+- **📱 Design responsive** : Adaptation mobile optimisée
+- **🔧 Styles centralisés** : Fichiers CSS et JS dédiés
+- **⚡ Navigation automatique** : Gestion intelligente de l'état actif
+- **📋 Templates réutilisables** : Structure HTML standardisée
+
 ### Version 4.0 - 🆕 SUPPORT SARL + GESTION CLIENTS
 - **🏢 Support SARL complet** : Nouveau statut juridique avec toutes les spécificités
 - **👥 Gestion clients intelligente** : Distinction automatique particuliers/entreprises
@@ -406,7 +550,7 @@ Ce projet est sous licence MIT. Vous êtes libre de :
 - **📊 Livre de recette** : Module complet de gestion des recettes
 - **🔄 Navigation multi-pages** : Header unifié avec navigation
 - **📈 Statistiques avancées** : Tableaux de bord et analyses
-- **🛒 Registre d'achat** : Interface préparée (développement en cours)
+- **🛒 Registre d'achat** : Module complet de gestion des achats
 - **🎨 Design unifié** : Cohérence visuelle sur tous les modules
 - **📱 Responsive amélioré** : Meilleure expérience mobile
 

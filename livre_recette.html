@@ -6,6 +6,7 @@
   <title>Livre de Recette - CAPSLOCK</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><style>.cls-1{fill:%23f4d03f;}.cls-2{fill:%23333;stroke:%23333;stroke-width:2;fill:none;}.cls-3{fill:%23333;}</style></defs><polygon class='cls-1' points='45,10 50,20 60,20 52,28 55,38 45,33 35,38 38,28 30,20 40,20'/><polygon class='cls-1' points='70,25 73,30 78,30 75,33 76,38 70,35 64,38 65,33 62,30 67,30'/><polygon class='cls-1' points='58,45 61,50 66,50 63,53 64,58 58,55 52,58 53,53 50,50 55,50'/><rect class='cls-2' x='15' y='25' width='45' height='60' rx='3'/><rect class='cls-3' x='20' y='35' width='25' height='2'/><rect class='cls-3' x='20' y='45' width='20' height='2'/><rect class='cls-3' x='20' y='55' width='25' height='2'/><rect class='cls-3' x='20' y='65' width='15' height='2'/><circle class='cls-2' cx='70' cy='60' r='15'/><text x='70' y='67' text-anchor='middle' class='cls-3' font-family='Arial' font-size='16' font-weight='bold'>$</text><path class='cls-2' d='M15,80 Q15,85 20,85 L75,85 Q80,85 80,80 L80,75 L15,75 Z'/></svg>" type="image/svg+xml">
+  <link rel="stylesheet" href="footer-styles.css">
   <style>
     body { font-family: 'Montserrat', Arial, sans-serif; background: #f7fafd; margin: 0; padding: 0; color: #222; }
     .container { max-width: 1200px; margin: 30px auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); padding: 32px; }
@@ -36,13 +37,58 @@
     .stat-card h3 { margin: 0 0 12px 0; font-size: 1.2rem; opacity: 0.9; }
     .stat-card .value { font-size: 2.2rem; font-weight: 700; margin-bottom: 8px; }
     .stat-card .label { font-size: 0.9rem; opacity: 0.8; }
-    .main-header { width: 100%; height: 3cm; background: #f7fafd; box-shadow: 0 4px 18px 0 rgba(26,126,231,0.08); border: none; margin: 0; padding: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; }
-    .header-logo { height: 57px; max-height: 57px; margin-left: 96px; margin-top: 0; margin-bottom: 0; margin-right: 18px; vertical-align: middle; display: inline-block; cursor: pointer; transition: transform 0.3s ease, filter 0.3s ease; }
-    .header-logo:hover { transform: scale(1.1); filter: brightness(1.1) drop-shadow(0 4px 8px rgba(26,126,231,0.3)); }
-    .header-buttons { display: flex; gap: 16px; margin-right: 96px; }
-    .header-button { background: #1a7ee7; color: white; border: none; border-radius: 8px; padding: 12px 24px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; font-family: 'Montserrat', Arial, sans-serif; }
-    .header-button:hover { background: #1766b8; }
-    .header-button.active { background: #0f5bb8; }
+    .main-header {
+      width: 100%;
+      height: 3cm;
+      background: #f7fafd;
+      box-shadow: 0 4px 18px 0 rgba(26,126,231,0.08);
+      border: none;
+      margin: 0;
+      padding: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-logo {
+      height: 57px;
+      max-height: 57px;
+      margin-left: 96px;
+      margin-top: 0;
+      margin-bottom: 0;
+      margin-right: 18px;
+      vertical-align: middle;
+      display: inline-block;
+      cursor: pointer;
+      transition: transform 0.3s ease, filter 0.3s ease;
+    }
+    .header-logo:hover {
+      transform: scale(1.1);
+      filter: brightness(1.1) drop-shadow(0 4px 8px rgba(26,126,231,0.3));
+    }
+    .header-buttons {
+      display: flex;
+      gap: 16px;
+      margin-right: 96px;
+    }
+    .header-button {
+      background: #1a7ee7;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: 'Montserrat', Arial, sans-serif;
+    }
+    .header-button:hover {
+      background: #1766b8;
+    }
+    .header-button.active {
+      background: #0f5bb8;
+    }
     .empty-state { text-align: center; padding: 60px 20px; color: #666; }
     .empty-state i { font-size: 3rem; margin-bottom: 16px; color: #1a7ee7; }
     .filters { background: #f4f8fb; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
@@ -50,8 +96,6 @@
     .total-row { font-weight: 700; background: #f4f8fb !important; color: #1a7ee7; }
     .amount-positive { color: #27ae60; font-weight: 600; }
     .amount-negative { color: #e74c3c; font-weight: 600; }
-    .footer { text-align: center; margin-top: 40px; padding: 20px; font-size: 0.9rem; color: #666; background: #f8f9fa; border-top: 1px solid #e9ecef; }
-    .footer a { color: inherit; text-decoration: underline; font-weight: bold; }
     @media (max-width: 768px) {
       .container { margin: 15px; padding: 20px; }
       .form-row { flex-direction: column; gap: 0; }
@@ -64,7 +108,7 @@
 </head>
 <body>
   <header class="main-header">
-    <img src="logo_capslock.png" alt="Logo CAPSLOCK" class="header-logo" onclick="window.location.href='facture.html'">
+    <img src="logo_capslock.png" alt="Logo CAPSLOCK" class="header-logo" onclick="window.location.href='index.html'">
     <div class="header-buttons">
       <button class="header-button" onclick="window.location.href='facture.html'">Devis/Facture</button>
       <button class="header-button" onclick="window.location.href='registre_achat.html'">Registre d'achat</button>
@@ -73,7 +117,7 @@
   </header>
 
   <div class="container">
-    <h1>📊 Livre de Recette</h1>
+    <h1>💰 Livre de Recette</h1>
     
     <!-- Statistiques -->
     <div class="stats-grid">

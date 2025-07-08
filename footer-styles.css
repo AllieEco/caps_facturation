@@ -1,0 +1,30 @@
+/* Footer harmonisé pour toutes les pages */
+.footer {
+  text-align: center;
+  margin-top: 40px;
+  padding: 20px;
+  font-size: 0.9rem;
+  color: #666;
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.footer a {
+  color: inherit;
+  text-decoration: underline;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.footer a:hover {
+  color: #1a7ee7;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .footer {
+    padding: 15px;
+    font-size: 0.8rem;
+  }
+} 

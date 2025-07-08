@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tableau de Bord Comptable - CAPSLOCK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><style>.cls-1{fill:%23f4d03f;}.cls-2{fill:%23333;stroke:%23333;stroke-width:2;fill:none;}.cls-3{fill:%23333;}</style></defs><polygon class='cls-1' points='45,10 50,20 60,20 52,28 55,38 45,33 35,38 38,28 30,20 40,20'/><polygon class='cls-1' points='70,25 73,30 78,30 75,33 76,38 70,35 64,38 65,33 62,30 67,30'/><polygon class='cls-1' points='58,45 61,50 66,50 63,53 64,58 58,55 52,58 53,53 50,50 55,50'/><rect class='cls-2' x='15' y='25' width='45' height='60' rx='3'/><rect class='cls-3' x='20' y='35' width='25' height='2'/><rect class='cls-3' x='20' y='45' width='20' height='2'/><rect class='cls-3' x='20' y='55' width='25' height='2'/><rect class='cls-3' x='20' y='65' width='15' height='2'/><circle class='cls-2' cx='70' cy='60' r='15'/><text x='70' y='67' text-anchor='middle' class='cls-3' font-family='Arial' font-size='16' font-weight='bold'>$</text><path class='cls-2' d='M15,80 Q15,85 20,85 L75,85 Q80,85 80,80 L80,75 L15,75 Z'/></svg>" type="image/svg+xml">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="footer-styles.css">
+  <style>
+    body { 
+      font-family: 'Montserrat', Arial, sans-serif; 
+      background: #f7fafd; 
+      margin: 0; 
+      padding: 0; 
+      color: #222; 
+    }
+    
+    .main-header {
+      width: 100%;
+      height: 3cm;
+      background: #f7fafd;
+      box-shadow: 0 4px 18px 0 rgba(26,126,231,0.08);
+      border: none;
+      margin: 0;
+      padding: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .header-logo {
+      height: 57px;
+      max-height: 57px;
+      margin-left: 96px;
+      margin-top: 0;
+      margin-bottom: 0;
+      margin-right: 18px;
+      vertical-align: middle;
+      display: inline-block;
+      cursor: pointer;
+      transition: transform 0.3s ease, filter 0.3s ease;
+    }
+    
+    .header-logo:hover {
+      transform: scale(1.1);
+      filter: brightness(1.1) drop-shadow(0 4px 8px rgba(26,126,231,0.3));
+    }
+    
+    .header-buttons {
+      display: flex;
+      gap: 16px;
+      margin-right: 96px;
+    }
+    
+    .header-button {
+      background: #1a7ee7;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: 'Montserrat', Arial, sans-serif;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .header-button:hover {
+      background: #1766b8;
+    }
+    
+    .header-button.active {
+      background: #0f5bb8;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    
+    .dashboard-title {
+      text-align: center;
+      color: #1a7ee7;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 40px;
+    }
+    
+    .dashboard-title::before {
+      content: "📊 ";
+      color: #333;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    
+    .stat-card {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    }
+    
+    .stat-card.active {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      border: 3px solid #1a7ee7;
+    }
+    
+    .stat-card.revenue {
+      background: linear-gradient(135deg, #1a7ee7, #0f5bb8);
+      color: white;
+    }
+    
+    .stat-card.expenses {
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      color: white;
+    }
+    
+    .stat-card.profit {
+      background: linear-gradient(135deg, #27ae60, #219a52);
+      color: white;
+    }
+    
+    .stat-card.invoices {
+      background: linear-gradient(135deg, #8e44ad, #732d91);
+      color: white;
+    }
+    
+    .stat-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+    }
+    
+    .stat-value {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    
+    .stat-label {
+      font-size: 1rem;
+      opacity: 0.9;
+      font-weight: 500;
+    }
+    
+    .stat-change {
+      font-size: 0.9rem;
+      margin-top: 8px;
+      opacity: 0.8;
+    }
+    
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    
+    .chart-card {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    }
+    
+    .chart-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #1a7ee7;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    
+    .chart-container {
+      position: relative;
+      height: 300px;
+    }
+    
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    
+    .action-card {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .action-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    }
+    
+    .action-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+    }
+    
+    .action-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #1a7ee7;
+      margin-bottom: 16px;
+    }
+    
+    .action-description {
+      color: #666;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+    
+    .action-button {
+      background: #1a7ee7;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: 'Montserrat', Arial, sans-serif;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .action-button:hover {
+      background: #1766b8;
+    }
+    
+    .recent-activity {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      margin-bottom: 40px;
+    }
+    
+    .activity-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #1a7ee7;
+      margin-bottom: 24px;
+    }
+    
+    .activity-item {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid #f0f0f0;
+      transition: background 0.2s;
+    }
+    
+    .activity-item:hover {
+      background: #f8f9fa;
+    }
+    
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+    
+    .activity-icon {
+      font-size: 1.5rem;
+      margin-right: 16px;
+      width: 40px;
+      text-align: center;
+    }
+    
+    .activity-content {
+      flex: 1;
+    }
+    
+    .activity-text {
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    
+    .activity-date {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    .activity-amount {
+      font-weight: 600;
+      color: #27ae60;
+    }
+    
+    .activity-amount-negative {
+      font-weight: 600;
+      color: #e74c3c;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+    
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      color: #1a7ee7;
+    }
+    
+    .period-selector {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    
+    .period-button {
+      background: white;
+      border: 2px solid #1a7ee7;
+      color: #1a7ee7;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Montserrat', Arial, sans-serif;
+    }
+    
+    .period-button:hover, .period-button.active {
+      background: #1a7ee7;
+      color: white;
+    }
+    
+    @media (max-width: 1024px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 15px;
+      }
+      
+      .header-buttons {
+        flex-direction: column;
+        gap: 8px;
+      }
+      
+      .header-logo {
+        margin-left: 20px;
+      }
+      
+      .header-buttons {
+        margin-right: 20px;
+      }
+      
+      .dashboard-title {
+        font-size: 2rem;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .period-selector {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <script src="config.js"></script>
+  
+  <header class="main-header">
+    <img src="logo_capslock.png" alt="Logo CAPSLOCK" class="header-logo" onclick="window.location.href='index.html'">
+    <div class="header-buttons">
+      <button class="header-button" onclick="window.location.href='facture.html'">Devis/Facture</button>
+      <button class="header-button" onclick="window.location.href='registre_achat.html'">Registre d'achat</button>
+      <button class="header-button" onclick="window.location.href='livre_recette.html'">Livre de recette</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1 class="dashboard-title">Tableau de Bord Comptable</h1>
+    
+    <div class="period-selector">
+      <button class="period-button active" data-period="all">Tout</button>
+      <button class="period-button" data-period="year">Cette année</button>
+      <button class="period-button" data-period="month">Ce mois</button>
+      <button class="period-button" data-period="quarter">Ce trimestre</button>
+    </div>
+    
+    <div class="stats-grid">
+      <div class="stat-card revenue active" id="revenueCard" onclick="switchChart('revenue')">
+        <div class="stat-icon">💰</div>
+        <div class="stat-value" id="totalRevenue">0,00 €</div>
+        <div class="stat-label">Chiffre d'affaires</div>
+        <div class="stat-change" id="revenueChange">+0% ce mois</div>
+      </div>
+      
+      <div class="stat-card expenses" id="expensesCard" onclick="switchChart('expenses')">
+        <div class="stat-icon">💸</div>
+        <div class="stat-value" id="totalExpenses">0,00 €</div>
+        <div class="stat-label">Dépenses</div>
+        <div class="stat-change" id="expensesChange">+0% ce mois</div>
+      </div>
+      
+      <div class="stat-card profit" id="profitCard" onclick="switchChart('profit')">
+        <div class="stat-icon">📈</div>
+        <div class="stat-value" id="netProfit">0,00 €</div>
+        <div class="stat-label">Bénéfice net</div>
+        <div class="stat-change" id="profitChange">Marge: 0%</div>
+      </div>
+      
+      <div class="stat-card invoices" id="invoicesCard" onclick="switchChart('invoices')">
+        <div class="stat-icon">🧾</div>
+        <div class="stat-value" id="totalInvoices">0</div>
+        <div class="stat-label">Factures émises</div>
+        <div class="stat-change" id="invoicesChange">Moyenne: 0,00 €</div>
+      </div>
+    </div>
+    
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3 class="chart-title" id="chartTitle">Évolution du chiffre d'affaires</h3>
+        <div class="chart-container">
+          <canvas id="revenueChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="chart-card">
+        <h3 class="chart-title" id="paymentChartTitle">Répartition des paiements</h3>
+        <div class="chart-container">
+          <canvas id="paymentChart"></canvas>
+        </div>
+      </div>
+    </div>
+    
+    <div class="quick-actions">
+      <div class="action-card">
+        <div class="action-icon">📝</div>
+        <div class="action-title">Créer une facture</div>
+        <div class="action-description">Générez rapidement une nouvelle facture ou un devis professionnel</div>
+        <a href="facture.html" class="action-button">Créer maintenant</a>
+      </div>
+      
+      <div class="action-card">
+        <div class="action-icon">💰</div>
+        <div class="action-title">Livre de recette</div>
+        <div class="action-description">Consultez et gérez toutes vos recettes avec des statistiques détaillées</div>
+        <a href="livre_recette.html" class="action-button">Voir les recettes</a>
+      </div>
+      
+      <div class="action-card">
+        <div class="action-icon">🛒</div>
+        <div class="action-title">Registre d'achat</div>
+        <div class="action-description">Suivez vos dépenses et achats professionnels avec catégorisation</div>
+        <a href="registre_achat.html" class="action-button">Gérer les achats</a>
+      </div>
+    </div>
+    
+    <div class="recent-activity">
+      <h3 class="activity-title">Activité récente</h3>
+      <div id="activityList">
+        <div class="empty-state">
+          <div class="empty-state-icon">💼</div>
+          <p>Aucune activité récente</p>
+          <p>Créez votre première facture pour commencer</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Variables globales
+    let recettes = [];
+    let achats = [];
+    let currentPeriod = 'all';
+    let currentChartType = 'revenue';
+    let revenueChart = null;
+    let paymentChart = null;
+    
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', function() {
+      loadData();
+      setupEventListeners();
+      updateDashboard();
+    });
+    
+    function loadData() {
+      // Charger les recettes depuis localStorage
+      const savedRecettes = localStorage.getItem('recettes');
+      if (savedRecettes) {
+        recettes = JSON.parse(savedRecettes);
+      }
+      
+      // Charger les achats depuis localStorage
+      const savedAchats = localStorage.getItem('achats');
+      if (savedAchats) {
+        achats = JSON.parse(savedAchats);
+      }
+    }
+    
+    function setupEventListeners() {
+      // Sélecteur de période
+      document.querySelectorAll('.period-button').forEach(button => {
+        button.addEventListener('click', function() {
+          document.querySelectorAll('.period-button').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentPeriod = this.dataset.period;
+          updateDashboard();
+        });
+      });
+    }
+    
+    function updateDashboard() {
+      const filteredRecettes = filterRecettesByPeriod(recettes, currentPeriod);
+      const filteredAchats = filterRecettesByPeriod(achats, currentPeriod);
+      updateStatistics(filteredRecettes, filteredAchats);
+      updateCharts(filteredRecettes, filteredAchats);
+      updateRecentActivity();
+    }
+    
+    function switchChart(chartType) {
+      // Mettre à jour l'état actif des cartes
+      document.querySelectorAll('.stat-card').forEach(card => {
+        card.classList.remove('active');
+      });
+      document.getElementById(chartType + 'Card').classList.add('active');
+      
+      // Mettre à jour le type de graphique actuel
+      currentChartType = chartType;
+      
+      // Mettre à jour le titre du graphique principal
+      const chartTitles = {
+        'revenue': 'Évolution du chiffre d\'affaires',
+        'expenses': 'Évolution des dépenses',
+        'profit': 'Évolution du bénéfice net',
+        'invoices': 'Évolution du nombre de factures'
+      };
+      document.getElementById('chartTitle').textContent = chartTitles[chartType];
+      
+      // Mettre à jour le titre du graphique circulaire
+      const paymentChartTitles = {
+        'revenue': 'Répartition des paiements',
+        'expenses': 'Modes de paiement des dépenses',
+        'profit': 'Répartition des paiements',
+        'invoices': 'Répartition des paiements'
+      };
+      document.getElementById('paymentChartTitle').textContent = paymentChartTitles[chartType];
+      
+      // Recharger les données filtrées et mettre à jour le graphique
+      const filteredRecettes = filterRecettesByPeriod(recettes, currentPeriod);
+      const filteredAchats = filterRecettesByPeriod(achats, currentPeriod);
+      updateCharts(filteredRecettes, filteredAchats);
+    }
+    
+    function filterRecettesByPeriod(recettes, period) {
+      const now = new Date();
+      
+      switch(period) {
+        case 'month':
+          return recettes.filter(r => {
+            const date = new Date(r.date);
+            return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+          });
+        case 'quarter':
+          const currentQuarter = Math.floor(now.getMonth() / 3);
+          return recettes.filter(r => {
+            const date = new Date(r.date);
+            const quarter = Math.floor(date.getMonth() / 3);
+            return quarter === currentQuarter && date.getFullYear() === now.getFullYear();
+          });
+        case 'year':
+          return recettes.filter(r => {
+            const date = new Date(r.date);
+            return date.getFullYear() === now.getFullYear();
+          });
+        default:
+          return recettes;
+      }
+    }
+    
+    function updateStatistics(filteredRecettes, filteredAchats) {
+      // Calcul des statistiques
+      const totalRevenue = filteredRecettes.reduce((sum, r) => sum + r.montantTTC, 0);
+      const totalExpenses = filteredAchats.reduce((sum, a) => sum + a.montantTTC, 0);
+      const netProfit = totalRevenue - totalExpenses;
+      const totalInvoices = filteredRecettes.length;
+      const averageInvoice = totalInvoices > 0 ? totalRevenue / totalInvoices : 0;
+      
+      // Calcul de l'évolution mensuelle pour les recettes
+      const now = new Date();
+      const currentMonth = now.getMonth();
+      const currentYear = now.getFullYear();
+      
+      const currentMonthRecettes = recettes.filter(r => {
+        const date = new Date(r.date);
+        return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+      });
+      
+      const lastMonthRecettes = recettes.filter(r => {
+        const date = new Date(r.date);
+        const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+        const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+        return date.getMonth() === lastMonth && date.getFullYear() === lastMonthYear;
+      });
+      
+      const currentMonthTotal = currentMonthRecettes.reduce((sum, r) => sum + r.montantTTC, 0);
+      const lastMonthTotal = lastMonthRecettes.reduce((sum, r) => sum + r.montantTTC, 0);
+      
+      const revenueMonthChange = lastMonthTotal > 0 ? 
+        ((currentMonthTotal - lastMonthTotal) / lastMonthTotal * 100).toFixed(1) : 0;
+      
+      // Calcul de l'évolution mensuelle pour les dépenses
+      const currentMonthAchats = achats.filter(a => {
+        const date = new Date(a.date);
+        return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+      });
+      
+      const lastMonthAchats = achats.filter(a => {
+        const date = new Date(a.date);
+        const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+        const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+        return date.getMonth() === lastMonth && date.getFullYear() === lastMonthYear;
+      });
+      
+      const currentMonthExpenses = currentMonthAchats.reduce((sum, a) => sum + a.montantTTC, 0);
+      const lastMonthExpenses = lastMonthAchats.reduce((sum, a) => sum + a.montantTTC, 0);
+      
+      const expensesMonthChange = lastMonthExpenses > 0 ? 
+        ((currentMonthExpenses - lastMonthExpenses) / lastMonthExpenses * 100).toFixed(1) : 0;
+      
+      // Mise à jour de l'affichage
+      document.getElementById('totalRevenue').textContent = totalRevenue.toFixed(2) + ' €';
+      document.getElementById('totalExpenses').textContent = totalExpenses.toFixed(2) + ' €';
+      document.getElementById('netProfit').textContent = netProfit.toFixed(2) + ' €';
+      document.getElementById('totalInvoices').textContent = totalInvoices;
+      
+      // Gestion de l'affichage bénéfice/déficit
+      const profitCard = document.querySelector('.stat-card.profit');
+      const profitIcon = profitCard.querySelector('.stat-icon');
+      const profitLabel = profitCard.querySelector('.stat-label');
+      
+      if (netProfit < 0) {
+        // Déficit : changer l'émoji et le label
+        profitIcon.textContent = '📉';
+        profitLabel.textContent = 'Déficit net';
+      } else {
+        // Bénéfice : émoji et label par défaut
+        profitIcon.textContent = '📈';
+        profitLabel.textContent = 'Bénéfice net';
+      }
+      
+      // Mise à jour des changements
+      document.getElementById('revenueChange').textContent = 
+        `${revenueMonthChange > 0 ? '+' : ''}${revenueMonthChange}% ce mois`;
+      document.getElementById('expensesChange').textContent = 
+        `${expensesMonthChange > 0 ? '+' : ''}${expensesMonthChange}% ce mois`;
+      // Calcul et affichage de la marge ou du taux de déficit
+      const marginPercentage = totalRevenue > 0 ? ((netProfit / totalRevenue) * 100).toFixed(1) : 0;
+      if (netProfit < 0) {
+        document.getElementById('profitChange').textContent = 
+          `Déficit: ${Math.abs(marginPercentage)}%`;
+      } else {
+        document.getElementById('profitChange').textContent = 
+          `Marge: ${marginPercentage}%`;
+      }
+      document.getElementById('invoicesChange').textContent = 
+        `Moyenne: ${averageInvoice.toFixed(2)} €`;
+    }
+    
+    function updateCharts(filteredRecettes, filteredAchats) {
+      updateRevenueChart(filteredRecettes, filteredAchats);
+      updatePaymentChart(filteredRecettes, filteredAchats);
+    }
+    
+    function updateRevenueChart(filteredRecettes, filteredAchats) {
+      const ctx = document.getElementById('revenueChart').getContext('2d');
+      
+      // Préparer les données selon la période sélectionnée et le type de graphique
+      let labels = [];
+      let data = [];
+      let chartLabel = '';
+      let borderColor = '#1a7ee7';
+      let backgroundColor = 'rgba(26, 126, 231, 0.1)';
+      const now = new Date();
+      
+      // Fonction pour calculer les données selon le type de graphique
+      function calculateChartData(dataSource, dataType) {
+        let periodData = {};
+        
+        if (currentPeriod === 'month') {
+          // Pour "Ce mois" : afficher les jours du mois
+          const currentMonth = now.getMonth();
+          const currentYear = now.getFullYear();
+          const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+          
+          for (let day = 1; day <= daysInMonth; day++) {
+            periodData[day] = 0;
+          }
+          
+          dataSource.forEach(item => {
+            const date = new Date(item.date);
+            if (date.getMonth() === currentMonth && date.getFullYear() === currentYear) {
+              const day = date.getDate();
+              if (dataType === 'invoices') {
+                periodData[day]++;
+              } else {
+                periodData[day] += item.montantTTC;
+              }
+            }
+          });
+          
+          labels = Object.keys(periodData).map(day => `${day} ${now.toLocaleDateString('fr-FR', { month: 'short' })}`);
+          
+        } else if (currentPeriod === 'quarter') {
+          // Pour "Ce trimestre" : afficher les 3 mois du trimestre
+          const currentQuarter = Math.floor(now.getMonth() / 3);
+          const quarterStartMonth = currentQuarter * 3;
+          
+          for (let i = 0; i < 3; i++) {
+            const month = quarterStartMonth + i;
+            const date = new Date(now.getFullYear(), month, 1);
+            const key = `${date.getFullYear()}-${String(month + 1).padStart(2, '0')}`;
+            periodData[key] = 0;
+          }
+          
+          dataSource.forEach(item => {
+            const date = new Date(item.date);
+            const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+            if (periodData.hasOwnProperty(key)) {
+              if (dataType === 'invoices') {
+                periodData[key]++;
+              } else {
+                periodData[key] += item.montantTTC;
+              }
+            }
+          });
+          
+          labels = Object.keys(periodData).map(key => {
+            const [year, month] = key.split('-');
+            const date = new Date(parseInt(year), parseInt(month) - 1);
+            return date.toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
+          });
+          
+        } else if (currentPeriod === 'year') {
+          // Pour "Cette année" : afficher les 12 mois de l'année
+          for (let month = 0; month < 12; month++) {
+            const date = new Date(now.getFullYear(), month, 1);
+            const key = `${date.getFullYear()}-${String(month + 1).padStart(2, '0')}`;
+            periodData[key] = 0;
+          }
+          
+          dataSource.forEach(item => {
+            const date = new Date(item.date);
+            const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+            if (periodData.hasOwnProperty(key)) {
+              if (dataType === 'invoices') {
+                periodData[key]++;
+              } else {
+                periodData[key] += item.montantTTC;
+              }
+            }
+          });
+          
+          labels = Object.keys(periodData).map(key => {
+            const [year, month] = key.split('-');
+            const date = new Date(parseInt(year), parseInt(month) - 1);
+            return date.toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
+          });
+          
+        } else {
+          // Pour "Tout" : afficher les 12 derniers mois
+          for (let i = 11; i >= 0; i--) {
+            const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+            periodData[key] = 0;
+          }
+          
+          dataSource.forEach(item => {
+            const date = new Date(item.date);
+            const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+            if (periodData.hasOwnProperty(key)) {
+              if (dataType === 'invoices') {
+                periodData[key]++;
+              } else {
+                periodData[key] += item.montantTTC;
+              }
+            }
+          });
+          
+          labels = Object.keys(periodData).map(key => {
+            const [year, month] = key.split('-');
+            const date = new Date(parseInt(year), parseInt(month) - 1);
+            return date.toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
+          });
+        }
+        
+        // Calculer le cumul pour les montants, pas pour les factures
+        if (dataType === 'invoices') {
+          data = Object.values(periodData);
+        } else {
+          let cumul = 0;
+          data = Object.values(periodData).map(value => {
+            cumul += value;
+            return cumul;
+          });
+        }
+      }
+      
+      // Calculer les données selon le type de graphique
+      switch (currentChartType) {
+        case 'revenue':
+          calculateChartData(filteredRecettes, 'revenue');
+          chartLabel = 'Chiffre d\'affaires cumulé (€)';
+          borderColor = '#1a7ee7';
+          backgroundColor = 'rgba(26, 126, 231, 0.1)';
+          break;
+          
+        case 'expenses':
+          calculateChartData(filteredAchats, 'expenses');
+          chartLabel = 'Dépenses cumulées (€)';
+          borderColor = '#e74c3c';
+          backgroundColor = 'rgba(231, 76, 60, 0.1)';
+          break;
+          
+        case 'profit':
+          // Pour le bénéfice, on doit calculer la différence entre recettes et dépenses
+          const revenueData = {};
+          const expensesData = {};
+          
+          // Initialiser les données pour les recettes et dépenses
+          if (currentPeriod === 'month') {
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+              revenueData[day] = 0;
+              expensesData[day] = 0;
+            }
+            
+            filteredRecettes.forEach(recette => {
+              const date = new Date(recette.date);
+              if (date.getMonth() === currentMonth && date.getFullYear() === currentYear) {
+                const day = date.getDate();
+                revenueData[day] += recette.montantTTC;
+              }
+            });
+            
+            filteredAchats.forEach(achat => {
+              const date = new Date(achat.date);
+              if (date.getMonth() === currentMonth && date.getFullYear() === currentYear) {
+                const day = date.getDate();
+                expensesData[day] += achat.montantTTC;
+              }
+            });
+            
+            labels = Object.keys(revenueData).map(day => `${day} ${now.toLocaleDateString('fr-FR', { month: 'short' })}`);
+            
+          } else {
+            // Pour les autres périodes, utiliser les mois
+            const monthlyKeys = [];
+            if (currentPeriod === 'quarter') {
+              const currentQuarter = Math.floor(now.getMonth() / 3);
+              const quarterStartMonth = currentQuarter * 3;
+              for (let i = 0; i < 3; i++) {
+                const month = quarterStartMonth + i;
+                const date = new Date(now.getFullYear(), month, 1);
+                const key = `${date.getFullYear()}-${String(month + 1).padStart(2, '0')}`;
+                monthlyKeys.push(key);
+                revenueData[key] = 0;
+                expensesData[key] = 0;
+              }
+            } else if (currentPeriod === 'year') {
+              for (let month = 0; month < 12; month++) {
+                const date = new Date(now.getFullYear(), month, 1);
+                const key = `${date.getFullYear()}-${String(month + 1).padStart(2, '0')}`;
+                monthlyKeys.push(key);
+                revenueData[key] = 0;
+                expensesData[key] = 0;
+              }
+            } else {
+              for (let i = 11; i >= 0; i--) {
+                const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                monthlyKeys.push(key);
+                revenueData[key] = 0;
+                expensesData[key] = 0;
+              }
+            }
+            
+            filteredRecettes.forEach(recette => {
+              const date = new Date(recette.date);
+              const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+              if (revenueData.hasOwnProperty(key)) {
+                revenueData[key] += recette.montantTTC;
+              }
+            });
+            
+            filteredAchats.forEach(achat => {
+              const date = new Date(achat.date);
+              const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+              if (expensesData.hasOwnProperty(key)) {
+                expensesData[key] += achat.montantTTC;
+              }
+            });
+            
+            labels = monthlyKeys.map(key => {
+              const [year, month] = key.split('-');
+              const date = new Date(parseInt(year), parseInt(month) - 1);
+              return date.toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
+            });
+          }
+          
+          // Calculer le bénéfice cumulé
+          let cumulProfit = 0;
+          const keys = Object.keys(revenueData);
+          data = keys.map(key => {
+            const profit = revenueData[key] - expensesData[key];
+            cumulProfit += profit;
+            return cumulProfit;
+          });
+          
+          chartLabel = 'Bénéfice net cumulé (€)';
+          borderColor = '#27ae60';
+          backgroundColor = 'rgba(39, 174, 96, 0.1)';
+          break;
+          
+        case 'invoices':
+          calculateChartData(filteredRecettes, 'invoices');
+          chartLabel = 'Nombre de factures';
+          borderColor = '#8e44ad';
+          backgroundColor = 'rgba(142, 68, 173, 0.1)';
+          break;
+      }
+      
+            if (revenueChart) {
+        revenueChart.destroy();
+      }
+      
+      revenueChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: chartLabel,
+            data: data,
+            borderColor: borderColor,
+            backgroundColor: backgroundColor,
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: currentChartType !== 'profit',
+              ticks: {
+                callback: function(value) {
+                  if (currentChartType === 'invoices') {
+                    return value.toFixed(0);
+                  } else {
+                    return value.toFixed(0) + ' €';
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    function updatePaymentChart(filteredRecettes, filteredAchats) {
+      const ctx = document.getElementById('paymentChart').getContext('2d');
+      
+      let paymentMethods = {};
+      let chartTitle = '';
+      let colors = ['#1a7ee7', '#27ae60', '#e74c3c', '#f39c12', '#8e44ad'];
+      
+      // Choisir les données selon le type de graphique actuel
+      if (currentChartType === 'expenses') {
+        // Pour les dépenses, afficher les modes de paiement des achats
+        filteredAchats.forEach(achat => {
+          const method = achat.modePaiement || 'Non spécifié';
+          paymentMethods[method] = (paymentMethods[method] || 0) + achat.montantTTC;
+        });
+        chartTitle = 'Modes de paiement des dépenses';
+        colors = ['#e74c3c', '#c0392b', '#d35400', '#e67e22', '#f39c12'];
+      } else {
+        // Pour les autres types, afficher les modes de paiement des recettes
+        filteredRecettes.forEach(recette => {
+          const method = recette.modePaiement || 'Non spécifié';
+          paymentMethods[method] = (paymentMethods[method] || 0) + recette.montantTTC;
+        });
+        chartTitle = 'Répartition des paiements';
+      }
+      
+      const methodLabels = {
+        'virement': 'Virement',
+        'cheque': 'Chèque',
+        'carte': 'Carte bancaire',
+        'espece': 'Espèce'
+      };
+      
+      const labels = Object.keys(paymentMethods).map(key => methodLabels[key] || key);
+      const data = Object.values(paymentMethods);
+      
+      if (paymentChart) {
+        paymentChart.destroy();
+      }
+      
+      if (data.length === 0) {
+        // Afficher un message si pas de données
+        ctx.fillStyle = '#666';
+        ctx.font = '16px Montserrat';
+        ctx.textAlign = 'center';
+        ctx.fillText('Aucune donnée disponible', ctx.canvas.width / 2, ctx.canvas.height / 2);
+        return;
+      }
+      
+      paymentChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            backgroundColor: colors,
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+    }
+    
+    function updateRecentActivity() {
+      const activityList = document.getElementById('activityList');
+      
+      // Combiner recettes et achats
+      const allActivities = [
+        ...recettes.map(r => ({...r, type: 'recette'})),
+        ...achats.map(a => ({...a, type: 'achat'}))
+      ].sort((a, b) => new Date(b.date) - new Date(a.date))
+       .slice(0, 10);
+      
+      if (allActivities.length === 0) {
+        activityList.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">💼</div>
+            <p>Aucune activité récente</p>
+            <p>Créez votre première facture ou enregistrez un achat pour commencer</p>
+          </div>
+        `;
+        return;
+      }
+      
+      activityList.innerHTML = allActivities.map(activity => {
+        const isRecette = activity.type === 'recette';
+        const icon = isRecette ? '💰' : '🛒';
+        const prefix = isRecette ? 'Facture' : 'Achat';
+        const numero = isRecette ? activity.numeroFacture : activity.numeroFacture;
+        const nom = isRecette ? activity.client : activity.fournisseur;
+        const amountClass = isRecette ? 'activity-amount' : 'activity-amount-negative';
+        
+        return `
+          <div class="activity-item">
+            <div class="activity-icon">${icon}</div>
+            <div class="activity-content">
+              <div class="activity-text">
+                ${prefix} ${numero} - ${nom}
+              </div>
+              <div class="activity-date">
+                ${new Date(activity.date).toLocaleDateString('fr-FR')}
+              </div>
+            </div>
+            <div class="${amountClass}">
+              ${isRecette ? '+' : '-'}${activity.montantTTC.toFixed(2)} €
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    // Rafraîchir les données périodiquement
+    setInterval(function() {
+      const newRecettes = localStorage.getItem('recettes');
+      const newAchats = localStorage.getItem('achats');
+      
+      let dataChanged = false;
+      
+      if (newRecettes) {
+        const parsedRecettes = JSON.parse(newRecettes);
+        if (JSON.stringify(parsedRecettes) !== JSON.stringify(recettes)) {
+          recettes = parsedRecettes;
+          dataChanged = true;
+        }
+      }
+      
+      if (newAchats) {
+        const parsedAchats = JSON.parse(newAchats);
+        if (JSON.stringify(parsedAchats) !== JSON.stringify(achats)) {
+          achats = parsedAchats;
+          dataChanged = true;
+        }
+      }
+      
+      if (dataChanged) {
+        updateDashboard();
+      }
+    }, 5000);
+  </script>
+  
+  <div class="footer">
+    Made with ❤️ by <a href="https://github.com/AllieEco" target="_blank">AllieEco</a>
+  </div>
+</body>
+</html> 
