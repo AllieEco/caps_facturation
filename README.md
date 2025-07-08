@@ -5,7 +5,8 @@
 
 ## 📸 Aperçu de la suite
 
-![image](https://github.com/user-attachments/assets/00e7df91-dc6d-4f89-b347-473fbcf9743c)
+![image](https://github.com/user-attachments/assets/34ea8ebe-5925-4639-bd85-b307c5d35e97)
+
 
 *Interface moderne et intuitive avec navigation multi-pages*
 
