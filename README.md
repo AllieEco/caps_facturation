@@ -7,7 +7,6 @@
 
 ![image](https://github.com/user-attachments/assets/34ea8ebe-5925-4639-bd85-b307c5d35e97)
 
-
 *Interface moderne et intuitive avec navigation multi-pages*
 
 Une **suite de gestion comptable complète** **100% gratuite** et **conforme** pour tous les entrepreneurs français. **Tableau de bord intelligent**, générateur de factures, gestion des recettes et suivi des achats en toute simplicité !
@@ -22,8 +21,12 @@ Une **suite de gestion comptable complète** **100% gratuite** et **conforme** p
 - **🔄 Mise à jour automatique** : Synchronisation toutes les 5 secondes
 - **📱 Interface responsive** : Parfait sur mobile et desktop
 
-## 🆕 **NOUVELLE VERSION 4.2 : Footers harmonisés !**
-- **🎯 Footers unifiés** : "Made with ❤️ by AllieEco" sur toutes les pages
+## 🆕 **NOUVELLE VERSION 4.3 : Structure de fichiers organisée !**
+- **📁 Organisation claire** : Fichiers rangés dans des dossiers logiques
+- **🎯 Assets centralisés** : Images, CSS et JS dans des dossiers dédiés
+- **📄 Pages séparées** : Modules HTML dans le dossier `pages/`
+- **⚙️ Configuration isolée** : Fichiers de config dans `config/`
+- **🎨 Templates réutilisables** : Headers et footers dans `templates/`
 - **📊 Tableau de bord comptable** : Vue d'ensemble financière en temps réel
 - **📈 Indicateurs intelligents** : Bénéfice/déficit automatique avec émojis adaptatifs
 - **📊 Graphiques interactifs** : Évolution du CA et répartition des paiements
@@ -170,7 +173,7 @@ Une **suite de gestion comptable complète** **100% gratuite** et **conforme** p
 - **Livrables garantis** : Liste des prestations promises
 - **Section d'acceptation** : Zone pour signature client
 
-### 2️⃣ **📊 Livre de Recette**
+### 3️⃣ **📊 Livre de Recette**
 
 #### **Tableau de bord financier**
 - **Statistiques en temps réel** : Total recettes, recettes du mois, moyenne
@@ -198,7 +201,7 @@ Une **suite de gestion comptable complète** **100% gratuite** et **conforme** p
 - **Suppression sécurisée** : Gestion des recettes avec confirmation
 - **Vider le livre** : Remise à zéro avec double confirmation
 
-### 3️⃣ **🛒 Registre d'Achat**
+### 4️⃣ **🛒 Registre d'Achat**
 
 #### **Fonctionnalités principales**
 - **📋 Suivi des achats** : Enregistrement complet des dépenses
@@ -223,12 +226,12 @@ Une **suite de gestion comptable complète** **100% gratuite** et **conforme** p
 - **Styles centralisés** : Cohérence parfaite sur toutes les pages
 
 ### **Fichiers de support**
-- **`header-styles.css`** : Styles harmonisés pour tous les headers
-- **`header-template.html`** : Template HTML réutilisable
-- **`header-script.js`** : Gestion automatique de l'état actif
-- **`footer-styles.css`** : Styles harmonisés pour tous les footers
-- **`footer-template.html`** : Template HTML réutilisable
-- **`footer-script.js`** : Gestion automatique de l'insertion du footer
+- **`assets/css/header-styles.css`** : Styles harmonisés pour tous les headers
+- **`templates/header-template.html`** : Template HTML réutilisable
+- **`assets/js/header-script.js`** : Gestion automatique de l'état actif
+- **`assets/css/footer-styles.css`** : Styles harmonisés pour tous les footers
+- **`templates/footer-template.html`** : Template HTML réutilisable
+- **`assets/js/footer-script.js`** : Gestion automatique de l'insertion du footer
 
 ### **Liens rapides**
 - **Tableau de bord** → **Devis/Facture** : Créez une nouvelle facture depuis les actions rapides
@@ -249,16 +252,11 @@ Une **suite de gestion comptable complète** **100% gratuite** et **conforme** p
 #### **Téléchargement**
 1. Cliquez sur "Code" → "Download ZIP" sur GitHub
 2. Décompressez le fichier sur votre ordinateur
-3. Vous obtenez les fichiers :
-   - `index.html` : **Tableau de bord principal** (page d'accueil)
-   - `facture.html` : Générateur de factures/devis
-   - `livre_recette.html` : Livre de recette
-   - `registre_achat.html` : Registre d'achat
-   - `config.example.js` : Configuration par défaut
+3. Vous obtenez la structure organisée suivante :
 
 #### **Configuration initiale**
-1. Copiez le fichier `config.example.js` et renommez-le `config.js`
-2. Ouvrez `config.js` avec un éditeur de texte (Bloc-notes, TextEdit...)
+1. Copiez le fichier `config/config.example.js` et renommez-le `config/config.js`
+2. Ouvrez `config/config.js` avec un éditeur de texte (Bloc-notes, TextEdit...)
 3. Remplissez vos informations d'entreprise :
 
 ```javascript
@@ -305,7 +303,7 @@ const CONFIG = {
 
 ### 2️⃣ **Lancement de la suite**
 - Ouvrez le fichier `index.html` dans votre navigateur web pour accéder au tableau de bord
-- Ou ouvrez directement `facture.html` pour commencer par la facturation
+- Ou ouvrez directement `pages/facture.html` pour commencer par la facturation
 - Vos informations sont automatiquement pré-remplies
 - Utilisez les boutons du header pour naviguer entre les modules
 
@@ -369,7 +367,7 @@ const CONFIG = {
 - **PDF** : Cliquez "Enregistrer en PDF"
 - **CSV** : Cliquez "Exporter en CSV"
 
-### 4️⃣ **Utilisation du livre de recette**
+### 5️⃣ **Utilisation du livre de recette**
 
 #### **Accès au module**
 - Cliquez sur "Livre de recette" dans le header
@@ -441,7 +439,7 @@ const CONFIG = {
 - Stockage local (localStorage) uniquement
 
 ### ✅ **Protection de votre configuration**
-- Le fichier `config.js` reste sur votre ordinateur
+- Le fichier `config/config.js` reste sur votre ordinateur
 - Livre de recette stocké localement
 - Vous contrôlez 100% de vos données
 
@@ -454,21 +452,28 @@ const CONFIG = {
 
 ```
 caps_facturation/
-├── index.html           # Tableau de bord principal (page d'accueil)
-├── facture.html          # Générateur de factures/devis
-├── livre_recette.html    # Livre de recette
-├── registre_achat.html   # Registre d'achat
-├── config.example.js     # Configuration par défaut
-├── config.js            # Votre configuration (à créer)
-├── logo_capslock.png    # Logo de l'application
-├── header-styles.css    # Styles harmonisés du header
-├── header-template.html # Template HTML du header
-├── header-script.js     # Script de gestion du header
-├── footer-styles.css    # Styles harmonisés du footer
-├── footer-template.html # Template HTML du footer
-├── footer-script.js     # Script de gestion du footer
-├── LICENSE              # Licence MIT
-└── README.md           # Ce fichier
+├── index.html                    # Tableau de bord principal (page d'accueil)
+├── pages/                        # Modules de l'application
+│   ├── facture.html             # Générateur de factures/devis
+│   ├── livre_recette.html       # Livre de recette
+│   └── registre_achat.html      # Registre d'achat
+├── assets/                       # Ressources de l'application
+│   ├── images/                  # Images et logos
+│   │   └── logo_capslock.png    # Logo de l'application
+│   ├── css/                     # Styles CSS
+│   │   ├── header-styles.css    # Styles harmonisés du header
+│   │   └── footer-styles.css    # Styles harmonisés du footer
+│   └── js/                      # Scripts JavaScript
+│       ├── header-script.js     # Script de gestion du header
+│       └── footer-script.js     # Script de gestion du footer
+├── templates/                    # Templates HTML réutilisables
+│   ├── header-template.html     # Template HTML du header
+│   └── footer-template.html     # Template HTML du footer
+├── config/                       # Configuration de l'application
+│   ├── config.example.js        # Configuration par défaut
+│   └── config.js               # Votre configuration (à créer)
+├── LICENSE                       # Licence MIT
+└── README.md                    # Ce fichier
 ```
 
 ## 📞 Support et aide
@@ -523,6 +528,15 @@ Ce projet est sous licence MIT. Vous êtes libre de :
 - ✅ Utiliser en privé
 
 ## 🔄 Historique des versions
+
+### Version 4.3 - 📁 STRUCTURE ORGANISÉE
+- **📁 Organisation claire** : Fichiers rangés dans des dossiers logiques
+- **🎯 Assets centralisés** : Images, CSS et JS dans des dossiers dédiés
+- **📄 Pages séparées** : Modules HTML dans le dossier `pages/`
+- **⚙️ Configuration isolée** : Fichiers de config dans `config/`
+- **🎨 Templates réutilisables** : Headers et footers dans `templates/`
+- **🔗 Chemins mis à jour** : Tous les liens corrigés pour la nouvelle structure
+- **📱 Navigation optimisée** : Liens relatifs fonctionnels sur toutes les pages
 
 ### Version 4.2 - 🎨 FOOTERS HARMONISÉS
 - **🎯 Footers unifiés** : "Made with ❤️ by AllieEco" sur toutes les pages
