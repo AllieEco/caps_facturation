@@ -5,7 +5,7 @@
 
 ## 📸 Aperçu de la suite
 
-![image](https://github.com/user-attachments/assets/34ea8ebe-5925-4639-bd85-b307c5d35e97)
+![image](https://github.com/user-attachments/assets/1d1a186c-4762-4b8b-8234-243a0cb27995)
 
 *Interface moderne et intuitive avec navigation multi-pages*
 
@@ -123,6 +123,9 @@ Une **suite de gestion comptable complète** **100% gratuite** et **conforme** p
 
 ### 2️⃣ **🧾 Générateur de Factures/Devis**
 
+![image](https://github.com/user-attachments/assets/92c2f122-663b-47fb-ae16-9ff4be1d5b03)
+
+
 #### **Fonctionnalités principales**
 - **Mode DEVIS/FACTURE** : Bascule d'un simple clic
 - **4 statuts juridiques** : Micro-entreprise, SASU, EURL, SARL
@@ -175,6 +178,9 @@ Une **suite de gestion comptable complète** **100% gratuite** et **conforme** p
 
 ### 3️⃣ **📊 Livre de Recette**
 
+![image](https://github.com/user-attachments/assets/0a7757a3-0d86-4463-890a-a8286b212af0)
+
+
 #### **Tableau de bord financier**
 - **Statistiques en temps réel** : Total recettes, recettes du mois, moyenne
 - **Graphiques visuels** : Évolution de vos revenus
@@ -202,6 +208,9 @@ Une **suite de gestion comptable complète** **100% gratuite** et **conforme** p
 - **Vider le livre** : Remise à zéro avec double confirmation
 
 ### 4️⃣ **🛒 Registre d'Achat**
+
+![image](https://github.com/user-attachments/assets/c8207f5e-8b0e-4cc7-994b-dbafc9b67f92)
+
 
 #### **Fonctionnalités principales**
 - **📋 Suivi des achats** : Enregistrement complet des dépenses
