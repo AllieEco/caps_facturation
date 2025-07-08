@@ -12,7 +12,9 @@
 
 Une **suite de gestion comptable complète** **100% gratuite** et **conforme** pour tous les entrepreneurs français. Générez des factures, gérez vos recettes, et suivez vos achats en toute simplicité !
 
-## 🆕 **NOUVELLE VERSION 3.0 : Suite complète !**
+## 🆕 **NOUVELLE VERSION 4.0 : Support SARL + Gestion clients !**
+- **🏢 Support SARL complet** : Nouveau statut juridique avec toutes les spécificités
+- **👥 Gestion clients intelligente** : Distinction automatique particuliers/entreprises
 - **🧾 Générateur de factures/devis** : Créez des documents professionnels
 - **📊 Livre de recette** : Suivez toutes vos recettes et statistiques
 - **🛒 Registre d'achat** : Gérez vos achats professionnels (bientôt disponible)
@@ -21,10 +23,17 @@ Une **suite de gestion comptable complète** **100% gratuite** et **conforme** p
 
 ## 🎯 Pourquoi choisir cette suite ?
 
-### ✅ **Adapté aux statuts juridiques français**
+### ✅ **Adapté aux 4 statuts juridiques français**
 - **Micro-entreprise** : TVA non applicable, mentions spécifiques
 - **SASU** : TVA 20% automatique, capital social, président, informations complètes
 - **EURL** : TVA 20% automatique, gérant, associé unique
+- **SARL** : TVA 20% automatique, capital social, gérant, associés
+
+### ✅ **Gestion clients intelligente**
+- **Particuliers** : Interface simplifiée sans SIRET/TVA
+- **Entreprises** : Champs SIRET et TVA automatiques
+- **Case à cocher** : "Le client est-il une entreprise ?"
+- **Documents adaptés** : Mentions selon le type de client
 
 ### ✅ **Suite complète de gestion**
 - **Facturation** : Créez factures et devis professionnels
@@ -50,7 +59,8 @@ Une **suite de gestion comptable complète** **100% gratuite** et **conforme** p
 
 #### **Fonctionnalités principales**
 - **Mode DEVIS/FACTURE** : Bascule d'un simple clic
-- **Multi-statuts** : Micro-entreprise, SASU, EURL
+- **4 statuts juridiques** : Micro-entreprise, SASU, EURL, SARL
+- **Gestion clients** : Particuliers et entreprises
 - **Calcul automatique** : TVA, totaux, acomptes
 - **Export professionnel** : PDF haute qualité + CSV
 - **Aperçu temps réel** : Voyez votre document se construire
@@ -75,6 +85,21 @@ Une **suite de gestion comptable complète** **100% gratuite** et **conforme** p
 - ✅ Informations TVA avec régime réel normal
 - ✅ Mentions légales EURL complètes
 
+**SARL (Société à Responsabilité Limitée)** 🆕
+- ✅ Calcul automatique **HT et TTC** (TVA 20%)
+- ✅ Champs spécifiques : Capital social, Gérant, Associés, N° TVA
+- ✅ Date de création et RCS automatiques
+- ✅ Informations TVA avec régime réel normal
+- ✅ Mentions légales SARL complètes
+- ✅ Pénalités de retard : 3 fois le taux légal (3,99%)
+
+#### **Gestion clients intelligente** 🆕
+- **Case à cocher** : "Le client est-il une entreprise ?"
+- **Particuliers** : Affichage simplifié sans SIRET/TVA
+- **Entreprises** : Champs SIRET et N° TVA automatiques
+- **Documents adaptés** : Mentions selon le type de client
+- **Export CSV** : Différenciation particuliers/entreprises
+
 #### **Fonctionnalités avancées des devis**
 - **Validité personnalisable** : De 1 à 365 jours
 - **Système d'acompte** : Pourcentage flexible (10-90%)
@@ -82,7 +107,7 @@ Une **suite de gestion comptable complète** **100% gratuite** et **conforme** p
 - **Livrables garantis** : Liste des prestations promises
 - **Section d'acceptation** : Zone pour signature client
 
-### 2️⃣ **📊 Livre de Recette** *(NOUVEAU !)*
+### 2️⃣ **📊 Livre de Recette**
 
 #### **Tableau de bord financier**
 - **Statistiques en temps réel** : Total recettes, recettes du mois, moyenne
@@ -105,6 +130,7 @@ Une **suite de gestion comptable complète** **100% gratuite** et **conforme** p
 
 #### **Export et sauvegarde**
 - **Export CSV** : Compatible Excel et comptabilité
+- **Export PDF professionnel** : Livre de recette complet avec en-têtes
 - **Sauvegarde locale** : Données stockées sur votre ordinateur
 - **Suppression sécurisée** : Gestion des recettes avec confirmation
 - **Vider le livre** : Remise à zéro avec double confirmation
@@ -158,7 +184,7 @@ Une **suite de gestion comptable complète** **100% gratuite** et **conforme** p
 ```javascript
 const CONFIG = {
   // Choisissez votre statut
-  statutJuridique: "micro", // "micro", "sasu" ou "eurl"
+  statutJuridique: "micro", // "micro", "sasu", "eurl" ou "sarl"
   
   // Vos informations (remplacez par vos vraies données)
   emetteurNom: "Votre Nom ou Raison Sociale",
@@ -186,7 +212,14 @@ const CONFIG = {
   numTvaEurl: "FR12345678901",
   dateCreationEurl: "2024-01-01",
   gerantEurl: "Votre Nom",
-  associeUniqueEurl: "Votre Nom"
+  associeUniqueEurl: "Votre Nom",
+  
+  // Pour les SARL (si statutJuridique = "sarl")
+  capitalSocialSarl: "5000",
+  numTvaSarl: "FR12345678901",
+  dateCreationSarl: "2024-01-01",
+  gerantSarl: "Prénom NOM Gérant",
+  associesSarl: "Associé 1, Associé 2"
 };
 ```
 
@@ -204,7 +237,9 @@ const CONFIG = {
 
 #### **Étape 2 : Compléter les informations**
 - **Vos données** : Pré-remplies depuis la configuration
-- **Client** : Nom, adresse, SIRET si entreprise
+- **Statut juridique** : Sélectionnez votre statut (micro, SASU, EURL, SARL)
+- **Client** : Nom, adresse
+- **Type de client** : Cochez "Le client est-il une entreprise ?" si nécessaire
 - **Document** : Numéro, date, période
 
 #### **Étape 3 : Ajouter les prestations**
@@ -246,6 +281,7 @@ const CONFIG = {
 #### **Gestion des données**
 - **Suppression** : Bouton 🗑️ sur chaque ligne
 - **Export CSV** : Bouton "Exporter en CSV"
+- **Export PDF** : Livre de recette professionnel par année
 - **Vider le livre** : Bouton "Vider le livre" (avec confirmations)
 
 ## 🎯 Exemples d'utilisation
@@ -256,6 +292,11 @@ const CONFIG = {
 3. **Devis accepté** : Basculer en mode FACTURE
 4. **Envoyer la facture** : Export PDF de la facture
 5. **Paiement reçu** : Enregistrer dans le livre de recette
+
+### **Gestion clients particuliers/entreprises**
+1. **Client particulier** : Ne pas cocher la case "entreprise"
+2. **Client entreprise** : Cocher la case et remplir SIRET/TVA
+3. **Documents adaptés** : Les mentions s'ajustent automatiquement
 
 ### **Suivi mensuel des recettes**
 1. **Livre de recette** : Filtrer par mois en cours
@@ -291,7 +332,7 @@ const CONFIG = {
 ```
 caps_facturation/
 ├── facture.html          # Générateur de factures/devis
-├── livre_recette.html    # Livre de recette (NOUVEAU)
+├── livre_recette.html    # Livre de recette
 ├── registre_achat.html   # Registre d'achat (à venir)
 ├── config.example.js     # Configuration par défaut
 ├── config.js            # Votre configuration (à créer)
@@ -353,7 +394,15 @@ Ce projet est sous licence MIT. Vous êtes libre de :
 
 ## 🔄 Historique des versions
 
-### Version 3.0 (2025) - 🆕 SUITE COMPLÈTE
+### Version 4.0 - 🆕 SUPPORT SARL + GESTION CLIENTS
+- **🏢 Support SARL complet** : Nouveau statut juridique avec toutes les spécificités
+- **👥 Gestion clients intelligente** : Distinction automatique particuliers/entreprises
+- **✅ Case à cocher** : "Le client est-il une entreprise ?" pour adapter l'interface
+- **🧾 Documents adaptés** : Mentions SIRET/TVA uniquement pour les entreprises
+- **📊 Export CSV amélioré** : Différenciation particuliers/entreprises dans l'export
+- **🎨 Interface optimisée** : Affichage conditionnel des champs selon le type de client
+
+### Version 3.0 - 🆕 SUITE COMPLÈTE
 - **📊 Livre de recette** : Module complet de gestion des recettes
 - **🔄 Navigation multi-pages** : Header unifié avec navigation
 - **📈 Statistiques avancées** : Tableaux de bord et analyses
@@ -361,14 +410,14 @@ Ce projet est sous licence MIT. Vous êtes libre de :
 - **🎨 Design unifié** : Cohérence visuelle sur tous les modules
 - **📱 Responsive amélioré** : Meilleure expérience mobile
 
-### Version 2.0 (2024) - MODE DEVIS
+### Version 2.0 - MODE DEVIS
 - **Mode DEVIS intégré** : Bascule facile entre devis et facture
 - **Système d'acompte** : Gestion automatique des acomptes
 - **Planning personnalisé** : Démarrage et durée estimée
 - **Champ Président SASU** : Informations complètes pour les SASU
 - **Section d'acceptation** : Zone dédiée pour la signature
 
-### Version 1.0 (2024) - GÉNÉRATEUR DE FACTURES
+### Version 1.0 - GÉNÉRATEUR DE FACTURES
 - Générateur de factures multi-statuts
 - Support micro-entreprise, SASU, EURL
 - Export PDF et CSV
