@@ -235,6 +235,7 @@
           <option value="micro">Micro-entreprise</option>
           <option value="sasu">SASU</option>
           <option value="eurl">EURL</option>
+          <option value="sarl">SARL</option>
         </select>
         <label>Nom de l'entreprise</label>
         <input type="text" id="emetteurNom" value="" required>
@@ -281,6 +282,18 @@
           <input type="text" id="gerantEurl" placeholder="Nom du gérant">
           <label>Associé unique</label>
           <input type="text" id="associeUniqueEurl" placeholder="Nom de l'associé unique">
+        </div>
+        <div id="champsSarl" style="display: none;">
+          <label>Capital social SARL (€)</label>
+          <input type="number" id="capitalSocialSarl" min="0" step="0.01">
+          <label>N° TVA intracommunautaire</label>
+          <input type="text" id="numTvaSarl" placeholder="FR12345678901">
+          <label>Date de création SARL</label>
+          <input type="date" id="dateCreationSarl">
+          <label>Gérant</label>
+          <input type="text" id="gerantSarl" placeholder="Nom du gérant">
+          <label>Associés</label>
+          <input type="text" id="associesSarl" placeholder="Noms des associés">
         </div>
         <label>Email</label>
         <input type="email" id="emetteurEmail" value="" required>
@@ -482,6 +495,7 @@
       const statut = document.getElementById('statutJuridique').value;
       const champsSasu = document.getElementById('champsSasu');
       const champsEurl = document.getElementById('champsEurl');
+      const champsSarl = document.getElementById('champsSarl');
       const champsClientSasu = document.getElementById('champsClientSasu');
       const champsMicroRcs = document.getElementById('champsMicroRcs');
       const champsRcsStandard = document.getElementById('champsRcsStandard');
@@ -498,6 +512,7 @@
       if (statut === 'sasu') {
         champsSasu.style.display = 'block';
         champsEurl.style.display = 'none';
+        champsSarl.style.display = 'none';
         champsClientSasu.style.display = 'block';
         champsMicroRcs.style.display = 'none';
         champsRcsStandard.style.display = 'block';
@@ -525,6 +540,7 @@
       } else if (statut === 'eurl') {
         champsSasu.style.display = 'none';
         champsEurl.style.display = 'block';
+        champsSarl.style.display = 'none';
         champsClientSasu.style.display = 'block';
         champsMicroRcs.style.display = 'none';
         champsRcsStandard.style.display = 'block';
@@ -549,9 +565,38 @@
         emetteurRcs.required = true;
         emetteurVilleRcs.required = true;
         
+      } else if (statut === 'sarl') {
+        champsSasu.style.display = 'none';
+        champsEurl.style.display = 'none';
+        champsSarl.style.display = 'block';
+        champsClientSasu.style.display = 'block';
+        champsMicroRcs.style.display = 'none';
+        champsRcsStandard.style.display = 'block';
+        prixTTCInput.disabled = false;
+        infoTVA.style.display = 'block';
+        infoMicro.style.display = 'none';
+        
+        // Afficher le champ Contact et cacher le champ Président
+        contactLabel.style.display = 'block';
+        emetteurContact.style.display = 'block';
+        emetteurContact.required = true;
+        presidentLabel.style.display = 'none';
+        presidentSasuMain.style.display = 'none';
+        presidentSasuMain.required = false;
+        
+        // Réinitialiser les champs RCS pour SARL
+        const emetteurRcs = document.getElementById('emetteurRcs');
+        const emetteurVilleRcs = document.getElementById('emetteurVilleRcs');
+        if (emetteurRcs.value === 'Dispensé d\'immatriculation au RCS') {
+          emetteurRcs.value = '';
+        }
+        emetteurRcs.required = true;
+        emetteurVilleRcs.required = true;
+        
       } else {
         champsSasu.style.display = 'none';
         champsEurl.style.display = 'none';
+        champsSarl.style.display = 'none';
         champsClientSasu.style.display = 'none';
         champsMicroRcs.style.display = 'block';
         champsRcsStandard.style.display = 'none';
@@ -617,7 +662,7 @@
       const statutJuridique = document.getElementById('statutJuridique').value;
       
       if (!isNaN(prixHT) && prixHT >= 0) {
-        if (statutJuridique === 'sasu' || statutJuridique === 'eurl') {
+        if (statutJuridique === 'sasu' || statutJuridique === 'eurl' || statutJuridique === 'sarl') {
           const prixTTC = prixHT * 1.20; // TVA 20%
           document.getElementById('prixPresta').value = prixTTC.toFixed(2);
         } else {
@@ -634,7 +679,7 @@
       const statutJuridique = document.getElementById('statutJuridique').value;
       
       if (!isNaN(prixTTC) && prixTTC >= 0) {
-        if (statutJuridique === 'sasu' || statutJuridique === 'eurl') {
+        if (statutJuridique === 'sasu' || statutJuridique === 'eurl' || statutJuridique === 'sarl') {
           const prixHT = prixTTC / 1.20; // Déduction TVA 20%
           document.getElementById('prixHT').value = prixHT.toFixed(2);
         } else {
@@ -661,8 +706,8 @@
       if (!titre || !desc) return;
       
       let prixFinal;
-      if (statutJuridique === 'sasu' || statutJuridique === 'eurl') {
-        // Pour SASU et EURL, on peut avoir HT ou TTC, on stocke le TTC
+      if (statutJuridique === 'sasu' || statutJuridique === 'eurl' || statutJuridique === 'sarl') {
+        // Pour SASU, EURL et SARL, on peut avoir HT ou TTC, on stocke le TTC
         if (!isNaN(prixTTC)) {
           prixFinal = prixTTC;
         } else if (!isNaN(prixHT)) {
@@ -735,7 +780,7 @@
       list.innerHTML = '';
       prestations.forEach((p, i) => {
         let prixLabel;
-        if (statutJuridique === 'sasu' || statutJuridique === 'eurl') {
+        if (statutJuridique === 'sasu' || statutJuridique === 'eurl' || statutJuridique === 'sarl') {
           prixLabel = `${p.prix.toFixed(2)} € TTC`;
         } else {
           prixLabel = `${p.prix.toFixed(2)} € HT`;
@@ -784,6 +829,9 @@
         } else if (statutJuridique === 'eurl') {
           // Pour EURL, totalPrix = TTC
           genererFactureEURL(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalPrix);
+        } else if (statutJuridique === 'sarl') {
+          // Pour SARL, totalPrix = TTC
+          genererFactureSARL(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalPrix);
         } else {
           // Pour micro-entreprise, totalPrix = HT
           genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalPrix);
@@ -797,11 +845,267 @@
         } else if (statutJuridique === 'eurl') {
           // Pour EURL, totalPrix = TTC
           genererDevisEURL(numFacture, dateFacture, validiteDevis, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalPrix);
+        } else if (statutJuridique === 'sarl') {
+          // Pour SARL, totalPrix = TTC
+          genererDevisSARL(numFacture, dateFacture, validiteDevis, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalPrix);
         } else {
           // Pour micro-entreprise, totalPrix = HT
           genererDevisMicro(numFacture, dateFacture, validiteDevis, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalPrix);
         }
       }
+    }
+    
+    function genererFactureSARL(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalTTC) {
+      const capitalSocialSarl = document.getElementById('capitalSocialSarl').value;
+      const numTvaSarl = document.getElementById('numTvaSarl').value;
+      const dateCreationSarl = document.getElementById('dateCreationSarl').value;
+      const gerantSarl = document.getElementById('gerantSarl').value;
+      const associesSarl = document.getElementById('associesSarl').value;
+      const clientTva = document.getElementById('clientTva').value;
+      const datePrestation = document.getElementById('datePrestation').value;
+      
+      const totalHT = totalTTC / 1.20; // Calcul HT à partir du TTC
+      const tva = totalTTC - totalHT; // TVA = TTC - HT
+      
+      document.getElementById('factureApercu').innerHTML = `
+        <div class="facture-header">
+          <div class="facture-emetteur">
+            ${logoEntrepriseData ? `<img src="${logoEntrepriseData}" style="max-width: 120px; max-height: 80px; margin-bottom: 10px; display: block;"><br>` : ''}
+            <b style="font-size:1.4rem;">${emetteurNom} SARL</b><br>
+            Adresse complète : ${emetteurAdresse}<br>
+            ${emetteurCodePostal} ${emetteurVille}<br>
+            Tél : ${emetteurTel}<br>
+            Email : ${emetteurEmail}<br><br>
+                         SIRET : ${emetteurSiret || '[SIRET]'}<br>
+             RCS : ${emetteurVilleRcs || '[VILLE]'} ${emetteurRcs || '[N° RCS]'}<br>
+             TVA : ${numTvaSarl || '[N° TVA]'}<br>
+             Capital social : ${capitalSocialSarl || '[CAPITAL]'} €<br>
+             Gérant : ${gerantSarl || '[GÉRANT]'}<br>
+             Associés : ${associesSarl || '[ASSOCIÉS]'}
+          </div>
+          <div style="text-align:right;min-width:220px;">
+            <div class="facture-title">FACTURE</div>
+                         <div class="facture-info">N° <b>${numFacture || 'F001'}</b></div>
+             <div class="facture-info">Date : <b>${dateFacture || '[DATE]'}</b></div>
+            <div class="facture-info">Date d'échéance : <b>${echeance || '[DATE ÉCHÉANCE]'}</b></div>
+          </div>
+        </div>
+        
+        <div class="facture-client-box">
+                     <b>FACTURER À :</b><br>
+          ${clientNom ? `<b>${clientNom}</b><br>` : 'Nom/Raison sociale : [CLIENT ENTREPRISE]<br>'}
+          ${clientAdresse ? `${clientAdresse}<br>` : 'Adresse : [123 Rue du Client]<br>'}
+          ${clientVille ? `${clientVille}<br>` : '[75000 PARIS]<br>'}
+          ${clientTva ? `N° TVA intracommunautaire : ${clientTva}<br>` : 'N° TVA intracommunautaire : [N° TVA] (si applicable)<br>'}
+        </div>
+        
+        <table class="facture-table">
+          <tr>
+                         <th>DÉSIGNATION</th>
+            <th>QUANTITÉ</th>
+            <th>PRIX UNITAIRE HT</th>
+            <th>TVA</th>
+            <th>TOTAL HT</th>
+          </tr>
+          ${prestations.length === 0 ? `<tr><td colspan='5' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
+            prestations.map(p => {
+              const prixHT = p.prix / 1.20; // Pour SARL, HT = TTC / 1.20
+              const totalHT = prixHT * (p.qte || 1);
+              return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:center;'>20%</td><td style='text-align:right;'>${totalHT.toFixed(2)} €</td></tr>`;
+            }).join('')}
+        </table>
+        
+        <div class="facture-total">
+          <b>TOTAL HT : ${totalHT.toFixed(2)} €</b><br>
+          <b>TVA (20%) : ${tva.toFixed(2)} €</b><br>
+                     <span style="font-size:1.25em; font-weight:800;">TOTAL TTC : ${totalTTC.toFixed(2)} €</span>
+        </div>
+        
+        <div class="facture-paiement-box">
+                     <b>CONDITIONS DE PAIEMENT</b><br>
+          Mode de paiement : ${modePaiement === 'virement' ? 'Virement bancaire' : modePaiement === 'cheque' ? 'Chèque' : modePaiement === 'carte' ? 'Carte bancaire' : 'Espèce'}<br>
+          Délai de paiement : 30 jours à réception<br>
+          Pénalités de retard : 3 fois le taux légal (actuellement 3,99%)<br>
+          Indemnité forfaitaire pour frais de recouvrement : 40 €<br><br>
+          ${modePaiement === 'virement' ? `<b>IBAN :</b> ${iban || '[IBAN]'}<br><b>BIC :</b> ${bic || '[BIC]'}<br>` : ''}
+        </div>
+        
+        <div class="mentions">
+          <b>MENTIONS LÉGALES OBLIGATOIRES</b><br>
+          En cas de retard de paiement, seront exigibles, conformément à l'article L. 441-10 du Code de commerce :<br>
+          • Une indemnité calculée sur la base de 3 fois le taux d'intérêt légal<br>
+          • Une indemnité forfaitaire pour frais de recouvrement de 40 euros<br>
+          • La possibilité de réclamer une indemnisation complémentaire sur justification<br>
+          • TVA sur les débits - Escompte pour paiement anticipé : Néant<br><br>
+          <b>Règlement des différends :</b> En cas de litige, seuls les tribunaux de ${emetteurVille || '[VILLE DU SIÈGE]'} seront compétents.
+        </div>
+      `;
+    }
+    
+    function genererDevisSARL(numFacture, dateFacture, validiteDevis, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalTTC) {
+      const capitalSocialSarl = document.getElementById('capitalSocialSarl').value;
+      const numTvaSarl = document.getElementById('numTvaSarl').value;
+      const dateCreationSarl = document.getElementById('dateCreationSarl').value;
+      const gerantSarl = document.getElementById('gerantSarl').value;
+      const associesSarl = document.getElementById('associesSarl').value;
+      const clientTva = document.getElementById('clientTva').value;
+      const datePrestation = document.getElementById('datePrestation').value;
+      
+      const totalHT = totalTTC / 1.20; // Calcul HT à partir du TTC
+      const tva = totalTTC - totalHT; // TVA = TTC - HT
+      
+      let dateEcheance = '';
+      if (dateFacture && validiteDevis) {
+        const d = new Date(dateFacture);
+        d.setDate(d.getDate() + parseInt(validiteDevis));
+        dateEcheance = d.toLocaleDateString('fr-FR');
+      }
+      
+      // Gestion de l'acompte
+      const demanderAcompte = document.getElementById('demanderAcompte').checked;
+      const pourcentageAcompte = parseInt(document.getElementById('pourcentageAcompte').value) || 40;
+      const montantAcompte = demanderAcompte ? (totalTTC * pourcentageAcompte / 100) : 0;
+      const solde = demanderAcompte ? (totalTTC - montantAcompte) : totalTTC;
+      
+      // Gestion du planning personnalisé
+      const demarrageDevis = document.getElementById('demarrageDevis').value || '2 semaines après signature';
+      const dureeEstimee = document.getElementById('dureeEstimee').value || `${prestations.length > 0 ? Math.max(...prestations.map(p => p.qte || 1)) : 'X'} jour${prestations.length > 0 && Math.max(...prestations.map(p => p.qte || 1)) > 1 ? 's' : ''}`;
+      
+      document.getElementById('factureApercu').innerHTML = `
+        <div class="facture-header">
+          <div class="facture-emetteur">
+            ${logoEntrepriseData ? `<img src="${logoEntrepriseData}" style="max-width: 120px; max-height: 80px; margin-bottom: 10px; display: block;"><br>` : ''}
+            <b style="font-size:1.4rem;">${emetteurNom} SARL</b><br>
+            Siège social : ${emetteurAdresse}<br>
+            ${emetteurCodePostal} ${emetteurVille}<br><br>
+            SIRET : ${emetteurSiret || '[SIRET SARL]'}<br>
+            RCS ${emetteurVilleRcs || '[VILLE RCS]'} : ${emetteurRcs || '[N° RCS]'}<br>
+            N° TVA : ${numTvaSarl || '[N° TVA INTRA]'}<br>
+            Capital social : ${capitalSocialSarl || '[CAPITAL]'} €<br><br>
+            Gérant : ${gerantSarl || '[NOM GÉRANT]'}<br>
+            Associés : ${associesSarl || '[NOM ASSOCIÉS]'}<br><br>
+            Email : ${emetteurEmail}<br>
+            Tél : ${emetteurTel}
+          </div>
+          <div style="text-align:right;min-width:220px;">
+            <div class="facture-title">DEVIS</div>
+            <div class="facture-info">N° <b>${numFacture || 'D001'}</b></div>
+            <div class="facture-info">Date : <b>${dateFacture || '[DATE]'}</b></div>
+            <div class="facture-info">Projet : <b>${periode || '[NOM PROJET]'}</b></div>
+            <div class="facture-info">Validité : <b>${validiteDevis || 30} jours</b></div>
+          </div>
+        </div>
+        
+        <div class="facture-client-box">
+          <b>CLIENT :</b><br>
+          ${clientNom ? `<b>${clientNom}</b><br>` : '[NOM DU CLIENT]<br>'}
+          ${clientAdresse ? `${clientAdresse}<br>` : '[ADRESSE CLIENT]<br>'}
+          ${clientVille ? `${clientVille}<br>` : '[CODE POSTAL VILLE]<br>'}
+          ${clientSiret ? `SIRET : ${clientSiret}<br>` : 'SIRET : [SIRET CLIENT]<br>'}
+          ${clientTva ? `N° TVA : ${clientTva}<br>` : 'N° TVA : [N° TVA CLIENT si applicable]<br>'}
+        </div>
+        
+        <div style="background: #fff3cd; border: 2px solid #f0ad4e; border-radius: 8px; padding: 15px; margin: 20px 0; text-align: center;">
+          <b style="font-size: 1.1rem; color: #8a6d3b;">⏰ DEVIS VALABLE ${validiteDevis || 30} JOURS</b><br>
+          Du ${dateFacture || '[DATE]'} au ${dateEcheance || '[DATE + ' + (validiteDevis || 30) + ' jours]'}
+        </div>
+        
+        <table class="facture-table">
+          <tr>
+            <th>Description des prestations</th>
+            <th>Période</th>
+            <th>Qté</th>
+            <th>Prix unit. HT</th>
+            <th>Prix unit. TTC</th>
+            <th>Total HT</th>
+            <th>Total TTC</th>
+          </tr>
+          ${prestations.length === 0 ? `<tr><td colspan='7' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
+            prestations.map(p => {
+              const prixHT = p.prix / 1.20; // Pour SARL, HT = TTC / 1.20
+              const totalHT = prixHT * (p.qte || 1);
+              const totalTTC = p.prix * (p.qte || 1);
+              return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}</td><td>${periode}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:right;'>${p.prix.toFixed(2)} €</td><td style='text-align:right;'>${totalHT.toFixed(2)} €</td><td style='text-align:right;'>${totalTTC.toFixed(2)} €</td></tr>`;
+            }).join('')}
+        </table>
+        
+        <div style="background: #e8f4fd; border-radius: 8px; padding: 15px; margin: 20px 0;">
+          <b>INFORMATIONS TVA :</b><br>
+          • SARL assujettie à la TVA depuis le ${dateCreationSarl ? new Date(dateCreationSarl).toLocaleDateString('fr-FR') : '[DATE CRÉATION]'}<br>
+          • Régime réel normal - Déclarations mensuelles<br>
+          • Taux de TVA applicable : 20% (services aux entreprises)<br>
+          • TVA sur les débits (facturation)
+        </div>
+        
+        <div class="facture-total">
+          Total HT : ${totalHT.toFixed(2)} €<br>
+          TVA 20% : ${tva.toFixed(2)} €<br>
+          <span style="font-size:1.25em; font-weight:800;">TOTAL TTC : ${totalTTC.toFixed(2)} €</span>
+        </div>
+        
+        <div style="background: #f4f8fb; border-radius: 8px; padding: 20px; margin: 25px 0;">
+          <b style="font-size: 1.1rem; color: #1a7ee7;">CONDITIONS D'EXÉCUTION :</b><br><br>
+          
+          <b>📅 Planning :</b><br>
+          • Démarrage : ${demarrageDevis}<br>
+          • Durée estimée : ${dureeEstimee}<br>
+          • Livraison : selon planning convenu<br><br>
+          
+          <b>💰 Modalités de paiement :</b><br>
+          ${demanderAcompte ? `• Acompte de ${pourcentageAcompte}% à la commande (${montantAcompte.toFixed(2)} € TTC)<br>• Solde ${100 - pourcentageAcompte}% à la livraison (${solde.toFixed(2)} € TTC)<br>` : '• Paiement intégral à la livraison<br>'}
+          • Règlement par ${modePaiement === 'virement' ? 'virement bancaire uniquement' : modePaiement === 'cheque' ? 'chèque' : modePaiement === 'carte' ? 'carte bancaire' : 'espèce'}<br>
+          ${modePaiement === 'virement' ? `• IBAN : ${iban || '[IBAN SARL]'}<br>• BIC : ${bic || '[BIC SARL]'}<br>• Banque : ${banque || '[NOM BANQUE]'}<br>• Titulaire : ${emetteurNom} SARL<br>` : ''}<br>
+          
+          <b>🎯 Livrables garantis :</b><br>
+          ${getLivrables().map(livrable => `• ${livrable}`).join('<br>') || '• Aucun livrable spécifié'}
+                 </div>
+         
+         <div style="background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 8px; padding: 20px; margin: 30px 0;">
+           <b style="color: #495057; font-size: 1.1rem;">📋 VALIDATION DU DEVIS</b><br><br>
+           
+           <b>Je soussigné(e) :</b> _________________________<br>
+           <b>Représentant la société :</b> ${clientNom || '_________________________'}<br>
+           <b>Accepte ce devis dans son intégralité</b><br><br>
+           
+           ${demanderAcompte ? `☐ Verser l'acompte de ${pourcentageAcompte}% (${montantAcompte.toFixed(2)} €) sous 8 jours<br>` : '☐ Prévoir le paiement intégral à la livraison<br>'}<br>
+           
+           <b>TOTAL ACCEPTÉ :</b> _______ €<br><br>
+           
+           Le ___/___/_____ à ____________<br><br>
+           
+           <b>Signature et cachet :</b><br>
+           <div style="border: 1px dashed #6c757d; height: 80px; margin: 10px 0; display: flex; align-items: center; justify-content: center; color: #6c757d; font-style: italic;">
+             Signature du client et cachet de l'entreprise
+           </div>
+           
+           <b>Mention "Bon pour accord"</b><br>
+           <i>Nom et qualité du signataire</i>
+         </div>
+         
+         <div style="text-align: center; margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+           <b style="color: #1a7ee7;">Merci de votre confiance !</b><br>
+           Questions ? Contactez-moi au ${emetteurTel}<br><br>
+           <i style="font-size: 0.9rem; color: #666;">
+             ${emetteurNom} SARL - ${emetteurContact} - SIRET ${emetteurSiret || '[SIRET]'} - ${emetteurEmail}
+           </i>
+         </div>
+         
+         <div class="mentions">
+           <b>MENTIONS LÉGALES OBLIGATOIRES SARL :</b><br>
+           • En cas de retard de paiement : indemnité forfaitaire de recouvrement de 40 €<br>
+           • Pénalités de retard : 3 fois le taux de l'intérêt légal (soit 3,99% en 2025)<br>
+           • Aucun escompte accordé pour paiement anticipé<br>
+           • TVA sur les débits - Régime réel normal<br>
+           • Responsabilité limitée aux apports<br>
+           • Gérant : ${gerantSarl || '[NOM GÉRANT]'} - Associés : ${associesSarl || '[NOM ASSOCIÉS]'}
+         </div>
+        
+        <div style="text-align: center; margin-top: 30px; font-size: 0.9rem; color: #666;">
+          <b>${emetteurNom} SARL</b><br>
+          SARL au capital de ${capitalSocialSarl || '[CAPITAL]'} € - RCS ${emetteurVilleRcs || '[VILLE RCS]'} ${emetteurRcs || '[N° RCS]'} - SIRET ${emetteurSiret || '[SIRET]'} - N° TVA ${numTvaSarl || 'FR[N° TVA]'}<br>
+          Gérant : ${gerantSarl || '[NOM GÉRANT]'} - Associés : ${associesSarl || '[NOM ASSOCIÉS]'}
+        </div>
+      `;
     }
     
     function genererFactureMicro(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalHT) {
@@ -1662,7 +1966,7 @@
       const totalPrix = prestations.reduce((acc, p) => acc + (p.prix * (p.qte || 1)), 0);
       let totalHT, totalTTC, totalTVA;
       
-      if (statutJuridique === 'sasu' || statutJuridique === 'eurl') {
+      if (statutJuridique === 'sasu' || statutJuridique === 'eurl' || statutJuridique === 'sarl') {
         totalTTC = totalPrix;
         totalHT = totalTTC / 1.20;
         totalTVA = totalTTC - totalHT;
@@ -1713,7 +2017,7 @@
       
       // Prestations
       csvContent += 'PRESTATIONS\n';
-      if (statutJuridique === 'sasu' || statutJuridique === 'eurl') {
+      if (statutJuridique === 'sasu' || statutJuridique === 'eurl' || statutJuridique === 'sarl') {
         csvContent += 'Titre,Description,Quantité,Prix unitaire HT,Prix unitaire TTC,Total HT,Total TTC\n';
       } else {
         csvContent += 'Titre,Description,Quantité,Prix unitaire HT,Total HT\n';
@@ -1724,7 +2028,7 @@
         const desc = `"${p.desc.replace(/"/g, '""')}"`;
         const qte = p.qte || 1;
         
-        if (statutJuridique === 'sasu' || statutJuridique === 'eurl') {
+        if (statutJuridique === 'sasu' || statutJuridique === 'eurl' || statutJuridique === 'sarl') {
           const prixHT = p.prix / 1.20;
           const prixTTC = p.prix;
           const totalHT = prixHT * qte;
@@ -1743,7 +2047,7 @@
       csvContent += 'TOTAUX\n';
       csvContent += 'Type,Montant\n';
       csvContent += `Total HT,${totalHT.toFixed(2)}\n`;
-      if (statutJuridique === 'sasu' || statutJuridique === 'eurl') {
+      if (statutJuridique === 'sasu' || statutJuridique === 'eurl' || statutJuridique === 'sarl') {
         csvContent += `TVA 20%,${totalTVA.toFixed(2)}\n`;
       } else {
         csvContent += `TVA,Non applicable\n`;
@@ -1934,6 +2238,13 @@
         if (CONFIG.dateCreationEurl) document.getElementById('dateCreationEurl').value = CONFIG.dateCreationEurl;
         if (CONFIG.gerantEurl) document.getElementById('gerantEurl').value = CONFIG.gerantEurl;
         if (CONFIG.associeUniqueEurl) document.getElementById('associeUniqueEurl').value = CONFIG.associeUniqueEurl;
+        
+        // Valeurs spécifiques SARL
+        if (CONFIG.capitalSocialSarl) document.getElementById('capitalSocialSarl').value = CONFIG.capitalSocialSarl;
+        if (CONFIG.numTvaSarl) document.getElementById('numTvaSarl').value = CONFIG.numTvaSarl;
+        if (CONFIG.dateCreationSarl) document.getElementById('dateCreationSarl').value = CONFIG.dateCreationSarl;
+        if (CONFIG.gerantSarl) document.getElementById('gerantSarl').value = CONFIG.gerantSarl;
+        if (CONFIG.associesSarl) document.getElementById('associesSarl').value = CONFIG.associesSarl;
         
         if (CONFIG.statutJuridique) document.getElementById('statutJuridique').value = CONFIG.statutJuridique;
         

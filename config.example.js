@@ -1,7 +1,7 @@
 // Exemple de configuration - Copier ce fichier en config.js et remplir vos informations
 const CONFIG = {
   // Statut juridique
-  statutJuridique: "micro", // "micro", "sasu" ou "eurl"
+  statutJuridique: "micro", // "micro", "sasu", "eurl" ou "sarl"
   
   // Informations émetteur
   emetteurNom: "VOTRE_NOM_ENTREPRISE",
@@ -30,6 +30,13 @@ const CONFIG = {
   dateCreationEurl: "2024-01-01", // Date de création de l'EURL
   gerantEurl: "VOTRE_NOM_GERANT", // Nom du gérant
   associeUniqueEurl: "VOTRE_NOM_ASSOCIE", // Nom de l'associé unique
+  
+  // Informations spécifiques SARL (optionnel si statutJuridique = "sarl")
+  capitalSocialSarl: "10000", // Capital social SARL en euros
+  numTvaSarl: "FR12345678901", // N° TVA intracommunautaire SARL
+  dateCreationSarl: "2024-01-01", // Date de création de la SARL
+  gerantSarl: "VOTRE_NOM_GERANT", // Nom du gérant
+  associesSarl: "ASSOCIÉ 1, ASSOCIÉ 2", // Noms des associés
   
   // Informations bancaires
   iban: "VOTRE_IBAN",
