@@ -9,32 +9,56 @@
   <style>
     body { font-family: 'Montserrat', Arial, sans-serif; background: #f7fafd; margin: 0; padding: 0; color: #222; }
     .container { max-width: 1200px; margin: 30px auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); padding: 32px; }
-    h1 { color: #1a7ee7; font-size: 2.5rem; margin-bottom: 24px; text-align: center; letter-spacing: 1px; }
-    h2 { color: #1a7ee7; font-size: 1.8rem; margin-bottom: 18px; margin-top: 30px; }
-    .main-header { width: 100%; height: 3cm; background: #f7fafd; box-shadow: 0 4px 18px 0 rgba(26,126,231,0.08); border: none; margin: 0; padding: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; }
+    h1 { color: #e74c3c; font-size: 2.5rem; margin-bottom: 24px; text-align: center; letter-spacing: 1px; }
+    h2 { color: #e74c3c; font-size: 1.8rem; margin-bottom: 18px; margin-top: 30px; }
+    h3 { color: #e74c3c; font-size: 1.3rem; margin-bottom: 12px; margin-top: 24px; }
+    .btn { background: #e74c3c; color: #fff; border: none; border-radius: 6px; padding: 12px 24px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin: 8px 4px; box-shadow: 0 2px 8px rgba(231,76,60,0.15); transition: all 0.2s; }
+    .btn:hover { background: #c0392b; transform: translateY(-2px); box-shadow: 0 4px 16px rgba(231,76,60,0.25); }
+    .btn-success { background: #27ae60; }
+    .btn-success:hover { background: #219a52; }
+    .btn-danger { background: #e74c3c; }
+    .btn-danger:hover { background: #c0392b; }
+    .btn-secondary { background: #95a5a6; }
+    .btn-secondary:hover { background: #7f8c8d; }
+    .form-group { margin-bottom: 20px; }
+    .form-row { display: flex; gap: 16px; margin-bottom: 16px; }
+    .form-row > div { flex: 1; }
+    label { font-weight: 600; margin-bottom: 6px; display: block; color: #333; }
+    input, select, textarea { width: 100%; padding: 12px; border: 1px solid #f7c7c7; border-radius: 6px; font-size: 1rem; font-family: inherit; background: #fffafa; transition: border 0.2s; box-sizing: border-box; }
+    input:focus, select:focus, textarea:focus { border: 1.5px solid #e74c3c; outline: none; }
+    .table-container { overflow-x: auto; margin: 20px 0; }
+    table { width: 100%; border-collapse: collapse; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-radius: 8px; overflow: hidden; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e9ecef; }
+    th { background: #fdf4f4; font-weight: 600; color: #e74c3c; }
+    tr:hover { background: #f8f9fa; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0; }
+    .stat-card { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; padding: 24px; border-radius: 12px; text-align: center; box-shadow: 0 4px 16px rgba(231,76,60,0.2); }
+    .stat-card h3 { margin: 0 0 12px 0; font-size: 1.2rem; opacity: 0.9; }
+    .stat-card .value { font-size: 2.2rem; font-weight: 700; margin-bottom: 8px; }
+    .stat-card .label { font-size: 0.9rem; opacity: 0.8; }
+    .main-header { width: 100%; height: 3cm; background: #f7fafd; box-shadow: 0 4px 18px 0 rgba(231,76,60,0.08); border: none; margin: 0; padding: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; }
     .header-logo { height: 57px; max-height: 57px; margin-left: 96px; margin-top: 0; margin-bottom: 0; margin-right: 18px; vertical-align: middle; display: inline-block; cursor: pointer; transition: transform 0.3s ease, filter 0.3s ease; }
-    .header-logo:hover { transform: scale(1.1); filter: brightness(1.1) drop-shadow(0 4px 8px rgba(26,126,231,0.3)); }
+    .header-logo:hover { transform: scale(1.1); filter: brightness(1.1) drop-shadow(0 4px 8px rgba(231,76,60,0.3)); }
     .header-buttons { display: flex; gap: 16px; margin-right: 96px; }
     .header-button { background: #1a7ee7; color: white; border: none; border-radius: 8px; padding: 12px 24px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; font-family: 'Montserrat', Arial, sans-serif; }
     .header-button:hover { background: #1766b8; }
-    .header-button.active { background: #0f5bb8; }
-    .coming-soon { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; padding: 60px 40px; border-radius: 12px; text-align: center; margin: 40px 0; }
-    .coming-soon h2 { color: white; font-size: 2.2rem; margin-bottom: 20px; }
-    .coming-soon p { font-size: 1.1rem; margin-bottom: 30px; opacity: 0.9; }
-    .coming-soon .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 30px; }
-    .feature-card { background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 8px; backdrop-filter: blur(10px); }
-    .feature-card h3 { margin: 0 0 10px 0; font-size: 1.2rem; }
-    .feature-card p { margin: 0; font-size: 0.9rem; opacity: 0.8; }
+    .header-button.active { background: #e74c3c; }
+    .empty-state { text-align: center; padding: 60px 20px; color: #666; }
+    .empty-state i { font-size: 3rem; margin-bottom: 16px; color: #e74c3c; }
+    .filters { background: #fdf4f4; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+    .filters h3 { margin-top: 0; }
+    .total-row { font-weight: 700; background: #fdf4f4 !important; color: #e74c3c; }
+    .amount-negative { color: #e74c3c; font-weight: 600; }
+    .amount-positive { color: #27ae60; font-weight: 600; }
     .footer { text-align: center; margin-top: 40px; padding: 20px; font-size: 0.9rem; color: #666; background: #f8f9fa; border-top: 1px solid #e9ecef; }
     .footer a { color: inherit; text-decoration: underline; font-weight: bold; }
     @media (max-width: 768px) {
       .container { margin: 15px; padding: 20px; }
+      .form-row { flex-direction: column; gap: 0; }
+      .stats-grid { grid-template-columns: 1fr; }
       .header-buttons { flex-direction: column; gap: 8px; }
       .header-logo { margin-left: 20px; }
       .header-buttons { margin-right: 20px; }
-      .coming-soon { padding: 40px 20px; }
-      .coming-soon h2 { font-size: 1.8rem; }
-      .features { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -51,48 +75,942 @@
   <div class="container">
     <h1>🛒 Registre d'Achat</h1>
     
-    <div class="coming-soon">
-      <h2>🚧 En cours de développement</h2>
-      <p>Le registre d'achat sera bientôt disponible pour gérer tous vos achats professionnels.</p>
-      
-      <div class="features">
-        <div class="feature-card">
-          <h3>📋 Suivi des achats</h3>
-          <p>Enregistrez tous vos achats professionnels avec les détails complets</p>
+    <!-- Statistiques -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Total des achats</h3>
+        <div class="value" id="totalAchats">0,00 €</div>
+        <div class="label">Toutes périodes</div>
+      </div>
+      <div class="stat-card">
+        <h3>Achats ce mois</h3>
+        <div class="value" id="achatsMois">0,00 €</div>
+        <div class="label" id="labelMois">Janvier 2025</div>
+      </div>
+      <div class="stat-card">
+        <h3>Nombre de factures</h3>
+        <div class="value" id="nombreFactures">0</div>
+        <div class="label">Factures d'achat</div>
+      </div>
+      <div class="stat-card">
+        <h3>Achat moyen</h3>
+        <div class="value" id="achatMoyen">0,00 €</div>
+        <div class="label">Par facture</div>
+      </div>
+    </div>
+
+    <!-- Formulaire d'ajout -->
+    <h2>➕ Enregistrer un achat</h2>
+    <form id="achatForm">
+      <div class="form-row">
+        <div>
+          <label for="dateAchat">Date d'achat</label>
+          <input type="date" id="dateAchat" required>
         </div>
-        <div class="feature-card">
-          <h3>🧾 Gestion des factures</h3>
-          <p>Organisez et classez vos factures d'achat par fournisseur et catégorie</p>
-        </div>
-        <div class="feature-card">
-          <h3>📊 Analyse des dépenses</h3>
-          <p>Visualisez vos dépenses par période et catégorie</p>
-        </div>
-        <div class="feature-card">
-          <h3>💾 Export comptable</h3>
-          <p>Exportez vos données au format CSV pour votre comptabilité</p>
-        </div>
-        <div class="feature-card">
-          <h3>🔍 Recherche avancée</h3>
-          <p>Retrouvez facilement vos achats grâce aux filtres intelligents</p>
-        </div>
-        <div class="feature-card">
-          <h3>📈 Tableaux de bord</h3>
-          <p>Statistiques détaillées et graphiques de vos dépenses</p>
+        <div>
+          <label for="numeroFacture">Numéro de facture</label>
+          <input type="text" id="numeroFacture" placeholder="FA001" required>
         </div>
       </div>
       
-      <p style="margin-top: 40px; font-size: 0.9rem;">
-        En attendant, vous pouvez continuer à utiliser le 
-        <a href="facture.html" style="color: #fff; text-decoration: underline;">générateur de devis/factures</a>
-        et le 
-        <a href="livre_recette.html" style="color: #fff; text-decoration: underline;">livre de recettes</a>
-      </p>
+      <div class="form-row">
+        <div>
+          <label for="fournisseurNom">Fournisseur</label>
+          <input type="text" id="fournisseurNom" placeholder="Nom du fournisseur" required>
+        </div>
+        <div>
+          <label for="categorieAchat">Catégorie</label>
+          <select id="categorieAchat" required>
+            <option value="">Sélectionnez une catégorie</option>
+            <option value="fournitures">Fournitures de bureau</option>
+            <option value="equipement">Équipement informatique</option>
+            <option value="services">Services</option>
+            <option value="marketing">Marketing & Communication</option>
+            <option value="formation">Formation</option>
+            <option value="transport">Transport & Déplacement</option>
+            <option value="assurance">Assurance</option>
+            <option value="loyer">Loyer & Charges</option>
+            <option value="telephonie">Téléphonie & Internet</option>
+            <option value="autres">Autres</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div>
+          <label for="montantHT">Montant HT (€)</label>
+          <input type="number" id="montantHT" step="0.01" min="0" placeholder="0.00" required>
+        </div>
+        <div>
+          <label for="tauxTva">Taux TVA (%)</label>
+          <select id="tauxTva" required>
+            <option value="0">0% (Exonéré)</option>
+            <option value="20">20% (Taux normal)</option>
+            <option value="10">10% (Taux réduit)</option>
+            <option value="5.5">5,5% (Taux super réduit)</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div>
+          <label for="montantTTC">Montant TTC (€)</label>
+          <input type="number" id="montantTTC" step="0.01" min="0" placeholder="0.00" readonly>
+        </div>
+        <div>
+          <label for="modePaiement">Mode de paiement</label>
+          <select id="modePaiement" required>
+            <option value="virement">Virement bancaire</option>
+            <option value="carte">Carte bancaire</option>
+            <option value="cheque">Chèque</option>
+            <option value="espece">Espèce</option>
+            <option value="prelevement">Prélèvement</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div>
+          <label for="datePaiement">Date de paiement</label>
+          <input type="date" id="datePaiement">
+        </div>
+        <div>
+          <label for="deductible">Déductible fiscalement</label>
+          <select id="deductible">
+            <option value="oui">Oui</option>
+            <option value="non">Non</option>
+            <option value="partiel">Partiellement</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="descriptionAchat">Description (optionnel)</label>
+        <textarea id="descriptionAchat" rows="3" placeholder="Détails de l'achat..."></textarea>
+      </div>
+      
+      <button type="submit" class="btn btn-success">Enregistrer l'achat</button>
+    </form>
+
+    <!-- Filtres -->
+    <div class="filters">
+      <h3>🔍 Filtres</h3>
+      <div class="form-row">
+        <div>
+          <label for="filtreAnnee">Année</label>
+          <select id="filtreAnnee">
+            <option value="">Toutes les années</option>
+          </select>
+        </div>
+        <div>
+          <label for="filtreMois">Mois</label>
+          <select id="filtreMois">
+            <option value="">Tous les mois</option>
+            <option value="01">Janvier</option>
+            <option value="02">Février</option>
+            <option value="03">Mars</option>
+            <option value="04">Avril</option>
+            <option value="05">Mai</option>
+            <option value="06">Juin</option>
+            <option value="07">Juillet</option>
+            <option value="08">Août</option>
+            <option value="09">Septembre</option>
+            <option value="10">Octobre</option>
+            <option value="11">Novembre</option>
+            <option value="12">Décembre</option>
+          </select>
+        </div>
+        <div>
+          <label for="filtreCategorie">Catégorie</label>
+          <select id="filtreCategorie">
+            <option value="">Toutes les catégories</option>
+            <option value="fournitures">Fournitures de bureau</option>
+            <option value="equipement">Équipement informatique</option>
+            <option value="services">Services</option>
+            <option value="marketing">Marketing & Communication</option>
+            <option value="formation">Formation</option>
+            <option value="transport">Transport & Déplacement</option>
+            <option value="assurance">Assurance</option>
+            <option value="loyer">Loyer & Charges</option>
+            <option value="telephonie">Téléphonie & Internet</option>
+            <option value="autres">Autres</option>
+          </select>
+        </div>
+        <div>
+          <label for="filtreFournisseur">Fournisseur</label>
+          <input type="text" id="filtreFournisseur" placeholder="Nom du fournisseur">
+        </div>
+        <div style="display: flex; align-items: end;">
+          <button type="button" class="btn btn-secondary" onclick="reinitialiserFiltres()">Réinitialiser</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tableau des achats -->
+    <h2>📋 Historique des achats</h2>
+    <div class="table-container">
+      <table id="achatsTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>N° Facture</th>
+            <th>Fournisseur</th>
+            <th>Catégorie</th>
+            <th>Montant HT</th>
+            <th>TVA</th>
+            <th>Montant TTC</th>
+            <th>Mode paiement</th>
+            <th>Déductible</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="achatsTableBody">
+          <tr>
+            <td colspan="10" class="empty-state">
+              <div>
+                <i>🛒</i>
+                <p>Aucun achat enregistré</p>
+                <p>Commencez par enregistrer votre premier achat ci-dessus</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Boutons d'export -->
+    <div style="text-align: center; margin-top: 30px;">
+      <button class="btn" onclick="exporterCSV()">📊 Exporter en CSV</button>
+      <button class="btn" onclick="exporterPDF()">📄 Exporter en PDF</button>
+      <button class="btn btn-danger" onclick="viderRegistre()">🗑️ Vider le registre</button>
     </div>
   </div>
 
   <div class="footer">
     Made with ❤️ by <a href="https://github.com/AllieEco" target="_blank">AllieEco</a>
   </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="config.js"></script>
+  <script>
+    let achats = JSON.parse(localStorage.getItem('achats')) || [];
+    let achatsFiltered = [...achats];
+
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', function() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('dateAchat').value = today;
+      document.getElementById('datePaiement').value = today;
+      document.getElementById('deductible').value = 'oui';
+      
+      // Calculer automatiquement le TTC
+      document.getElementById('montantHT').addEventListener('input', calculerTTC);
+      document.getElementById('tauxTva').addEventListener('change', calculerTTC);
+      
+      // Filtres
+      document.getElementById('filtreAnnee').addEventListener('change', appliquerFiltres);
+      document.getElementById('filtreMois').addEventListener('change', appliquerFiltres);
+      document.getElementById('filtreCategorie').addEventListener('change', appliquerFiltres);
+      document.getElementById('filtreFournisseur').addEventListener('input', appliquerFiltres);
+      
+      // Remplir les années disponibles
+      remplirAnnees();
+      
+      // Charger les données
+      afficherAchats();
+      mettreAJourStatistiques();
+    });
+
+    // Gestionnaire du formulaire
+    document.getElementById('achatForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      ajouterAchat();
+    });
+
+    function calculerTTC() {
+      const montantHT = parseFloat(document.getElementById('montantHT').value) || 0;
+      const tauxTva = parseFloat(document.getElementById('tauxTva').value) || 0;
+      const montantTTC = montantHT * (1 + tauxTva / 100);
+      document.getElementById('montantTTC').value = montantTTC.toFixed(2);
+    }
+
+    function ajouterAchat() {
+      const achat = {
+        id: Date.now(),
+        date: document.getElementById('dateAchat').value,
+        numeroFacture: document.getElementById('numeroFacture').value,
+        fournisseur: document.getElementById('fournisseurNom').value,
+        categorie: document.getElementById('categorieAchat').value,
+        montantHT: parseFloat(document.getElementById('montantHT').value),
+        tauxTva: parseFloat(document.getElementById('tauxTva').value),
+        montantTTC: parseFloat(document.getElementById('montantTTC').value),
+        modePaiement: document.getElementById('modePaiement').value,
+        datePaiement: document.getElementById('datePaiement').value,
+        deductible: document.getElementById('deductible').value,
+        description: document.getElementById('descriptionAchat').value
+      };
+      
+      achats.push(achat);
+      localStorage.setItem('achats', JSON.stringify(achats));
+      
+      // Réinitialiser le formulaire
+      document.getElementById('achatForm').reset();
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('dateAchat').value = today;
+      document.getElementById('datePaiement').value = today;
+      document.getElementById('deductible').value = 'oui';
+      document.getElementById('montantTTC').value = '';
+      
+      // Rafraîchir l'affichage
+      achatsFiltered = [...achats];
+      afficherAchats();
+      mettreAJourStatistiques();
+      remplirAnnees();
+      
+      alert('Achat enregistré avec succès !');
+    }
+
+    function supprimerAchat(id) {
+      if (confirm('Êtes-vous sûr de vouloir supprimer cet achat ?')) {
+        achats = achats.filter(a => a.id !== id);
+        localStorage.setItem('achats', JSON.stringify(achats));
+        achatsFiltered = [...achats];
+        afficherAchats();
+        mettreAJourStatistiques();
+        remplirAnnees();
+      }
+    }
+
+    function afficherAchats() {
+      const tbody = document.getElementById('achatsTableBody');
+      
+      if (achatsFiltered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="10" class="empty-state">
+              <div>
+                <i>🛒</i>
+                <p>Aucun achat trouvé</p>
+                <p>Modifiez vos filtres ou ajoutez un nouvel achat</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      
+      // Trier par date décroissante
+      achatsFiltered.sort((a, b) => new Date(b.date) - new Date(a.date));
+      
+      tbody.innerHTML = achatsFiltered.map(achat => `
+        <tr>
+          <td>${new Date(achat.date).toLocaleDateString('fr-FR')}</td>
+          <td><strong>${achat.numeroFacture}</strong></td>
+          <td>${achat.fournisseur}</td>
+          <td>${getCategorieLabel(achat.categorie)}</td>
+          <td class="amount-negative">${achat.montantHT.toFixed(2)} €</td>
+          <td>${achat.tauxTva}%</td>
+          <td class="amount-negative"><strong>${achat.montantTTC.toFixed(2)} €</strong></td>
+          <td>${getModePaiementLabel(achat.modePaiement)}</td>
+          <td>${getDeductibleLabel(achat.deductible)}</td>
+          <td>
+            <button class="btn btn-danger" onclick="supprimerAchat(${achat.id})" title="Supprimer">🗑️</button>
+          </td>
+        </tr>
+      `).join('');
+
+      // Ajouter une ligne de total
+      const totalHT = achatsFiltered.reduce((sum, a) => sum + a.montantHT, 0);
+      const totalTTC = achatsFiltered.reduce((sum, a) => sum + a.montantTTC, 0);
+      const totalTVA = totalTTC - totalHT;
+      
+      tbody.innerHTML += `
+        <tr class="total-row">
+          <td colspan="4"><strong>TOTAL</strong></td>
+          <td><strong>${totalHT.toFixed(2)} €</strong></td>
+          <td><strong>${totalTVA.toFixed(2)} €</strong></td>
+          <td><strong>${totalTTC.toFixed(2)} €</strong></td>
+          <td colspan="3"></td>
+        </tr>
+      `;
+    }
+
+    function mettreAJourStatistiques() {
+      const totalAchats = achats.reduce((sum, a) => sum + a.montantTTC, 0);
+      const nombreFactures = achats.length;
+      const achatMoyen = nombreFactures > 0 ? totalAchats / nombreFactures : 0;
+      
+      // Achats du mois en cours
+      const maintenant = new Date();
+      const moisActuel = maintenant.getMonth();
+      const anneeActuelle = maintenant.getFullYear();
+      const achatsMois = achats.filter(a => {
+        const dateAchat = new Date(a.date);
+        return dateAchat.getMonth() === moisActuel && dateAchat.getFullYear() === anneeActuelle;
+      }).reduce((sum, a) => sum + a.montantTTC, 0);
+      
+      document.getElementById('totalAchats').textContent = totalAchats.toFixed(2) + ' €';
+      document.getElementById('achatsMois').textContent = achatsMois.toFixed(2) + ' €';
+      document.getElementById('nombreFactures').textContent = nombreFactures;
+      document.getElementById('achatMoyen').textContent = achatMoyen.toFixed(2) + ' €';
+      
+      // Mettre à jour le label du mois
+      const nomsMois = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 
+                       'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+      document.getElementById('labelMois').textContent = nomsMois[moisActuel] + ' ' + anneeActuelle;
+    }
+
+    function remplirAnnees() {
+      const select = document.getElementById('filtreAnnee');
+      const annees = [...new Set(achats.map(a => new Date(a.date).getFullYear()))].sort((a, b) => b - a);
+      
+      const optionsExistantes = Array.from(select.options).map(o => o.value);
+      
+      annees.forEach(annee => {
+        if (!optionsExistantes.includes(annee.toString())) {
+          const option = document.createElement('option');
+          option.value = annee;
+          option.textContent = annee;
+          select.appendChild(option);
+        }
+      });
+    }
+
+    function appliquerFiltres() {
+      const filtreAnnee = document.getElementById('filtreAnnee').value;
+      const filtreMois = document.getElementById('filtreMois').value;
+      const filtreCategorie = document.getElementById('filtreCategorie').value;
+      const filtreFournisseur = document.getElementById('filtreFournisseur').value.toLowerCase();
+      
+      achatsFiltered = achats.filter(achat => {
+        const dateAchat = new Date(achat.date);
+        const anneeAchat = dateAchat.getFullYear().toString();
+        const moisAchat = (dateAchat.getMonth() + 1).toString().padStart(2, '0');
+        
+        return (!filtreAnnee || anneeAchat === filtreAnnee) &&
+               (!filtreMois || moisAchat === filtreMois) &&
+               (!filtreCategorie || achat.categorie === filtreCategorie) &&
+               (!filtreFournisseur || achat.fournisseur.toLowerCase().includes(filtreFournisseur));
+      });
+      
+      afficherAchats();
+    }
+
+    function reinitialiserFiltres() {
+      document.getElementById('filtreAnnee').value = '';
+      document.getElementById('filtreMois').value = '';
+      document.getElementById('filtreCategorie').value = '';
+      document.getElementById('filtreFournisseur').value = '';
+      achatsFiltered = [...achats];
+      afficherAchats();
+    }
+
+    function getCategorieLabel(categorie) {
+      const labels = {
+        'fournitures': 'Fournitures de bureau',
+        'equipement': 'Équipement informatique',
+        'services': 'Services',
+        'marketing': 'Marketing & Communication',
+        'formation': 'Formation',
+        'transport': 'Transport & Déplacement',
+        'assurance': 'Assurance',
+        'loyer': 'Loyer & Charges',
+        'telephonie': 'Téléphonie & Internet',
+        'autres': 'Autres'
+      };
+      return labels[categorie] || categorie;
+    }
+
+    function getModePaiementLabel(mode) {
+      const labels = {
+        'virement': 'Virement',
+        'carte': 'Carte',
+        'cheque': 'Chèque',
+        'espece': 'Espèce',
+        'prelevement': 'Prélèvement'
+      };
+      return labels[mode] || mode;
+    }
+
+    function getDeductibleLabel(deductible) {
+      const labels = {
+        'oui': 'Oui',
+        'non': 'Non',
+        'partiel': 'Partiel'
+      };
+      return labels[deductible] || deductible;
+    }
+
+    function exporterCSV() {
+      if (achatsFiltered.length === 0) {
+        alert('Aucun achat à exporter');
+        return;
+      }
+      
+      let csvContent = '\uFEFF'; // BOM UTF-8
+      csvContent += 'Date,Numéro Facture,Fournisseur,Catégorie,Montant HT,Taux TVA,Montant TTC,Mode Paiement,Date Paiement,Déductible,Description\n';
+      
+      achatsFiltered.forEach(achat => {
+        csvContent += `${achat.date},${achat.numeroFacture},"${achat.fournisseur}","${getCategorieLabel(achat.categorie)}",${achat.montantHT.toFixed(2)},${achat.tauxTva},${achat.montantTTC.toFixed(2)},${getModePaiementLabel(achat.modePaiement)},${achat.datePaiement || ''},${getDeductibleLabel(achat.deductible)},"${achat.description || ''}"\n`;
+      });
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `registre_achats_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function exporterPDF() {
+      if (achats.length === 0) {
+        alert('Aucun achat à exporter en PDF');
+        return;
+      }
+
+      // Vérifier si CONFIG est disponible
+      if (typeof CONFIG === 'undefined') {
+        alert('Configuration manquante. Veuillez créer le fichier config.js');
+        return;
+      }
+
+      // Créer une nouvelle instance jsPDF en format paysage
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('l', 'mm', 'a4'); // 'l' = landscape (paysage)
+      
+      // Fonction locale pour les labels
+      function getCategorieLabel(categorie) {
+        const labels = {
+          'fournitures': 'Fournitures de bureau',
+          'equipement': 'Équipement informatique',
+          'services': 'Services',
+          'marketing': 'Marketing & Communication',
+          'formation': 'Formation',
+          'transport': 'Transport & Déplacement',
+          'assurance': 'Assurance',
+          'loyer': 'Loyer & Charges',
+          'telephonie': 'Téléphonie & Internet',
+          'autres': 'Autres'
+        };
+        return labels[categorie] || categorie;
+      }
+      
+      function getModePaiementLabel(mode) {
+        const labels = {
+          'virement': 'Virement',
+          'carte': 'Carte',
+          'cheque': 'Chèque',
+          'espece': 'Espèce',
+          'prelevement': 'Prélèvement'
+        };
+        return labels[mode] || mode;
+      }
+      
+      // Paramètres généraux - Format paysage A4 : 297 x 210 mm
+      const pageWidth = 297;
+      const pageHeight = 210;
+      const margin = 15;
+      const usableWidth = pageWidth - (margin * 2);
+      
+      // Obtenir l'année à afficher
+      const filtreAnnee = document.getElementById('filtreAnnee').value;
+      const anneeAffichage = filtreAnnee || new Date().getFullYear().toString();
+      
+      // Récupérer les informations de l'entreprise depuis CONFIG
+      const nomEntreprise = CONFIG.emetteurNom || 'Entreprise';
+      const siret = CONFIG.emetteurSiret || '[SIRET]';
+      const statutJuridique = CONFIG.statutJuridique || 'micro';
+      
+      // Déterminer le nom de l'entrepreneur selon le statut
+      let nomEntrepreneur = '[NOM ENTREPRENEUR]';
+      if (statutJuridique === 'sasu') {
+        nomEntrepreneur = CONFIG.presidentSasu || '[PRÉSIDENT SASU]';
+      } else if (statutJuridique === 'eurl') {
+        nomEntrepreneur = CONFIG.gerantEurl || '[GÉRANT EURL]';
+      } else {
+        nomEntrepreneur = CONFIG.emetteurContact || '[ENTREPRENEUR]';
+      }
+      
+      let currentY = margin;
+      
+      // Fonction pour ajouter une nouvelle page si nécessaire
+      function checkNewPage(neededSpace = 40) {
+        if (currentY + neededSpace > pageHeight - margin) {
+          pdf.addPage();
+          currentY = margin;
+          return true;
+        }
+        return false;
+      }
+      
+      // En-tête du document
+      pdf.setFontSize(24);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('REGISTRE D\'ACHAT', pageWidth / 2, currentY, { align: 'center' });
+      currentY += 15;
+      
+      pdf.setFontSize(16);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(nomEntreprise, pageWidth / 2, currentY, { align: 'center' });
+      currentY += 10;
+      
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Entrepreneur : ${nomEntrepreneur}`, pageWidth / 2, currentY, { align: 'center' });
+      currentY += 8;
+      
+      pdf.text(`SIRET : ${siret}`, pageWidth / 2, currentY, { align: 'center' });
+      currentY += 8;
+      
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(`ANNÉE ${anneeAffichage}`, pageWidth / 2, currentY, { align: 'center' });
+      currentY += 20;
+      
+      // Ligne de séparation
+      pdf.setLineWidth(0.5);
+      pdf.line(margin, currentY, pageWidth - margin, currentY);
+      currentY += 15;
+      
+      // Filtrer les achats pour l'année sélectionnée
+      const achatsAnnee = achats.filter(achat => {
+        const dateAchat = new Date(achat.date);
+        return dateAchat.getFullYear().toString() === anneeAffichage;
+      });
+      
+      // Organiser les achats par mois
+      const moisNoms = [
+        'JANVIER', 'FÉVRIER', 'MARS', 'AVRIL', 'MAI', 'JUIN',
+        'JUILLET', 'AOÛT', 'SEPTEMBRE', 'OCTOBRE', 'NOVEMBRE', 'DÉCEMBRE'
+      ];
+      
+      const achatsParMois = {};
+      for (let i = 0; i < 12; i++) {
+        achatsParMois[i] = [];
+      }
+      
+      // Répartir les achats par mois
+      achatsAnnee.forEach(achat => {
+        const dateAchat = new Date(achat.date);
+        const mois = dateAchat.getMonth();
+        achatsParMois[mois].push(achat);
+      });
+      
+      // Fonction pour diviser le texte en lignes selon la largeur de colonne
+      function diviserTexte(texte, largeurMax, fontSize = 9) {
+        if (!texte) return [''];
+        
+        pdf.setFontSize(fontSize);
+        const texteStr = texte.toString();
+        const largeurColonne = largeurMax - 6; // Marge interne de 3mm de chaque côté
+        
+        // Si le texte tient sur une ligne
+        if (pdf.getTextWidth(texteStr) <= largeurColonne) {
+          return [texteStr];
+        }
+        
+        const mots = texteStr.split(' ');
+        const lignes = [];
+        let ligneActuelle = '';
+        
+        for (let mot of mots) {
+          const testLigne = ligneActuelle + (ligneActuelle ? ' ' : '') + mot;
+          
+          if (pdf.getTextWidth(testLigne) <= largeurColonne) {
+            ligneActuelle = testLigne;
+          } else {
+            if (ligneActuelle) {
+              lignes.push(ligneActuelle);
+              ligneActuelle = mot;
+            } else {
+              // Mot trop long, le couper
+              while (mot.length > 0) {
+                let partieVisible = mot;
+                while (pdf.getTextWidth(partieVisible) > largeurColonne && partieVisible.length > 1) {
+                  partieVisible = partieVisible.slice(0, -1);
+                }
+                lignes.push(partieVisible);
+                mot = mot.slice(partieVisible.length);
+              }
+              ligneActuelle = '';
+            }
+          }
+        }
+        
+        if (ligneActuelle) {
+          lignes.push(ligneActuelle);
+        }
+        
+        return lignes.length > 0 ? lignes : [''];
+      }
+      
+      // Fonction pour calculer la hauteur nécessaire pour une rangée
+      function calculerHauteurRangee(rowData, fontSize = 9) {
+        let maxLignes = 1;
+        
+        rowData.forEach((cellData, i) => {
+          const colWidths = [22, 26, 40, 35, 28, 30, 28, 25, 25]; // Largeurs colonnes
+          const lignes = diviserTexte(cellData, colWidths[i], fontSize);
+          maxLignes = Math.max(maxLignes, lignes.length);
+        });
+        
+        return Math.max(10, maxLignes * 5 + 4); // 10mm minimum, 5mm par ligne + marge
+      }
+      
+      // Générer le PDF pour chaque mois
+      for (let mois = 0; mois < 12; mois++) {
+        checkNewPage(60);
+        
+        // Titre du mois
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(moisNoms[mois], margin, currentY);
+        currentY += 10;
+        
+        // Paramètres du tableau optimisés pour format paysage
+        const tableHeaders = ['Date', 'N° Facture', 'Fournisseur', 'Catégorie', 'Montant HT', 'Montant TTC', 'Mode paiement', 'Paiement', 'Déductible'];
+        const colWidths = [22, 26, 40, 35, 28, 30, 28, 25, 25]; // Total = 259mm
+        
+        // En-têtes du tableau avec hauteur adaptative
+        const headerRowData = tableHeaders;
+        const headerRowHeight = calculerHauteurRangee(headerRowData, 10);
+        
+        pdf.setFillColor(240, 240, 240);
+        pdf.rect(margin, currentY, usableWidth, headerRowHeight, 'F');
+        
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'bold');
+        
+        let colX = margin;
+        tableHeaders.forEach((header, i) => {
+          const lignesHeader = diviserTexte(header, colWidths[i], 10);
+          
+          // Centrer verticalement les lignes dans la cellule
+          const startY = currentY + (headerRowHeight - (lignesHeader.length * 5)) / 2 + 4;
+          
+          lignesHeader.forEach((ligne, j) => {
+            pdf.text(ligne, colX + 3, startY + (j * 5));
+          });
+          
+          colX += colWidths[i];
+        });
+        
+        currentY += headerRowHeight;
+        
+        // Lignes de données
+        const achatsMois = achatsParMois[mois];
+        achatsMois.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        if (achatsMois.length === 0) {
+          // Ligne vide si pas d'achats
+          const emptyRowHeight = 10;
+          
+          pdf.setFont('helvetica', 'italic');
+          pdf.setFontSize(10);
+          
+          // Centrer le texte sur toute la largeur du tableau
+          const largeurTableau = colWidths.reduce((sum, width) => sum + width, 0);
+          const xCentre = margin + largeurTableau / 2;
+          pdf.text('Aucun achat pour ce mois', xCentre, currentY + emptyRowHeight / 2 + 2, { align: 'center' });
+          
+          // Bordures pour ligne vide
+          pdf.setLineWidth(0.1);
+          pdf.rect(margin, currentY, largeurTableau, emptyRowHeight);
+          
+          currentY += emptyRowHeight;
+        } else {
+          // Afficher les achats du mois
+          achatsMois.forEach((achat, index) => {
+            const dateFormatee = new Date(achat.date).toLocaleDateString('fr-FR');
+            const categorieLabel = getCategorieLabel(achat.categorie);
+            const modePaiementLabel = getModePaiementLabel(achat.modePaiement);
+            const datePaiementFormatee = achat.datePaiement ? new Date(achat.datePaiement).toLocaleDateString('fr-FR') : 'En attente';
+            const deductibleLabel = achat.deductible === 'oui' ? 'Oui' : (achat.deductible === 'non' ? 'Non' : 'Partiel');
+            
+            const rowData = [
+              dateFormatee,
+              achat.numeroFacture,
+              achat.fournisseur,
+              categorieLabel,
+              achat.montantHT.toFixed(2) + ' €',
+              achat.montantTTC.toFixed(2) + ' €',
+              modePaiementLabel,
+              datePaiementFormatee,
+              deductibleLabel
+            ];
+            
+            // Calculer la hauteur nécessaire pour cette rangée
+            const rowHeight = calculerHauteurRangee(rowData, 9);
+            
+            checkNewPage(rowHeight + 5);
+            
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(9);
+            
+            // Dessiner les bordures de la cellule
+            pdf.setLineWidth(0.1);
+            let colX = margin;
+            for (let i = 0; i < colWidths.length; i++) {
+              pdf.rect(colX, currentY, colWidths[i], rowHeight);
+              colX += colWidths[i];
+            }
+            
+            // Afficher le contenu de chaque cellule
+            colX = margin;
+            rowData.forEach((data, i) => {
+              const lignesCellule = diviserTexte(data, colWidths[i], 9);
+              
+              // Style spécial pour certaines colonnes
+              if (i === 1) { // N° Facture
+                pdf.setFont('helvetica', 'bold');
+              } else if (data.toString().includes('€')) { // Montants
+                pdf.setFont('helvetica', 'normal');
+                pdf.setFontSize(9);
+              } else {
+                pdf.setFont('helvetica', 'normal');
+                pdf.setFontSize(9);
+              }
+              
+              // Centrer verticalement les lignes dans la cellule
+              const startY = currentY + (rowHeight - (lignesCellule.length * 5)) / 2 + 4;
+              
+              lignesCellule.forEach((ligne, j) => {
+                pdf.text(ligne, colX + 3, startY + (j * 5));
+              });
+              
+              colX += colWidths[i];
+            });
+            
+            currentY += rowHeight;
+          });
+          
+          // Ligne de total pour le mois
+          if (achatsMois.length > 0) {
+            const totalHTMois = achatsMois.reduce((sum, a) => sum + a.montantHT, 0);
+            const totalTTCMois = achatsMois.reduce((sum, a) => sum + a.montantTTC, 0);
+            
+            const totalData = ['', '', '', 'TOTAL MOIS', totalHTMois.toFixed(2) + ' €', totalTTCMois.toFixed(2) + ' €', '', '', ''];
+            const totalRowHeight = calculerHauteurRangee(totalData, 10);
+            
+            pdf.setFillColor(245, 245, 245);
+            pdf.rect(margin, currentY, usableWidth, totalRowHeight, 'F');
+            
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(10);
+            
+            // Dessiner les bordures
+            pdf.setLineWidth(0.1);
+            let colX = margin;
+            for (let i = 0; i < colWidths.length; i++) {
+              pdf.rect(colX, currentY, colWidths[i], totalRowHeight);
+              colX += colWidths[i];
+            }
+            
+            // Afficher le contenu
+            colX = margin;
+            totalData.forEach((data, i) => {
+              if (data) {
+                const lignesCellule = diviserTexte(data, colWidths[i], 10);
+                const startY = currentY + (totalRowHeight - (lignesCellule.length * 5)) / 2 + 4;
+                
+                lignesCellule.forEach((ligne, j) => {
+                  pdf.text(ligne, colX + 3, startY + (j * 5));
+                });
+              }
+              colX += colWidths[i];
+            });
+            
+            currentY += totalRowHeight;
+          }
+        }
+        
+        currentY += 15;
+      }
+      
+      // Total général à la fin
+      checkNewPage(30);
+      
+      const totalHTGeneral = achatsAnnee.reduce((sum, a) => sum + a.montantHT, 0);
+      const totalTTCGeneral = achatsAnnee.reduce((sum, a) => sum + a.montantTTC, 0);
+      
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('RÉCAPITULATIF ANNUEL', margin, currentY);
+      currentY += 10;
+      
+      pdf.setFontSize(10);
+      pdf.text(`Total HT ${anneeAffichage} : ${totalHTGeneral.toFixed(2)} €`, margin, currentY);
+      currentY += 8;
+      pdf.text(`Total TTC ${anneeAffichage} : ${totalTTCGeneral.toFixed(2)} €`, margin, currentY);
+      currentY += 8;
+      pdf.text(`Nombre de factures : ${achatsAnnee.length}`, margin, currentY);
+      
+      // Générer le PDF en blob
+      const pdfBlob = pdf.output('blob');
+      
+      // Nom de fichier suggéré
+      const nomFichierSuggere = `Registre_Achats_${nomEntreprise.replace(/[^a-zA-Z0-9]/g, '')}_${anneeAffichage}.pdf`;
+      
+      // Tentative d'utilisation de l'API File System Access (navigateurs modernes)
+      if ('showSaveFilePicker' in window) {
+        window.showSaveFilePicker({
+          suggestedName: nomFichierSuggere,
+          types: [
+            {
+              description: 'Fichiers PDF',
+              accept: {
+                'application/pdf': ['.pdf'],
+              },
+            },
+          ],
+        }).then(async (fileHandle) => {
+          const writable = await fileHandle.createWritable();
+          await writable.write(pdfBlob);
+          await writable.close();
+          
+          alert('📄 PDF exporté avec succès !');
+        }).catch((err) => {
+          // L'utilisateur a annulé ou une erreur est survenue
+          if (err.name !== 'AbortError') {
+            console.error('Erreur lors de la sauvegarde:', err);
+            // Fallback vers téléchargement normal
+            telechargerPDFNormal();
+          }
+        });
+      } else {
+        // Fallback pour les navigateurs qui ne supportent pas l'API
+        telechargerPDFNormal();
+      }
+      
+      // Fonction de téléchargement normal (fallback)
+      function telechargerPDFNormal() {
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(pdfBlob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', nomFichierSuggere);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        alert('📄 PDF téléchargé dans votre dossier de téléchargements !');
+      }
+    }
+
+    function viderRegistre() {
+      if (confirm('Êtes-vous sûr de vouloir supprimer tous les achats ? Cette action est irréversible.')) {
+        if (confirm('Confirmation finale : tous les achats seront supprimés définitivement.')) {
+          achats = [];
+          achatsFiltered = [];
+          localStorage.removeItem('achats');
+          afficherAchats();
+          mettreAJourStatistiques();
+          remplirAnnees();
+          alert('Registre d\'achat vidé avec succès');
+        }
+      }
+    }
+  </script>
 </body>
 </html> 
