@@ -245,6 +245,8 @@
     Made with ❤️ by <a href="https://github.com/AllieEco" target="_blank">AllieEco</a>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="config.js"></script>
   <script>
     let recettes = JSON.parse(localStorage.getItem('recettes')) || [];
     let recettesFiltered = [...recettes];
@@ -484,7 +486,416 @@
     }
 
     function exporterPDF() {
-      alert('Fonctionnalité d\'export PDF en cours de développement');
+      if (recettes.length === 0) {
+        alert('Aucune recette à exporter en PDF');
+        return;
+      }
+
+      // Vérifier si CONFIG est disponible
+      if (typeof CONFIG === 'undefined') {
+        alert('Configuration manquante. Veuillez créer le fichier config.js');
+        return;
+      }
+
+      // Créer une nouvelle instance jsPDF en format paysage
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('l', 'mm', 'a4'); // 'l' = landscape (paysage)
+      
+      // Fonction locale pour les labels de mode de paiement
+      function getModePaiementLabel(mode) {
+        const labels = {
+          'virement': 'Virement',
+          'cheque': 'Chèque', 
+          'carte': 'Carte',
+          'espece': 'Espèce'
+        };
+        return labels[mode] || mode;
+      }
+      
+      // Paramètres généraux - Format paysage A4 : 297 x 210 mm
+      const pageWidth = 297;
+      const pageHeight = 210;
+      const margin = 15;
+      const usableWidth = pageWidth - (margin * 2);
+      
+      // Obtenir l'année à afficher
+      const filtreAnnee = document.getElementById('filtreAnnee').value;
+      const anneeAffichage = filtreAnnee || new Date().getFullYear().toString();
+      
+      // Récupérer les informations de l'entreprise depuis CONFIG
+      const nomEntreprise = CONFIG.emetteurNom || 'Entreprise';
+      const siret = CONFIG.emetteurSiret || '[SIRET]';
+      const statutJuridique = CONFIG.statutJuridique || 'micro';
+      
+      // Déterminer le nom de l'entrepreneur selon le statut
+      let nomEntrepreneur = '[NOM ENTREPRENEUR]';
+      if (statutJuridique === 'sasu') {
+        nomEntrepreneur = CONFIG.presidentSasu || '[PRÉSIDENT SASU]';
+      } else if (statutJuridique === 'eurl') {
+        nomEntrepreneur = CONFIG.gerantEurl || '[GÉRANT EURL]';
+      } else {
+        nomEntrepreneur = CONFIG.emetteurContact || '[ENTREPRENEUR]';
+      }
+      
+      let currentY = margin;
+      
+      // Fonction pour ajouter une nouvelle page si nécessaire
+      function checkNewPage(neededSpace = 40) {
+        if (currentY + neededSpace > pageHeight - margin) {
+          pdf.addPage();
+          currentY = margin;
+          return true;
+        }
+        return false;
+      }
+      
+      // En-tête du document
+      pdf.setFontSize(24);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('LIVRE DE RECETTE', pageWidth / 2, currentY, { align: 'center' });
+      currentY += 15;
+      
+      pdf.setFontSize(16);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(nomEntreprise, pageWidth / 2, currentY, { align: 'center' });
+      currentY += 10;
+      
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Entrepreneur : ${nomEntrepreneur}`, pageWidth / 2, currentY, { align: 'center' });
+      currentY += 8;
+      
+      pdf.text(`SIRET : ${siret}`, pageWidth / 2, currentY, { align: 'center' });
+      currentY += 8;
+      
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(`ANNÉE ${anneeAffichage}`, pageWidth / 2, currentY, { align: 'center' });
+      currentY += 20;
+      
+      // Ligne de séparation
+      pdf.setLineWidth(0.5);
+      pdf.line(margin, currentY, pageWidth - margin, currentY);
+      currentY += 15;
+      
+      // Filtrer les recettes pour l'année sélectionnée
+      const recettesAnnee = recettes.filter(recette => {
+        const dateRecette = new Date(recette.date);
+        return dateRecette.getFullYear().toString() === anneeAffichage;
+      });
+      
+      // Organiser les recettes par mois
+      const moisNoms = [
+        'JANVIER', 'FÉVRIER', 'MARS', 'AVRIL', 'MAI', 'JUIN',
+        'JUILLET', 'AOÛT', 'SEPTEMBRE', 'OCTOBRE', 'NOVEMBRE', 'DÉCEMBRE'
+      ];
+      
+      const recettesParMois = {};
+      for (let i = 0; i < 12; i++) {
+        recettesParMois[i] = [];
+      }
+      
+      // Répartir les recettes par mois
+      recettesAnnee.forEach(recette => {
+        const dateRecette = new Date(recette.date);
+        const mois = dateRecette.getMonth();
+        recettesParMois[mois].push(recette);
+      });
+      
+      // Générer le PDF pour chaque mois
+      for (let mois = 0; mois < 12; mois++) {
+        checkNewPage(60);
+        
+        // Titre du mois
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(moisNoms[mois], margin, currentY);
+        currentY += 10;
+        
+        // Paramètres du tableau optimisés pour format paysage
+        const tableHeaders = ['Date', 'N° Facture', 'Client', 'Nature de la prestation', 'Mode paiement', 'Montant HT', 'Montant TTC'];
+        const colWidths = [22, 26, 40, 75, 32, 28, 28]; // Total = 251mm (< 267mm utilisable)
+        const minRowHeight = 10;
+        
+        // Fonction pour diviser le texte en lignes selon la largeur de colonne
+        function diviserTexte(texte, largeurMax, fontSize = 9) {
+          if (!texte) return [''];
+          
+          pdf.setFontSize(fontSize);
+          const texteStr = texte.toString();
+          const largeurColonne = largeurMax - 6; // Marge interne de 3mm de chaque côté
+          
+          // Si le texte tient sur une ligne
+          if (pdf.getTextWidth(texteStr) <= largeurColonne) {
+            return [texteStr];
+          }
+          
+          const mots = texteStr.split(' ');
+          const lignes = [];
+          let ligneActuelle = '';
+          
+          for (let mot of mots) {
+            const testLigne = ligneActuelle + (ligneActuelle ? ' ' : '') + mot;
+            
+            if (pdf.getTextWidth(testLigne) <= largeurColonne) {
+              ligneActuelle = testLigne;
+            } else {
+              if (ligneActuelle) {
+                lignes.push(ligneActuelle);
+                ligneActuelle = mot;
+              } else {
+                // Mot trop long, le couper
+                while (mot.length > 0) {
+                  let partieVisible = mot;
+                  while (pdf.getTextWidth(partieVisible) > largeurColonne && partieVisible.length > 1) {
+                    partieVisible = partieVisible.slice(0, -1);
+                  }
+                  lignes.push(partieVisible);
+                  mot = mot.slice(partieVisible.length);
+                }
+                ligneActuelle = '';
+              }
+            }
+          }
+          
+          if (ligneActuelle) {
+            lignes.push(ligneActuelle);
+          }
+          
+          return lignes.length > 0 ? lignes : [''];
+        }
+        
+        // Fonction pour calculer la hauteur nécessaire pour une rangée
+        function calculerHauteurRangee(rowData, fontSize = 9) {
+          let maxLignes = 1;
+          
+          rowData.forEach((cellData, i) => {
+            const lignes = diviserTexte(cellData, colWidths[i], fontSize);
+            maxLignes = Math.max(maxLignes, lignes.length);
+          });
+          
+          return Math.max(minRowHeight, maxLignes * 5 + 4); // 5mm par ligne + marge
+        }
+        
+        // En-têtes du tableau avec hauteur adaptative
+        const headerRowData = tableHeaders;
+        const headerRowHeight = calculerHauteurRangee(headerRowData, 10);
+        
+        pdf.setFillColor(240, 240, 240);
+        pdf.rect(margin, currentY, usableWidth, headerRowHeight, 'F');
+        
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'bold');
+        
+        let colX = margin;
+        tableHeaders.forEach((header, i) => {
+          const lignesHeader = diviserTexte(header, colWidths[i], 10);
+          
+          // Centrer verticalement les lignes dans la cellule
+          const startY = currentY + (headerRowHeight - (lignesHeader.length * 5)) / 2 + 4;
+          
+          lignesHeader.forEach((ligne, j) => {
+            pdf.text(ligne, colX + 3, startY + (j * 5));
+          });
+          
+          colX += colWidths[i];
+        });
+        
+        currentY += headerRowHeight;
+        
+        // Lignes de données
+        const recettesMois = recettesParMois[mois];
+        recettesMois.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        if (recettesMois.length === 0) {
+          // Ligne vide si pas de recettes
+          const emptyRowHeight = minRowHeight;
+          
+          pdf.setFont('helvetica', 'italic');
+          pdf.setFontSize(10);
+          
+          // Centrer le texte sur toute la largeur du tableau
+          const largeurTableau = colWidths.reduce((sum, width) => sum + width, 0);
+          const xCentre = margin + largeurTableau / 2;
+          pdf.text('Aucune recette pour ce mois', xCentre, currentY + emptyRowHeight / 2 + 2, { align: 'center' });
+          
+          // Bordures pour ligne vide
+          pdf.setLineWidth(0.1);
+          pdf.rect(margin, currentY, largeurTableau, emptyRowHeight);
+          
+          currentY += emptyRowHeight;
+        } else {
+          // Afficher les recettes du mois
+          recettesMois.forEach((recette, index) => {
+            const dateFormatee = new Date(recette.date).toLocaleDateString('fr-FR');
+            const description = recette.description || 'Prestation';
+            const modePaiementLabel = getModePaiementLabel(recette.modePaiement);
+            
+            const rowData = [
+              dateFormatee,
+              recette.numeroFacture,
+              recette.client,
+              description,
+              modePaiementLabel,
+              recette.montantHT.toFixed(2) + ' €',
+              recette.montantTTC.toFixed(2) + ' €'
+            ];
+            
+            // Calculer la hauteur nécessaire pour cette rangée
+            const rowHeight = calculerHauteurRangee(rowData, 9);
+            
+            checkNewPage(rowHeight + 5);
+            
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(9);
+            
+            // Dessiner les bordures de la cellule
+            pdf.setLineWidth(0.1);
+            let colX = margin;
+            for (let i = 0; i < colWidths.length; i++) {
+              pdf.rect(colX, currentY, colWidths[i], rowHeight);
+              colX += colWidths[i];
+            }
+            
+            // Afficher le contenu de chaque cellule
+            colX = margin;
+            rowData.forEach((data, i) => {
+              const lignesCellule = diviserTexte(data, colWidths[i], 9);
+              
+              // Style spécial pour certaines colonnes
+              if (i === 1) { // N° Facture
+                pdf.setFont('helvetica', 'bold');
+              } else if (data.toString().includes('€')) { // Montants
+                pdf.setFont('helvetica', 'normal');
+                pdf.setFontSize(9);
+              } else {
+                pdf.setFont('helvetica', 'normal');
+                pdf.setFontSize(9);
+              }
+              
+              // Centrer verticalement les lignes dans la cellule
+              const startY = currentY + (rowHeight - (lignesCellule.length * 5)) / 2 + 4;
+              
+              lignesCellule.forEach((ligne, j) => {
+                pdf.text(ligne, colX + 3, startY + (j * 5));
+              });
+              
+              colX += colWidths[i];
+            });
+            
+            currentY += rowHeight;
+          });
+          
+          // Ligne de total pour le mois
+          if (recettesMois.length > 0) {
+            const totalHTMois = recettesMois.reduce((sum, r) => sum + r.montantHT, 0);
+            const totalTTCMois = recettesMois.reduce((sum, r) => sum + r.montantTTC, 0);
+            
+            const totalData = ['', '', '', 'TOTAL MOIS', '', totalHTMois.toFixed(2) + ' €', totalTTCMois.toFixed(2) + ' €'];
+            const totalRowHeight = calculerHauteurRangee(totalData, 10);
+            
+            pdf.setFillColor(245, 245, 245);
+            pdf.rect(margin, currentY, usableWidth, totalRowHeight, 'F');
+            
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(10);
+            
+            // Dessiner les bordures
+            pdf.setLineWidth(0.1);
+            let colX = margin;
+            for (let i = 0; i < colWidths.length; i++) {
+              pdf.rect(colX, currentY, colWidths[i], totalRowHeight);
+              colX += colWidths[i];
+            }
+            
+            // Afficher le contenu
+            colX = margin;
+            totalData.forEach((data, i) => {
+              if (data) {
+                const lignesCellule = diviserTexte(data, colWidths[i], 10);
+                const startY = currentY + (totalRowHeight - (lignesCellule.length * 5)) / 2 + 4;
+                
+                lignesCellule.forEach((ligne, j) => {
+                  pdf.text(ligne, colX + 3, startY + (j * 5));
+                });
+              }
+              colX += colWidths[i];
+            });
+            
+            currentY += totalRowHeight;
+          }
+        }
+        
+        currentY += 15;
+      }
+      
+      // Total général à la fin
+      checkNewPage(30);
+      
+      const totalHTGeneral = recettesAnnee.reduce((sum, r) => sum + r.montantHT, 0);
+      const totalTTCGeneral = recettesAnnee.reduce((sum, r) => sum + r.montantTTC, 0);
+      
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('RÉCAPITULATIF ANNUEL', margin, currentY);
+      currentY += 10;
+      
+      pdf.setFontSize(10);
+      pdf.text(`Total HT ${anneeAffichage} : ${totalHTGeneral.toFixed(2)} €`, margin, currentY);
+      currentY += 8;
+      pdf.text(`Total TTC ${anneeAffichage} : ${totalTTCGeneral.toFixed(2)} €`, margin, currentY);
+      currentY += 8;
+      pdf.text(`Nombre de factures : ${recettesAnnee.length}`, margin, currentY);
+      
+      // Générer le PDF en blob
+      const pdfBlob = pdf.output('blob');
+      
+      // Nom de fichier suggéré
+      const nomFichierSuggere = `Livre_Recettes_${nomEntreprise.replace(/[^a-zA-Z0-9]/g, '')}_${anneeAffichage}.pdf`;
+      
+      // Tentative d'utilisation de l'API File System Access (navigateurs modernes)
+      if ('showSaveFilePicker' in window) {
+        window.showSaveFilePicker({
+          suggestedName: nomFichierSuggere,
+          types: [
+            {
+              description: 'Fichiers PDF',
+              accept: {
+                'application/pdf': ['.pdf'],
+              },
+            },
+          ],
+        }).then(async (fileHandle) => {
+          const writable = await fileHandle.createWritable();
+          await writable.write(pdfBlob);
+          await writable.close();
+          
+          alert('📄 PDF exporté avec succès !');
+        }).catch((err) => {
+          // L'utilisateur a annulé ou une erreur est survenue
+          if (err.name !== 'AbortError') {
+            console.error('Erreur lors de la sauvegarde:', err);
+            // Fallback vers téléchargement normal
+            telechargerPDFNormal();
+          }
+        });
+      } else {
+        // Fallback pour les navigateurs qui ne supportent pas l'API
+        telechargerPDFNormal();
+      }
+      
+      // Fonction de téléchargement normal (fallback)
+      function telechargerPDFNormal() {
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(pdfBlob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', nomFichierSuggere);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        alert('📄 PDF téléchargé dans votre dossier de téléchargements !');
+      }
     }
 
     function viderLivre() {
