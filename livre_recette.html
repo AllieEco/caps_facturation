@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Livre de Recette - CAPSLOCK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><style>.cls-1{fill:%23f4d03f;}.cls-2{fill:%23333;stroke:%23333;stroke-width:2;fill:none;}.cls-3{fill:%23333;}</style></defs><polygon class='cls-1' points='45,10 50,20 60,20 52,28 55,38 45,33 35,38 38,28 30,20 40,20'/><polygon class='cls-1' points='70,25 73,30 78,30 75,33 76,38 70,35 64,38 65,33 62,30 67,30'/><polygon class='cls-1' points='58,45 61,50 66,50 63,53 64,58 58,55 52,58 53,53 50,50 55,50'/><rect class='cls-2' x='15' y='25' width='45' height='60' rx='3'/><rect class='cls-3' x='20' y='35' width='25' height='2'/><rect class='cls-3' x='20' y='45' width='20' height='2'/><rect class='cls-3' x='20' y='55' width='25' height='2'/><rect class='cls-3' x='20' y='65' width='15' height='2'/><circle class='cls-2' cx='70' cy='60' r='15'/><text x='70' y='67' text-anchor='middle' class='cls-3' font-family='Arial' font-size='16' font-weight='bold'>$</text><path class='cls-2' d='M15,80 Q15,85 20,85 L75,85 Q80,85 80,80 L80,75 L15,75 Z'/></svg>" type="image/svg+xml">
+  <style>
+    body { font-family: 'Montserrat', Arial, sans-serif; background: #f7fafd; margin: 0; padding: 0; color: #222; }
+    .container { max-width: 1200px; margin: 30px auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); padding: 32px; }
+    h1 { color: #1a7ee7; font-size: 2.5rem; margin-bottom: 24px; text-align: center; letter-spacing: 1px; }
+    h2 { color: #1a7ee7; font-size: 1.8rem; margin-bottom: 18px; margin-top: 30px; }
+    h3 { color: #1a7ee7; font-size: 1.3rem; margin-bottom: 12px; margin-top: 24px; }
+    .btn { background: #1a7ee7; color: #fff; border: none; border-radius: 6px; padding: 12px 24px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin: 8px 4px; box-shadow: 0 2px 8px rgba(26,126,231,0.15); transition: all 0.2s; }
+    .btn:hover { background: #1766b8; transform: translateY(-2px); box-shadow: 0 4px 16px rgba(26,126,231,0.25); }
+    .btn-success { background: #27ae60; }
+    .btn-success:hover { background: #219a52; }
+    .btn-danger { background: #e74c3c; }
+    .btn-danger:hover { background: #c0392b; }
+    .btn-secondary { background: #95a5a6; }
+    .btn-secondary:hover { background: #7f8c8d; }
+    .form-group { margin-bottom: 20px; }
+    .form-row { display: flex; gap: 16px; margin-bottom: 16px; }
+    .form-row > div { flex: 1; }
+    label { font-weight: 600; margin-bottom: 6px; display: block; color: #333; }
+    input, select, textarea { width: 100%; padding: 12px; border: 1px solid #c7e0f7; border-radius: 6px; font-size: 1rem; font-family: inherit; background: #fafdff; transition: border 0.2s; box-sizing: border-box; }
+    input:focus, select:focus, textarea:focus { border: 1.5px solid #1a7ee7; outline: none; }
+    .table-container { overflow-x: auto; margin: 20px 0; }
+    table { width: 100%; border-collapse: collapse; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-radius: 8px; overflow: hidden; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e9ecef; }
+    th { background: #f4f8fb; font-weight: 600; color: #1a7ee7; }
+    tr:hover { background: #f8f9fa; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0; }
+    .stat-card { background: linear-gradient(135deg, #1a7ee7, #0f5bb8); color: white; padding: 24px; border-radius: 12px; text-align: center; box-shadow: 0 4px 16px rgba(26,126,231,0.2); }
+    .stat-card h3 { margin: 0 0 12px 0; font-size: 1.2rem; opacity: 0.9; }
+    .stat-card .value { font-size: 2.2rem; font-weight: 700; margin-bottom: 8px; }
+    .stat-card .label { font-size: 0.9rem; opacity: 0.8; }
+    .main-header { width: 100%; height: 3cm; background: #f7fafd; box-shadow: 0 4px 18px 0 rgba(26,126,231,0.08); border: none; margin: 0; padding: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; }
+    .header-logo { height: 57px; max-height: 57px; margin-left: 96px; margin-top: 0; margin-bottom: 0; margin-right: 18px; vertical-align: middle; display: inline-block; cursor: pointer; transition: transform 0.3s ease, filter 0.3s ease; }
+    .header-logo:hover { transform: scale(1.1); filter: brightness(1.1) drop-shadow(0 4px 8px rgba(26,126,231,0.3)); }
+    .header-buttons { display: flex; gap: 16px; margin-right: 96px; }
+    .header-button { background: #1a7ee7; color: white; border: none; border-radius: 8px; padding: 12px 24px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; font-family: 'Montserrat', Arial, sans-serif; }
+    .header-button:hover { background: #1766b8; }
+    .header-button.active { background: #0f5bb8; }
+    .empty-state { text-align: center; padding: 60px 20px; color: #666; }
+    .empty-state i { font-size: 3rem; margin-bottom: 16px; color: #1a7ee7; }
+    .filters { background: #f4f8fb; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+    .filters h3 { margin-top: 0; }
+    .total-row { font-weight: 700; background: #f4f8fb !important; color: #1a7ee7; }
+    .amount-positive { color: #27ae60; font-weight: 600; }
+    .amount-negative { color: #e74c3c; font-weight: 600; }
+    .footer { text-align: center; margin-top: 40px; padding: 20px; font-size: 0.9rem; color: #666; background: #f8f9fa; border-top: 1px solid #e9ecef; }
+    .footer a { color: inherit; text-decoration: underline; font-weight: bold; }
+    @media (max-width: 768px) {
+      .container { margin: 15px; padding: 20px; }
+      .form-row { flex-direction: column; gap: 0; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .header-buttons { flex-direction: column; gap: 8px; }
+      .header-logo { margin-left: 20px; }
+      .header-buttons { margin-right: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="main-header">
+    <img src="logo_capslock.png" alt="Logo CAPSLOCK" class="header-logo" onclick="window.location.href='facture.html'">
+    <div class="header-buttons">
+      <button class="header-button" onclick="window.location.href='facture.html'">Devis/Facture</button>
+      <button class="header-button" onclick="window.location.href='registre_achat.html'">Registre d'achat</button>
+      <button class="header-button active">Livre de recette</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1>📊 Livre de Recette</h1>
+    
+    <!-- Statistiques -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Total des recettes</h3>
+        <div class="value" id="totalRecettes">0,00 €</div>
+        <div class="label">Toutes périodes</div>
+      </div>
+      <div class="stat-card">
+        <h3>Recettes ce mois</h3>
+        <div class="value" id="recettesMois">0,00 €</div>
+        <div class="label" id="labelMois">Janvier 2025</div>
+      </div>
+      <div class="stat-card">
+        <h3>Nombre de factures</h3>
+        <div class="value" id="nombreFactures">0</div>
+        <div class="label">Factures émises</div>
+      </div>
+      <div class="stat-card">
+        <h3>Recette moyenne</h3>
+        <div class="value" id="recetteMoyenne">0,00 €</div>
+        <div class="label">Par facture</div>
+      </div>
+    </div>
+
+    <!-- Formulaire d'ajout -->
+    <h2>➕ Enregistrer une recette</h2>
+    <form id="recetteForm">
+      <div class="form-row">
+        <div>
+          <label for="dateRecette">Date de la recette</label>
+          <input type="date" id="dateRecette" required>
+        </div>
+        <div>
+          <label for="numeroFacture">Numéro de facture</label>
+          <input type="text" id="numeroFacture" placeholder="F001" required>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div>
+          <label for="clientNom">Client</label>
+          <input type="text" id="clientNom" placeholder="Nom du client" required>
+        </div>
+        <div>
+          <label for="montantHT">Montant HT (€)</label>
+          <input type="number" id="montantHT" step="0.01" min="0" placeholder="0.00" required>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div>
+          <label for="tauxTva">Taux TVA (%)</label>
+          <select id="tauxTva" required>
+            <option value="0">0% (Micro-entreprise)</option>
+            <option value="20">20% (Taux normal)</option>
+            <option value="10">10% (Taux réduit)</option>
+            <option value="5.5">5,5% (Taux super réduit)</option>
+          </select>
+        </div>
+        <div>
+          <label for="montantTTC">Montant TTC (€)</label>
+          <input type="number" id="montantTTC" step="0.01" min="0" placeholder="0.00" readonly>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div>
+          <label for="modePaiement">Mode de paiement</label>
+          <select id="modePaiement" required>
+            <option value="virement">Virement bancaire</option>
+            <option value="cheque">Chèque</option>
+            <option value="carte">Carte bancaire</option>
+            <option value="espece">Espèce</option>
+          </select>
+        </div>
+        <div>
+          <label for="dateEncaissement">Date d'encaissement</label>
+          <input type="date" id="dateEncaissement">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="descriptionRecette">Description (optionnel)</label>
+        <textarea id="descriptionRecette" rows="3" placeholder="Prestations facturées..."></textarea>
+      </div>
+      
+      <button type="submit" class="btn btn-success">Enregistrer la recette</button>
+    </form>
+
+    <!-- Filtres -->
+    <div class="filters">
+      <h3>🔍 Filtres</h3>
+      <div class="form-row">
+        <div>
+          <label for="filtreAnnee">Année</label>
+          <select id="filtreAnnee">
+            <option value="">Toutes les années</option>
+          </select>
+        </div>
+        <div>
+          <label for="filtreMois">Mois</label>
+          <select id="filtreMois">
+            <option value="">Tous les mois</option>
+            <option value="01">Janvier</option>
+            <option value="02">Février</option>
+            <option value="03">Mars</option>
+            <option value="04">Avril</option>
+            <option value="05">Mai</option>
+            <option value="06">Juin</option>
+            <option value="07">Juillet</option>
+            <option value="08">Août</option>
+            <option value="09">Septembre</option>
+            <option value="10">Octobre</option>
+            <option value="11">Novembre</option>
+            <option value="12">Décembre</option>
+          </select>
+        </div>
+        <div>
+          <label for="filtreClient">Client</label>
+          <input type="text" id="filtreClient" placeholder="Nom du client">
+        </div>
+        <div style="display: flex; align-items: end;">
+          <button type="button" class="btn btn-secondary" onclick="reinitialiserFiltres()">Réinitialiser</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tableau des recettes -->
+    <h2>📋 Historique des recettes</h2>
+    <div class="table-container">
+      <table id="recettesTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>N° Facture</th>
+            <th>Client</th>
+            <th>Montant HT</th>
+            <th>TVA</th>
+            <th>Montant TTC</th>
+            <th>Mode paiement</th>
+            <th>Encaissement</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="recettesTableBody">
+          <tr>
+            <td colspan="9" class="empty-state">
+              <div>
+                <i>💰</i>
+                <p>Aucune recette enregistrée</p>
+                <p>Commencez par enregistrer votre première recette ci-dessus</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Boutons d'export -->
+    <div style="text-align: center; margin-top: 30px;">
+      <button class="btn" onclick="exporterCSV()">📊 Exporter en CSV</button>
+      <button class="btn" onclick="exporterPDF()">📄 Exporter en PDF</button>
+      <button class="btn btn-danger" onclick="viderLivre()">🗑️ Vider le livre</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    Made with ❤️ by <a href="https://github.com/AllieEco" target="_blank">AllieEco</a>
+  </div>
+
+  <script>
+    let recettes = JSON.parse(localStorage.getItem('recettes')) || [];
+    let recettesFiltered = [...recettes];
+
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', function() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('dateRecette').value = today;
+      document.getElementById('dateEncaissement').value = today;
+      
+      // Calculer automatiquement le TTC
+      document.getElementById('montantHT').addEventListener('input', calculerTTC);
+      document.getElementById('tauxTva').addEventListener('change', calculerTTC);
+      
+      // Filtres
+      document.getElementById('filtreAnnee').addEventListener('change', appliquerFiltres);
+      document.getElementById('filtreMois').addEventListener('change', appliquerFiltres);
+      document.getElementById('filtreClient').addEventListener('input', appliquerFiltres);
+      
+      // Remplir les années disponibles
+      remplirAnnees();
+      
+      // Charger les données
+      afficherRecettes();
+      mettreAJourStatistiques();
+    });
+
+    // Gestionnaire du formulaire
+    document.getElementById('recetteForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      ajouterRecette();
+    });
+
+    function calculerTTC() {
+      const montantHT = parseFloat(document.getElementById('montantHT').value) || 0;
+      const tauxTva = parseFloat(document.getElementById('tauxTva').value) || 0;
+      const montantTTC = montantHT * (1 + tauxTva / 100);
+      document.getElementById('montantTTC').value = montantTTC.toFixed(2);
+    }
+
+    function ajouterRecette() {
+      const recette = {
+        id: Date.now(),
+        date: document.getElementById('dateRecette').value,
+        numeroFacture: document.getElementById('numeroFacture').value,
+        client: document.getElementById('clientNom').value,
+        montantHT: parseFloat(document.getElementById('montantHT').value),
+        tauxTva: parseFloat(document.getElementById('tauxTva').value),
+        montantTTC: parseFloat(document.getElementById('montantTTC').value),
+        modePaiement: document.getElementById('modePaiement').value,
+        dateEncaissement: document.getElementById('dateEncaissement').value,
+        description: document.getElementById('descriptionRecette').value
+      };
+      
+      recettes.push(recette);
+      localStorage.setItem('recettes', JSON.stringify(recettes));
+      
+      // Réinitialiser le formulaire
+      document.getElementById('recetteForm').reset();
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('dateRecette').value = today;
+      document.getElementById('dateEncaissement').value = today;
+      document.getElementById('montantTTC').value = '';
+      
+      // Rafraîchir l'affichage
+      recettesFiltered = [...recettes];
+      afficherRecettes();
+      mettreAJourStatistiques();
+      remplirAnnees();
+      
+      alert('Recette enregistrée avec succès !');
+    }
+
+    function supprimerRecette(id) {
+      if (confirm('Êtes-vous sûr de vouloir supprimer cette recette ?')) {
+        recettes = recettes.filter(r => r.id !== id);
+        localStorage.setItem('recettes', JSON.stringify(recettes));
+        recettesFiltered = [...recettes];
+        afficherRecettes();
+        mettreAJourStatistiques();
+        remplirAnnees();
+      }
+    }
+
+    function afficherRecettes() {
+      const tbody = document.getElementById('recettesTableBody');
+      
+      if (recettesFiltered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" class="empty-state">
+              <div>
+                <i>💰</i>
+                <p>Aucune recette trouvée</p>
+                <p>Modifiez vos filtres ou ajoutez une nouvelle recette</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      
+      // Trier par date décroissante
+      recettesFiltered.sort((a, b) => new Date(b.date) - new Date(a.date));
+      
+      tbody.innerHTML = recettesFiltered.map(recette => `
+        <tr>
+          <td>${new Date(recette.date).toLocaleDateString('fr-FR')}</td>
+          <td><strong>${recette.numeroFacture}</strong></td>
+          <td>${recette.client}</td>
+          <td class="amount-positive">${recette.montantHT.toFixed(2)} €</td>
+          <td>${recette.tauxTva}%</td>
+          <td class="amount-positive"><strong>${recette.montantTTC.toFixed(2)} €</strong></td>
+          <td>${getModePaiementLabel(recette.modePaiement)}</td>
+          <td>${recette.dateEncaissement ? new Date(recette.dateEncaissement).toLocaleDateString('fr-FR') : 'Non encaissé'}</td>
+          <td>
+            <button class="btn btn-danger" onclick="supprimerRecette(${recette.id})" title="Supprimer">🗑️</button>
+          </td>
+        </tr>
+      `).join('');
+
+      // Ajouter une ligne de total
+      const totalHT = recettesFiltered.reduce((sum, r) => sum + r.montantHT, 0);
+      const totalTTC = recettesFiltered.reduce((sum, r) => sum + r.montantTTC, 0);
+      const totalTVA = totalTTC - totalHT;
+      
+      tbody.innerHTML += `
+        <tr class="total-row">
+          <td colspan="3"><strong>TOTAL</strong></td>
+          <td><strong>${totalHT.toFixed(2)} €</strong></td>
+          <td><strong>${totalTVA.toFixed(2)} €</strong></td>
+          <td><strong>${totalTTC.toFixed(2)} €</strong></td>
+          <td colspan="3"></td>
+        </tr>
+      `;
+    }
+
+    function mettreAJourStatistiques() {
+      const totalRecettes = recettes.reduce((sum, r) => sum + r.montantTTC, 0);
+      const nombreFactures = recettes.length;
+      const recetteMoyenne = nombreFactures > 0 ? totalRecettes / nombreFactures : 0;
+      
+      // Recettes du mois en cours
+      const maintenant = new Date();
+      const moisActuel = maintenant.getMonth();
+      const anneeActuelle = maintenant.getFullYear();
+      const recettesMois = recettes.filter(r => {
+        const dateRecette = new Date(r.date);
+        return dateRecette.getMonth() === moisActuel && dateRecette.getFullYear() === anneeActuelle;
+      }).reduce((sum, r) => sum + r.montantTTC, 0);
+      
+      document.getElementById('totalRecettes').textContent = totalRecettes.toFixed(2) + ' €';
+      document.getElementById('recettesMois').textContent = recettesMois.toFixed(2) + ' €';
+      document.getElementById('nombreFactures').textContent = nombreFactures;
+      document.getElementById('recetteMoyenne').textContent = recetteMoyenne.toFixed(2) + ' €';
+      
+      // Mettre à jour le label du mois
+      const nomsMois = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 
+                       'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+      document.getElementById('labelMois').textContent = nomsMois[moisActuel] + ' ' + anneeActuelle;
+    }
+
+    function remplirAnnees() {
+      const select = document.getElementById('filtreAnnee');
+      const annees = [...new Set(recettes.map(r => new Date(r.date).getFullYear()))].sort((a, b) => b - a);
+      
+      const optionsExistantes = Array.from(select.options).map(o => o.value);
+      
+      annees.forEach(annee => {
+        if (!optionsExistantes.includes(annee.toString())) {
+          const option = document.createElement('option');
+          option.value = annee;
+          option.textContent = annee;
+          select.appendChild(option);
+        }
+      });
+    }
+
+    function appliquerFiltres() {
+      const filtreAnnee = document.getElementById('filtreAnnee').value;
+      const filtreMois = document.getElementById('filtreMois').value;
+      const filtreClient = document.getElementById('filtreClient').value.toLowerCase();
+      
+      recettesFiltered = recettes.filter(recette => {
+        const dateRecette = new Date(recette.date);
+        const anneeRecette = dateRecette.getFullYear().toString();
+        const moisRecette = (dateRecette.getMonth() + 1).toString().padStart(2, '0');
+        
+        return (!filtreAnnee || anneeRecette === filtreAnnee) &&
+               (!filtreMois || moisRecette === filtreMois) &&
+               (!filtreClient || recette.client.toLowerCase().includes(filtreClient));
+      });
+      
+      afficherRecettes();
+    }
+
+    function reinitialiserFiltres() {
+      document.getElementById('filtreAnnee').value = '';
+      document.getElementById('filtreMois').value = '';
+      document.getElementById('filtreClient').value = '';
+      recettesFiltered = [...recettes];
+      afficherRecettes();
+    }
+
+    function getModePaiementLabel(mode) {
+      const labels = {
+        'virement': 'Virement',
+        'cheque': 'Chèque',
+        'carte': 'Carte',
+        'espece': 'Espèce'
+      };
+      return labels[mode] || mode;
+    }
+
+    function exporterCSV() {
+      if (recettesFiltered.length === 0) {
+        alert('Aucune recette à exporter');
+        return;
+      }
+      
+      let csvContent = '\uFEFF'; // BOM UTF-8
+      csvContent += 'Date,Numéro Facture,Client,Montant HT,Taux TVA,Montant TTC,Mode Paiement,Date Encaissement,Description\n';
+      
+      recettesFiltered.forEach(recette => {
+        csvContent += `${recette.date},${recette.numeroFacture},"${recette.client}",${recette.montantHT.toFixed(2)},${recette.tauxTva},${recette.montantTTC.toFixed(2)},${getModePaiementLabel(recette.modePaiement)},${recette.dateEncaissement || ''},"${recette.description || ''}"\n`;
+      });
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `livre_recettes_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function exporterPDF() {
+      alert('Fonctionnalité d\'export PDF en cours de développement');
+    }
+
+    function viderLivre() {
+      if (confirm('Êtes-vous sûr de vouloir supprimer toutes les recettes ? Cette action est irréversible.')) {
+        if (confirm('Confirmation finale : toutes les recettes seront supprimées définitivement.')) {
+          recettes = [];
+          recettesFiltered = [];
+          localStorage.removeItem('recettes');
+          afficherRecettes();
+          mettreAJourStatistiques();
+          remplirAnnees();
+          alert('Livre de recettes vidé avec succès');
+        }
+      }
+    }
+  </script>
+</body>
+</html> 

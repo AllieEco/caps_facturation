@@ -191,15 +191,18 @@
     .header-button:hover {
       background: #1766b8;
     }
+    .header-button.active {
+      background: #0f5bb8;
+    }
   </style>
 </head>
 <body>
   <header class="main-header">
     <img src="logo_capslock.png" alt="Logo CAPSLOCK" class="header-logo">
     <div class="header-buttons">
-      <button class="header-button">Devis/Facture</button>
-      <button class="header-button">Registre d'achat</button>
-      <button class="header-button">Livre de recette</button>
+      <button class="header-button active">Devis/Facture</button>
+      <button class="header-button" onclick="window.location.href='registre_achat.html'">Registre d'achat</button>
+      <button class="header-button" onclick="window.location.href='livre_recette.html'">Livre de recette</button>
     </div>
   </header>
   <div class="container">
