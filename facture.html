@@ -235,8 +235,10 @@
         </select>
         <label>Nom de l'entreprise</label>
         <input type="text" id="emetteurNom" value="" required>
-        <label>Contact</label>
+        <label id="contactLabel">Contact</label>
         <input type="text" id="emetteurContact" value="" required>
+        <label id="presidentLabel" style="display: none;">Président</label>
+        <input type="text" id="presidentSasuMain" style="display: none;" placeholder="Prénom NOM">
         <label>Adresse</label>
         <input type="text" id="emetteurAdresse" placeholder="Numéro et nom de rue" required>
         <label>Code postal</label>
@@ -258,8 +260,6 @@
           <input type="text" id="emetteurVilleRcs" placeholder="Ville d'immatriculation" required>
         </div>
         <div id="champsSasu" style="display: none;">
-          <label>Président</label>
-          <input type="text" id="presidentSasu" placeholder="Prénom NOM">
           <label>Capital social (€)</label>
           <input type="number" id="capitalSocial" min="0" step="0.01">
           <label>N° TVA intracommunautaire</label>
@@ -486,6 +486,12 @@
       const infoTVA = document.getElementById('infoTVA');
       const infoMicro = document.getElementById('infoMicro');
       
+      // Gérer l'affichage des champs Contact/Président
+      const contactLabel = document.getElementById('contactLabel');
+      const emetteurContact = document.getElementById('emetteurContact');
+      const presidentLabel = document.getElementById('presidentLabel');
+      const presidentSasuMain = document.getElementById('presidentSasuMain');
+      
       if (statut === 'sasu') {
         champsSasu.style.display = 'block';
         champsEurl.style.display = 'none';
@@ -495,6 +501,14 @@
         prixTTCInput.disabled = false;
         infoTVA.style.display = 'block';
         infoMicro.style.display = 'none';
+        
+        // Afficher le champ Président et cacher le champ Contact
+        contactLabel.style.display = 'none';
+        emetteurContact.style.display = 'none';
+        emetteurContact.required = false;
+        presidentLabel.style.display = 'block';
+        presidentSasuMain.style.display = 'block';
+        presidentSasuMain.required = true;
         
         // Réinitialiser les champs RCS pour SASU
         const emetteurRcs = document.getElementById('emetteurRcs');
@@ -515,6 +529,14 @@
         infoTVA.style.display = 'block';
         infoMicro.style.display = 'none';
         
+        // Afficher le champ Contact et cacher le champ Président
+        contactLabel.style.display = 'block';
+        emetteurContact.style.display = 'block';
+        emetteurContact.required = true;
+        presidentLabel.style.display = 'none';
+        presidentSasuMain.style.display = 'none';
+        presidentSasuMain.required = false;
+        
         // Réinitialiser les champs RCS pour EURL
         const emetteurRcs = document.getElementById('emetteurRcs');
         const emetteurVilleRcs = document.getElementById('emetteurVilleRcs');
@@ -534,6 +556,14 @@
         prixTTCInput.value = '';
         infoTVA.style.display = 'none';
         infoMicro.style.display = 'block';
+        
+        // Afficher le champ Contact et cacher le champ Président
+        contactLabel.style.display = 'block';
+        emetteurContact.style.display = 'block';
+        emetteurContact.required = true;
+        presidentLabel.style.display = 'none';
+        presidentSasuMain.style.display = 'none';
+        presidentSasuMain.required = false;
         
         // Initialiser l'affichage des champs RCS pour micro-entreprise
         changerAffichageRcsMicro();
@@ -724,7 +754,7 @@
       const banque = document.getElementById('banque').value;
       const modePaiement = document.getElementById('modePaiement').value;
       const emetteurNom = document.getElementById('emetteurNom').value;
-      const emetteurContact = document.getElementById('emetteurContact').value;
+      const emetteurContact = statutJuridique === 'sasu' ? document.getElementById('presidentSasuMain').value : document.getElementById('emetteurContact').value;
       const emetteurAdresse = document.getElementById('emetteurAdresse').value;
       const emetteurCodePostal = document.getElementById('emetteurCodePostal').value;
       const emetteurVille = document.getElementById('emetteurVille').value;
@@ -1242,7 +1272,7 @@
       const capitalSocial = document.getElementById('capitalSocial').value;
       const numTva = document.getElementById('numTva').value;
       const dateCreationSasu = document.getElementById('dateCreationSasu').value;
-      const presidentSasu = document.getElementById('presidentSasu').value;
+      const presidentSasu = document.getElementById('presidentSasuMain').value;
       const clientTva = document.getElementById('clientTva').value;
       const datePrestation = document.getElementById('datePrestation').value;
       
@@ -1334,7 +1364,7 @@
       const capitalSocial = document.getElementById('capitalSocial').value;
       const numTva = document.getElementById('numTva').value;
       const dateCreationSasu = document.getElementById('dateCreationSasu').value;
-      const presidentSasu = document.getElementById('presidentSasu').value;
+      const presidentSasu = document.getElementById('presidentSasuMain').value;
       const clientTva = document.getElementById('clientTva').value;
       const datePrestation = document.getElementById('datePrestation').value;
       
@@ -1496,6 +1526,9 @@
     document.querySelectorAll('#factureForm input, #factureForm select').forEach(input => {
       input.addEventListener('input', majApercu);
     });
+    
+    // Ajouter l'écouteur spécifique pour le champ président SASU
+    document.getElementById('presidentSasuMain').addEventListener('input', majApercu);
     
     // Ajouter l'écouteur pour le champ de validité du devis
     document.getElementById('validiteDevis').addEventListener('input', majApercu);
@@ -1753,6 +1786,7 @@
       const sectionMapping = {
         'emetteurNom': '.facture-emetteur',
         'emetteurContact': '.facture-emetteur',
+        'presidentSasuMain': '.facture-emetteur',
         'emetteurAdresse': '.facture-emetteur',
         'emetteurCodePostal': '.facture-emetteur',
         'emetteurVille': '.facture-emetteur',
@@ -1889,7 +1923,7 @@
         if (CONFIG.capitalSocial) document.getElementById('capitalSocial').value = CONFIG.capitalSocial;
         if (CONFIG.numTva) document.getElementById('numTva').value = CONFIG.numTva;
         if (CONFIG.dateCreationSasu) document.getElementById('dateCreationSasu').value = CONFIG.dateCreationSasu;
-        if (CONFIG.presidentSasu) document.getElementById('presidentSasu').value = CONFIG.presidentSasu;
+        if (CONFIG.presidentSasu) document.getElementById('presidentSasuMain').value = CONFIG.presidentSasu;
         
         // Valeurs spécifiques EURL
         if (CONFIG.capitalSocialEurl) document.getElementById('capitalSocialEurl').value = CONFIG.capitalSocialEurl;
