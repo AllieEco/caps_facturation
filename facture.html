@@ -151,22 +151,50 @@
       margin: 0;
       padding: 0;
       z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
     .header-logo {
       height: 57px;
       max-height: 57px;
       margin-left: 96px;
-      margin-top: 0.6cm;
-      margin-bottom: 0.6cm;
+      margin-top: 0;
+      margin-bottom: 0;
       margin-right: 18px;
       vertical-align: middle;
       display: inline-block;
+    }
+    .header-buttons {
+      display: flex;
+      gap: 16px;
+      margin-right: 96px;
+    }
+    .header-button {
+      background: #1a7ee7;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: 'Montserrat', Arial, sans-serif;
+    }
+    .header-button:hover {
+      background: #1766b8;
     }
   </style>
 </head>
 <body>
   <header class="main-header">
     <img src="logo_capslock.png" alt="Logo CAPSLOCK" class="header-logo">
+    <div class="header-buttons">
+      <button class="header-button">Devis/Facture</button>
+      <button class="header-button">Registre d'achat</button>
+      <button class="header-button">Livre de recette</button>
+    </div>
   </header>
   <div class="container">
     <div class="sync-indicator" id="syncIndicator">Aperçu synchronisé</div>
