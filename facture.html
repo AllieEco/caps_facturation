@@ -348,9 +348,15 @@
         <input type="text" id="clientAdresse" required>
         <label>Code postal & Ville</label>
         <input type="text" id="clientVille" required>
-        <label>SIRET du client (optionnel)</label>
-        <input type="text" id="clientSiret">
-        <div id="champsClientSasu" style="display: none;">
+        <div style="margin: 15px 0;">
+          <label>
+            <input type="checkbox" id="clientEntreprise" onchange="changerAffichageClientEntreprise()"> 
+            Le client est-il une entreprise ?
+          </label>
+        </div>
+        <div id="champsClientEntreprise" style="display: none;">
+          <label>SIRET du client</label>
+          <input type="text" id="clientSiret" placeholder="12345678901234">
           <label>N° TVA client (optionnel)</label>
           <input type="text" id="clientTva" placeholder="FR12345678901">
         </div>
@@ -496,7 +502,7 @@
       const champsSasu = document.getElementById('champsSasu');
       const champsEurl = document.getElementById('champsEurl');
       const champsSarl = document.getElementById('champsSarl');
-      const champsClientSasu = document.getElementById('champsClientSasu');
+
       const champsMicroRcs = document.getElementById('champsMicroRcs');
       const champsRcsStandard = document.getElementById('champsRcsStandard');
       const prixTTCInput = document.getElementById('prixPresta');
@@ -513,7 +519,6 @@
         champsSasu.style.display = 'block';
         champsEurl.style.display = 'none';
         champsSarl.style.display = 'none';
-        champsClientSasu.style.display = 'block';
         champsMicroRcs.style.display = 'none';
         champsRcsStandard.style.display = 'block';
         prixTTCInput.disabled = false;
@@ -541,7 +546,6 @@
         champsSasu.style.display = 'none';
         champsEurl.style.display = 'block';
         champsSarl.style.display = 'none';
-        champsClientSasu.style.display = 'block';
         champsMicroRcs.style.display = 'none';
         champsRcsStandard.style.display = 'block';
         prixTTCInput.disabled = false;
@@ -569,7 +573,6 @@
         champsSasu.style.display = 'none';
         champsEurl.style.display = 'none';
         champsSarl.style.display = 'block';
-        champsClientSasu.style.display = 'block';
         champsMicroRcs.style.display = 'none';
         champsRcsStandard.style.display = 'block';
         prixTTCInput.disabled = false;
@@ -597,7 +600,6 @@
         champsSasu.style.display = 'none';
         champsEurl.style.display = 'none';
         champsSarl.style.display = 'none';
-        champsClientSasu.style.display = 'none';
         champsMicroRcs.style.display = 'block';
         champsRcsStandard.style.display = 'none';
         prixTTCInput.disabled = true;
@@ -629,6 +631,22 @@
       
       // Rafraîchir l'affichage des prestations avec les bons labels
       afficherPrestations();
+      majApercu();
+    }
+    
+    function changerAffichageClientEntreprise() {
+      const clientEntreprise = document.getElementById('clientEntreprise').checked;
+      const champsClientEntreprise = document.getElementById('champsClientEntreprise');
+      
+      if (clientEntreprise) {
+        champsClientEntreprise.style.display = 'block';
+      } else {
+        champsClientEntreprise.style.display = 'none';
+        // Vider les champs si on décoche
+        document.getElementById('clientSiret').value = '';
+        document.getElementById('clientTva').value = '';
+      }
+      
       majApercu();
     }
     
@@ -1001,8 +1019,8 @@
           ${clientNom ? `<b>${clientNom}</b><br>` : '[NOM DU CLIENT]<br>'}
           ${clientAdresse ? `${clientAdresse}<br>` : '[ADRESSE CLIENT]<br>'}
           ${clientVille ? `${clientVille}<br>` : '[CODE POSTAL VILLE]<br>'}
-          ${clientSiret ? `SIRET : ${clientSiret}<br>` : 'SIRET : [SIRET CLIENT]<br>'}
-          ${clientTva ? `N° TVA : ${clientTva}<br>` : 'N° TVA : [N° TVA CLIENT si applicable]<br>'}
+          ${document.getElementById('clientEntreprise').checked ? (clientSiret ? `SIRET : ${clientSiret}<br>` : 'SIRET : [SIRET CLIENT]<br>') : ''}
+          ${document.getElementById('clientEntreprise').checked ? (clientTva ? `N° TVA : ${clientTva}<br>` : 'N° TVA : [N° TVA CLIENT si applicable]<br>') : ''}
         </div>
         
         <div style="background: #fff3cd; border: 2px solid #f0ad4e; border-radius: 8px; padding: 15px; margin: 20px 0; text-align: center;">
@@ -1135,7 +1153,7 @@
           ${clientNom ? `<b>${clientNom}</b><br>` : '[NOM DU CLIENT]<br>'}
           ${clientAdresse ? `${clientAdresse}<br>` : '[ADRESSE CLIENT]<br>'}
           ${clientVille ? `${clientVille}<br>` : '[CODE POSTAL VILLE]<br>'}
-          ${clientSiret ? `SIRET : ${clientSiret}<br>` : 'SIRET : [SIRET CLIENT si applicable]<br>'}
+          ${document.getElementById('clientEntreprise').checked ? (clientSiret ? `SIRET : ${clientSiret}<br>` : 'SIRET : [SIRET CLIENT]<br>') : ''}
         </div>
         <table class="facture-table">
           <tr>
@@ -1217,7 +1235,7 @@
           <br>Contact : [NOM CONTACT]<br>
           Email : [EMAIL CLIENT]<br>
           Tél : [TÉLÉPHONE CLIENT]<br>
-          ${clientSiret ? `SIRET : ${clientSiret}<br>` : ''}
+          ${document.getElementById('clientEntreprise').checked ? (clientSiret ? `SIRET : ${clientSiret}<br>` : '') : ''}
         </div>
         
         <div style="background: #fff3cd; border: 2px solid #f0ad4e; border-radius: 8px; padding: 15px; margin: 20px 0; text-align: center;">
@@ -1353,8 +1371,8 @@
           ${clientNom ? `<b>${clientNom}</b><br>` : '[RAISON SOCIALE CLIENT]<br>'}
           ${clientAdresse ? `${clientAdresse}<br>` : '[ADRESSE CLIENT]<br>'}
           ${clientVille ? `${clientVille}<br>` : '[CODE POSTAL VILLE CLIENT]<br>'}
-          ${clientSiret ? `SIRET : ${clientSiret}<br>` : 'SIRET : [SIRET CLIENT]<br>'}
-          ${clientTva ? `N° TVA : ${clientTva}<br>` : 'N° TVA : [N° TVA CLIENT si applicable]<br>'}
+          ${document.getElementById('clientEntreprise').checked ? (clientSiret ? `SIRET : ${clientSiret}<br>` : 'SIRET : [SIRET CLIENT]<br>') : ''}
+          ${document.getElementById('clientEntreprise').checked ? (clientTva ? `N° TVA : ${clientTva}<br>` : 'N° TVA : [N° TVA CLIENT si applicable]<br>') : ''}
         </div>
         <table class="facture-table">
           <tr>
@@ -1470,8 +1488,8 @@
           <br>Contact : [NOM CONTACT]<br>
           Email : [EMAIL CLIENT]<br>
           Tél : [TÉLÉPHONE CLIENT]<br>
-          ${clientSiret ? `SIRET : ${clientSiret}<br>` : ''}
-          ${clientTva ? `N° TVA : ${clientTva}<br>` : ''}
+          ${document.getElementById('clientEntreprise').checked ? (clientSiret ? `SIRET : ${clientSiret}<br>` : '') : ''}
+          ${document.getElementById('clientEntreprise').checked ? (clientTva ? `N° TVA : ${clientTva}<br>` : '') : ''}
         </div>
         
         <div style="background: #fff3cd; border: 2px solid #f0ad4e; border-radius: 8px; padding: 15px; margin: 20px 0; text-align: center;">
@@ -1614,8 +1632,8 @@
           ${clientNom ? `<b>${clientNom}</b><br>` : '[RAISON SOCIALE CLIENT]<br>'}
           ${clientAdresse ? `${clientAdresse}<br>` : '[ADRESSE CLIENT]<br>'}
           ${clientVille ? `${clientVille}<br>` : '[CODE POSTAL VILLE CLIENT]<br>'}
-          ${clientSiret ? `SIRET : ${clientSiret}<br>` : 'SIRET : [SIRET CLIENT]<br>'}
-          ${clientTva ? `N° TVA : ${clientTva}<br>` : 'N° TVA : [N° TVA CLIENT si applicable]<br>'}
+          ${document.getElementById('clientEntreprise').checked ? (clientSiret ? `SIRET : ${clientSiret}<br>` : 'SIRET : [SIRET CLIENT]<br>') : ''}
+          ${document.getElementById('clientEntreprise').checked ? (clientTva ? `N° TVA : ${clientTva}<br>` : 'N° TVA : [N° TVA CLIENT si applicable]<br>') : ''}
         </div>
                  <table class="facture-table">
            <tr>
@@ -1726,8 +1744,8 @@
           <br>Contact : [NOM CONTACT]<br>
           Email : [EMAIL CLIENT]<br>
           Tél : [TÉLÉPHONE CLIENT]<br>
-          ${clientSiret ? `SIRET : ${clientSiret}<br>` : ''}
-          ${clientTva ? `N° TVA : ${clientTva}<br>` : ''}
+          ${document.getElementById('clientEntreprise').checked ? (clientSiret ? `SIRET : ${clientSiret}<br>` : '') : ''}
+          ${document.getElementById('clientEntreprise').checked ? (clientTva ? `N° TVA : ${clientTva}<br>` : '') : ''}
         </div>
         
         <div style="background: #fff3cd; border: 2px solid #f0ad4e; border-radius: 8px; padding: 15px; margin: 20px 0; text-align: center;">
@@ -2012,7 +2030,14 @@
       csvContent += `Nom client,${clientNom}\n`;
       csvContent += `Adresse client,${clientAdresse}\n`;
       csvContent += `Ville client,${clientVille}\n`;
-      csvContent += `SIRET client,${clientSiret}\n`;
+      const clientEntreprise = document.getElementById('clientEntreprise').checked;
+      if (clientEntreprise) {
+        csvContent += `SIRET client,${clientSiret}\n`;
+        const clientTva = document.getElementById('clientTva').value || '';
+        csvContent += `TVA client,${clientTva}\n`;
+      } else {
+        csvContent += `Type client,Particulier\n`;
+      }
       csvContent += '\n';
       
       // Prestations
