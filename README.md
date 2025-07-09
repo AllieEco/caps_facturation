@@ -33,11 +33,14 @@
 - **Calcul automatique** : TVA, totaux, acomptes
 - **Export professionnel** : PDF haute qualité + CSV
 
-### 3️⃣ **📊 Livre de Recette**
-- **Enregistrement facile** : Formulaire simple et guidé
-- **Statistiques en temps réel** : Total recettes, recettes du mois, moyenne
-- **Filtres et recherche** : Par période, client
-- **Export complet** : CSV et PDF professionnel
+### 3️⃣ **💰 Livre de Recette - NOUVEAU !**
+- **📝 Enregistrement facile** : Formulaire simple et guidé avec calcul automatique TTC
+- **📊 Statistiques en temps réel** : Total recettes, recettes du mois, nombre de factures, moyenne
+- **🔍 Filtres avancés** : Par année, mois, client avec recherche instantanée
+- **📋 Historique complet** : Tableau détaillé avec totaux automatiques
+- **📄 Export professionnel** : PDF format paysage avec récapitulatif mensuel et annuel
+- **💳 Gestion des paiements** : Virement, chèque, carte, espèce avec dates d'encaissement
+- **⚡ Interface moderne** : Design responsive avec animations et effets visuels
 
 ### 4️⃣ **🛒 Registre d'Achat**
 - **Suivi des achats** : Enregistrement complet des dépenses
@@ -96,6 +99,13 @@ const CONFIG = {
 - **Client entreprise** : Cocher la case et remplir SIRET/TVA
 - **Documents adaptés** : Les mentions s'ajustent automatiquement
 
+### **💡 Utilisation du Livre de Recette**
+1. **Enregistrer une recette** : Remplir le formulaire avec les informations de facturation
+2. **Calcul automatique** : Le montant TTC se calcule automatiquement selon le taux de TVA
+3. **Suivi des paiements** : Indiquer le mode de paiement et la date d'encaissement
+4. **Filtres et recherche** : Utiliser les filtres pour analyser vos recettes par période
+5. **Export comptable** : Générer des rapports PDF professionnels pour votre comptable
+
 ## 🔒 Sécurité et confidentialité
 
 ### ✅ **Vos données sont 100% privées**
@@ -114,6 +124,9 @@ caps_facturation/
 │   ├── livre_recette.html       # Livre de recette
 │   └── registre_achat.html      # Registre d'achat
 ├── assets/                       # Ressources (CSS, JS, images)
+│   ├── css/                     # Styles CSS
+│   ├── js/                      # Scripts JavaScript
+│   └── images/                  # Images et logos
 ├── templates/                    # Templates HTML réutilisables
 ├── config/                       # Configuration
 │   ├── config.example.js        # Configuration par défaut
