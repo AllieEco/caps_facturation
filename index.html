@@ -963,18 +963,22 @@
         revenueChart.destroy();
       }
       
-      revenueChart = new Chart(ctx, {
-        type: 'line',
+      // Choisir le type de graphique selon le type de données
+      const chartType = currentChartType === 'invoices' ? 'bar' : 'line';
+      
+      // Configuration spécifique selon le type de graphique
+      const chartConfig = {
+        type: chartType,
         data: {
           labels: labels,
           datasets: [{
             label: chartLabel,
             data: data,
             borderColor: borderColor,
-            backgroundColor: backgroundColor,
-            borderWidth: 3,
-            fill: true,
-            tension: 0.4
+            backgroundColor: chartType === 'bar' ? borderColor : backgroundColor,
+            borderWidth: chartType === 'bar' ? 0 : 3,
+            fill: chartType === 'bar' ? false : true,
+            tension: chartType === 'bar' ? 0 : 0.4
           }]
         },
         options: {
@@ -1000,7 +1004,9 @@
             }
           }
         }
-      });
+      };
+      
+      revenueChart = new Chart(ctx, chartConfig);
     }
     
     function updatePaymentChart(filteredRecettes, filteredAchats) {
