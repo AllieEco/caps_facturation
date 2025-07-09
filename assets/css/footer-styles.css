@@ -2,29 +2,61 @@
 .footer {
   text-align: center;
   margin-top: 40px;
-  padding: 20px;
+  padding: 30px 20px;
   font-size: 0.9rem;
-  color: #666;
-  background: #f8f9fa;
-  border-top: 1px solid #e9ecef;
+  color: rgba(255, 255, 255, 0.9);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
   font-family: 'Montserrat', sans-serif;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+  z-index: 100;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
 }
 
 .footer a {
-  color: inherit;
-  text-decoration: underline;
-  font-weight: bold;
-  transition: color 0.3s ease;
+  color: #1a7ee7;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.footer a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(135deg, #1a7ee7, #4a90e2);
+  transition: width 0.3s ease;
 }
 
 .footer a:hover {
-  color: #1a7ee7;
+  color: #0f5bb8;
+  transform: translateY(-1px);
+}
+
+.footer a:hover::after {
+  width: 100%;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   .footer {
-    padding: 15px;
+    padding: 20px 15px;
     font-size: 0.8rem;
   }
 } 
