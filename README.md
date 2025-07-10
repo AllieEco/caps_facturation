@@ -5,7 +5,8 @@
 
 ## 📸 Aperçu
 
-![image](https://github.com/user-attachments/assets/1d1a186c-4762-4b8b-8234-243a0cb27995)
+![image](https://github.com/user-attachments/assets/9be29747-4d91-4606-8c17-e39d0294fa6f)
+
 
 **Suite de gestion comptable complète et gratuite** pour tous les entrepreneurs français. Tableau de bord intelligent, facturation, gestion des recettes et suivi des achats.
 
