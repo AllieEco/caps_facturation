@@ -1365,6 +1365,15 @@
       }
     }
     
+    // Fonction pour générer l'horodatage (nouvelle réglementation 2026)
+    function genererHorodatage() {
+      const now = new Date();
+      const heures = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const secondes = now.getSeconds().toString().padStart(2, '0');
+      return `${heures}:${minutes}:${secondes}`;
+    }
+
     function genererFactureSARL(numFacture, dateFacture, echeance, clientNom, clientAdresse, clientVille, clientSiret, periode, iban, bic, banque, modePaiement, emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille, emetteurSiret, emetteurRcs, emetteurVilleRcs, emetteurEmail, emetteurTel, totalTTC) {
       const capitalSocialSarl = document.getElementById('capitalSocialSarl').value;
       const numTvaSarl = document.getElementById('numTvaSarl').value;
@@ -1397,6 +1406,7 @@
             <div class="facture-title">FACTURE</div>
                          <div class="facture-info">N° <b>${numFacture || 'F001'}</b></div>
              <div class="facture-info">Date : <b>${dateFacture || '[DATE]'}</b></div>
+            <div class="facture-info">Heure : <b>${genererHorodatage()}</b></div>
             <div class="facture-info">Date d'échéance : <b>${echeance || '[DATE ÉCHÉANCE]'}</b></div>
           </div>
         </div>
@@ -1503,6 +1513,7 @@
             <div class="facture-title">DEVIS</div>
             <div class="facture-info">N° <b>${numFacture || 'D001'}</b></div>
             <div class="facture-info">Date : <b>${dateFacture || '[DATE]'}</b></div>
+            <div class="facture-info">Heure : <b>${genererHorodatage()}</b></div>
             <div class="facture-info">Projet : <b>${periode || '[NOM PROJET]'}</b></div>
             <div class="facture-info">Validité : <b>${validiteDevis || 30} jours</b></div>
           </div>
@@ -1641,6 +1652,7 @@
             <div class="facture-title">FACTURE</div>
             <div class="facture-info">N° <b>${numFacture || ''}</b></div>
             <div class="facture-info">Date : <b>${dateFacture || '[DATE]'}</b></div>
+            <div class="facture-info">Heure : <b>${genererHorodatage()}</b></div>
             <div class="facture-info">Échéance : <b>${echeance || '[DATE + 30 jours]'}</b></div>
           </div>
         </div>
@@ -1721,6 +1733,7 @@
             <div class="facture-title">DEVIS</div>
             <div class="facture-info">N° <b>${numFacture || 'D001'}</b></div>
             <div class="facture-info">Date : <b>${dateFacture || '[DATE]'}</b></div>
+            <div class="facture-info">Heure : <b>${genererHorodatage()}</b></div>
             <div class="facture-info">Projet : <b>${periode || '[NOM PROJET]'}</b></div>
           </div>
         </div>
@@ -1862,6 +1875,7 @@
             <div class="facture-title">FACTURE</div>
             <div class="facture-info">N° <b>${numFacture || '2025-001'}</b></div>
             <div class="facture-info">Date d'émission : <b>${dateFacture || '[DATE]'}</b></div>
+            <div class="facture-info">Heure : <b>${genererHorodatage()}</b></div>
             <div class="facture-info">Date d'échéance : <b>${echeance || '[DATE + 30 jours]'}</b></div>
             <div class="facture-info">Date de prestation : <b>${datePrestation || periode || '[PÉRIODE]'}</b></div>
           </div>
@@ -1978,6 +1992,7 @@
             <div class="facture-title">DEVIS</div>
             <div class="facture-info">N° <b>${numFacture || 'D001'}</b></div>
             <div class="facture-info">Date : <b>${dateFacture || '[DATE]'}</b></div>
+            <div class="facture-info">Heure : <b>${genererHorodatage()}</b></div>
             <div class="facture-info">Projet : <b>${periode || '[NOM PROJET]'}</b></div>
           </div>
         </div>
@@ -2125,6 +2140,7 @@
             <div class="facture-title">FACTURE</div>
             <div class="facture-info">N° <b>${numFacture || '2025-001'}</b></div>
             <div class="facture-info">Date d'émission : <b>${dateFacture || '[DATE]'}</b></div>
+            <div class="facture-info">Heure : <b>${genererHorodatage()}</b></div>
             <div class="facture-info">Date d'échéance : <b>${echeance || '[DATE + 30 jours]'}</b></div>
             <div class="facture-info">Date de prestation : <b>${datePrestation || periode || '[PÉRIODE]'}</b></div>
           </div>
@@ -2236,6 +2252,7 @@
             <div class="facture-title">DEVIS</div>
             <div class="facture-info">N° <b>${numFacture || 'D001'}</b></div>
             <div class="facture-info">Date : <b>${dateFacture || '[DATE]'}</b></div>
+            <div class="facture-info">Heure : <b>${genererHorodatage()}</b></div>
             <div class="facture-info">Projet : <b>${periode || '[NOM PROJET]'}</b></div>
           </div>
         </div>
