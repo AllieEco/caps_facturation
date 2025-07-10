@@ -1,1 +1,121 @@
- 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Factur-X - En Construction</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/header-styles.css">
+  <link rel="stylesheet" href="../assets/css/footer-styles.css">
+  <style>
+    body {
+      font-family: 'Montserrat', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background-attachment: fixed;
+      margin: 0;
+      padding: 0;
+      color: #333;
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    #stars-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+    }
+
+    .main-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .construction-content {
+      background-color: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      max-width: 600px;
+      background: rgba(255, 255, 255, 0.9); /* Légère transparence pour voir le fond */
+    }
+
+    h1 {
+      font-size: 2.5em;
+      color: #1a73e8;
+      margin-bottom: 20px;
+    }
+
+    p {
+      font-size: 1.1em;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+      text-align: left;
+    }
+
+    li {
+      background-color: #f0f4f8;
+      margin-bottom: 10px;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 5px solid #1a73e8;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stars-bg"></canvas>
+
+  <header class="main-header">
+    <img src="../assets/images/logo_capslock.png" alt="Logo CAPSLOCK" class="header-logo" onclick="window.location.href='../index.html'">
+    <div class="header-buttons">
+      <button class="header-button" onclick="window.location.href='facture.html'">Devis/Facture</button>
+      <button class="header-button active" onclick="window.location.href='factur_x.html'">Factur-X</button>
+      <button class="header-button" onclick="window.location.href='registre_achat.html'">Registre d'achat</button>
+      <button class="header-button" onclick="window.location.href='livre_recette.html'">Livre de recette</button>
+    </div>
+  </header>
+
+  <div class="main-container">
+    <div class="construction-content">
+      <h1>🚧 Page en construction 🚧</h1>
+      <p>Cette page est actuellement en cours de développement. Voici un aperçu des fonctionnalités à venir :</p>
+      <ul>
+        <li>Retrouver vos factures générées avec l'historique de modifications et la possibilité de les modifier.</li>
+        <li>Trier les factures par client, par date, ou par statut.</li>
+        <li>Exporter vos données au format Factur-X pour une intégration facile.</li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="../assets/js/stars-background.js"></script>
+  <script src="../assets/js/footer-script.js"></script>
+</body>
+</html> 
