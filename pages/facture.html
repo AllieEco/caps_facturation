@@ -214,6 +214,7 @@
     <img src="../assets/images/logo_capslock.png" alt="Logo CAPSLOCK" class="header-logo" onclick="window.location.href='../index.html'">
     <div class="header-buttons">
       <button class="header-button active">Devis/Facture</button>
+      <button class="header-button" onclick="window.location.href='factur_x.html'">Factur-X</button>
       <button class="header-button" onclick="window.location.href='registre_achat.html'">Registre d'achat</button>
       <button class="header-button" onclick="window.location.href='livre_recette.html'">Livre de recette</button>
     </div>
@@ -2008,12 +2009,160 @@
         const docType = isFactureMode ? 'FACTURE' : 'DEVIS';
         const filename = `${docType}_${numFacture}_${clientNomClean}.pdf`;
         pdf.save(filename);
+        
+        // Enregistrer uniquement les factures (pas les devis) dans Factur-X
+        if (isFactureMode) {
+          enregistrerFacturePdf(numFacture, clientNom, filename);
+        }
       }).catch(err => {
         console.error('Erreur lors de la génération du PDF:', err);
         alert('Erreur lors de la génération du PDF. Veuillez réessayer.');
       });
     }
     
+    function enregistrerFacturePdf(numFacture, clientNom, nomFichier) {
+      try {
+        const facturesPdf = JSON.parse(localStorage.getItem('facturesPdf')) || [];
+        
+        // Vérifier si la facture n'est pas déjà enregistrée
+        const existante = facturesPdf.find(f => f.numeroFacture === numFacture && f.client === clientNom);
+        if (existante) {
+          console.log('Facture déjà enregistrée dans Factur-X');
+          return;
+        }
+        
+        // Récupérer TOUTES les informations de la facture
+        const nouvelleFacture = {
+          id: Date.now(),
+          numeroFacture: numFacture,
+          client: clientNom,
+          dateFacture: document.getElementById('dateFacture').value || '',
+          dateGeneration: new Date().toISOString(),
+          nomFichier: nomFichier,
+          
+          // Informations émetteur
+          statutJuridique: document.getElementById('statutJuridique').value,
+          emetteurNom: document.getElementById('emetteurNom').value,
+          emetteurContact: document.getElementById('emetteurContact').value,
+          presidentSasu: document.getElementById('presidentSasuMain').value,
+          emetteurAdresse: document.getElementById('emetteurAdresse').value,
+          emetteurCodePostal: document.getElementById('emetteurCodePostal').value,
+          emetteurVille: document.getElementById('emetteurVille').value,
+          emetteurSiret: document.getElementById('emetteurSiret').value,
+          emetteurRcs: document.getElementById('emetteurRcs').value,
+          emetteurVilleRcs: document.getElementById('emetteurVilleRcs').value,
+          emetteurEmail: document.getElementById('emetteurEmail').value,
+          emetteurTel: document.getElementById('emetteurTel').value,
+          
+          // Informations spécifiques selon statut
+          capitalSocial: document.getElementById('capitalSocial')?.value || '',
+          numTva: document.getElementById('numTva')?.value || '',
+          dateCreationSasu: document.getElementById('dateCreationSasu')?.value || '',
+          capitalSocialEurl: document.getElementById('capitalSocialEurl')?.value || '',
+          numTvaEurl: document.getElementById('numTvaEurl')?.value || '',
+          dateCreationEurl: document.getElementById('dateCreationEurl')?.value || '',
+          gerantEurl: document.getElementById('gerantEurl')?.value || '',
+          associeUniqueEurl: document.getElementById('associeUniqueEurl')?.value || '',
+          capitalSocialSarl: document.getElementById('capitalSocialSarl')?.value || '',
+          numTvaSarl: document.getElementById('numTvaSarl')?.value || '',
+          dateCreationSarl: document.getElementById('dateCreationSarl')?.value || '',
+          gerantSarl: document.getElementById('gerantSarl')?.value || '',
+          associesSarl: document.getElementById('associesSarl')?.value || '',
+          
+          // Informations client
+          clientAdresse: document.getElementById('clientAdresse').value,
+          clientVille: document.getElementById('clientVille').value,
+          clientEntreprise: document.getElementById('clientEntreprise').checked,
+          clientSiret: document.getElementById('clientSiret').value,
+          clientTva: document.getElementById('clientTva').value,
+          
+          // Informations document
+          periode: document.getElementById('periode').value,
+          datePrestation: document.getElementById('datePrestation').value,
+          validiteDevis: document.getElementById('validiteDevis')?.value || '',
+          demanderAcompte: document.getElementById('demanderAcompte')?.checked || false,
+          pourcentageAcompte: document.getElementById('pourcentageAcompte')?.value || '',
+          demarrageDevis: document.getElementById('demarrageDevis')?.value || '',
+          dureeEstimee: document.getElementById('dureeEstimee')?.value || '',
+          
+          // Informations bancaires
+          modePaiement: document.getElementById('modePaiement').value,
+          iban: document.getElementById('iban').value,
+          bic: document.getElementById('bic').value,
+          banque: document.getElementById('banque').value,
+          
+          // Prestations et montants
+          prestations: [...prestations],
+          montantTTC: prestations.reduce((acc, p) => acc + (p.prix * (p.qte || 1)), 0),
+          
+          // Livrables (si devis)
+          livrables: getLivrables(),
+          
+          // Logo
+          logoEntreprise: logoEntrepriseData
+        };
+        
+        facturesPdf.push(nouvelleFacture);
+        localStorage.setItem('facturesPdf', JSON.stringify(facturesPdf));
+        
+        // Créer le log initial de création
+        ajouterLogAuditFacture(nouvelleFacture, 'creation_facture', 'utilisateur', {
+          numeroFacture: nouvelleFacture.numeroFacture,
+          client: nouvelleFacture.client,
+          montantTTC: nouvelleFacture.montantTTC,
+          dateFacture: nouvelleFacture.dateFacture,
+          statutJuridique: nouvelleFacture.statutJuridique,
+          nomFichier: nouvelleFacture.nomFichier
+        });
+        
+        console.log('Facture enregistrée dans Factur-X:', nouvelleFacture);
+      } catch (error) {
+        console.error('Erreur lors de l\'enregistrement dans Factur-X:', error);
+      }
+    }
+
+    function ajouterLogAuditFacture(facture, action, utilisateur, details) {
+      try {
+        const logs = JSON.parse(localStorage.getItem('auditLogs')) || {};
+        
+        if (!logs[facture.id]) {
+          logs[facture.id] = [];
+        }
+        
+        const maintenant = new Date();
+        const logEntry = {
+          action: action,
+          timestamp: maintenant.toISOString(),
+          timestampLocal: maintenant.toLocaleString('fr-FR', {
+            timeZone: 'Europe/Paris',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+          }),
+          utilisateur: utilisateur,
+          details: {
+            numeroFacture: facture.numeroFacture,
+            client: facture.client,
+            montantTTC: facture.montantTTC,
+            statutJuridique: facture.statutJuridique,
+            dateFacture: facture.dateFacture,
+            nomFichier: facture.nomFichier,
+            ...details
+          }
+        };
+        
+        logs[facture.id].push(logEntry);
+        localStorage.setItem('auditLogs', JSON.stringify(logs));
+        
+        console.log('Log d\'audit ajouté:', logEntry);
+      } catch (error) {
+        console.error('Erreur lors de l\'ajout du log d\'audit:', error);
+      }
+    }
+
     function exporterCSV() {
       const statutJuridique = document.getElementById('statutJuridique').value;
       const numFacture = document.getElementById('numFacture').value || (isFactureMode ? 'F001' : 'D001');
@@ -2345,6 +2494,27 @@
         }
       }
       
+      // Vérifier si on doit générer un PDF depuis Factur-X
+      const urlParams = new URLSearchParams(window.location.search);
+      const generatePdf = urlParams.get('generate_pdf');
+      const factureData = urlParams.get('facture_data');
+      
+      if (generatePdf === '1' && factureData) {
+        // Décoder les données de la facture
+        try {
+          const facture = JSON.parse(decodeURIComponent(factureData));
+          preremplirFormulaire(facture);
+          
+          // Générer le PDF automatiquement après un petit délai
+          setTimeout(() => {
+            genererPDF();
+          }, 1500);
+        } catch (error) {
+          console.error('Erreur lors du décodage des données de facture:', error);
+          alert('Erreur lors du chargement des données de la facture');
+        }
+      }
+      
       // Initialiser l'affichage des champs selon le statut
       changerStatut();
       majApercu();
@@ -2352,6 +2522,82 @@
       // Initialiser le scroll synchronisé
       initScrollSynchronise();
     }
+    
+    // Fonction pour pré-remplir le formulaire avec les données de Factur-X
+    function preremplirFormulaire(facture) {
+      // Informations de base
+      document.getElementById('numFacture').value = facture.numeroFacture || '';
+      document.getElementById('dateFacture').value = facture.dateFacture || '';
+      document.getElementById('periode').value = facture.periode || '';
+      
+      // Statut juridique
+      document.getElementById('statutJuridique').value = facture.statutJuridique || 'micro';
+      
+      // Informations émetteur
+      document.getElementById('emetteurNom').value = facture.emetteurNom || '';
+      document.getElementById('emetteurContact').value = facture.emetteurContact || '';
+      document.getElementById('emetteurAdresse').value = facture.emetteurAdresse || '';
+      document.getElementById('emetteurCodePostal').value = facture.emetteurCodePostal || '';
+      document.getElementById('emetteurVille').value = facture.emetteurVille || '';
+      document.getElementById('emetteurSiret').value = facture.emetteurSiret || '';
+      document.getElementById('emetteurRcs').value = facture.emetteurRcs || '';
+      document.getElementById('emetteurVilleRcs').value = facture.emetteurVilleRcs || '';
+      document.getElementById('emetteurEmail').value = facture.emetteurEmail || '';
+      document.getElementById('emetteurTel').value = facture.emetteurTel || '';
+      
+      // Informations spécifiques selon le statut
+      if (facture.statutJuridique === 'sasu') {
+        document.getElementById('capitalSocial').value = facture.capitalSocial || '';
+        document.getElementById('numTva').value = facture.numTva || '';
+        document.getElementById('dateCreationSasu').value = facture.dateCreationSasu || '';
+        document.getElementById('presidentSasuMain').value = facture.presidentSasu || '';
+      } else if (facture.statutJuridique === 'eurl') {
+        document.getElementById('capitalSocialEurl').value = facture.capitalSocialEurl || '';
+        document.getElementById('numTvaEurl').value = facture.numTvaEurl || '';
+        document.getElementById('dateCreationEurl').value = facture.dateCreationEurl || '';
+        document.getElementById('gerantEurl').value = facture.gerantEurl || '';
+        document.getElementById('associeUniqueEurl').value = facture.associeUniqueEurl || '';
+      } else if (facture.statutJuridique === 'sarl') {
+        document.getElementById('capitalSocialSarl').value = facture.capitalSocialSarl || '';
+        document.getElementById('numTvaSarl').value = facture.numTvaSarl || '';
+        document.getElementById('dateCreationSarl').value = facture.dateCreationSarl || '';
+        document.getElementById('gerantSarl').value = facture.gerantSarl || '';
+        document.getElementById('associesSarl').value = facture.associesSarl || '';
+      }
+      
+      // Informations client
+      document.getElementById('clientNom').value = facture.client || '';
+      document.getElementById('clientAdresse').value = facture.clientAdresse || '';
+      document.getElementById('clientVille').value = facture.clientVille || '';
+      document.getElementById('clientSiret').value = facture.clientSiret || '';
+      document.getElementById('clientTva').value = facture.clientTva || '';
+      document.getElementById('clientEntreprise').checked = facture.clientEntreprise || false;
+      
+      // Informations bancaires
+      document.getElementById('iban').value = facture.iban || '';
+      document.getElementById('bic').value = facture.bic || '';
+      document.getElementById('banque').value = facture.banque || '';
+      document.getElementById('modePaiement').value = facture.modePaiement || 'virement';
+      
+      // Prestations
+      if (facture.prestations && facture.prestations.length > 0) {
+        prestations = facture.prestations.map(p => ({
+          titre: p.titre || '',
+          desc: p.description || '',
+          typePrestation: p.type || 'service',
+          prix: p.prix || 0,
+          qte: p.quantite || 1
+        }));
+        afficherPrestations();
+      }
+      
+      // Mettre à jour l'affichage
+      changerStatut();
+      majApercu();
+      
+      console.log('Formulaire pré-rempli avec les données de Factur-X');
+    }
+    
     initialiserFormulaire();
   </script>
   

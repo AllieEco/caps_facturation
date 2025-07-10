@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Factur-X - Facturation Conforme 2026 - CAPSLOCK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><style>.cls-1{fill:%23f4d03f;}.cls-2{fill:%23333;stroke:%23333;stroke-width:2;fill:none;}.cls-3{fill:%23333;}</style></defs><polygon class='cls-1' points='45,10 50,20 60,20 52,28 55,38 45,33 35,38 38,28 30,20 40,20'/><polygon class='cls-1' points='70,25 73,30 78,30 75,33 76,38 70,35 64,38 65,33 62,30 67,30'/><polygon class='cls-1' points='58,45 61,50 66,50 63,53 64,58 58,55 52,58 53,53 50,50 55,50'/><rect class='cls-2' x='15' y='25' width='45' height='60' rx='3'/><rect class='cls-3' x='20' y='35' width='25' height='2'/><rect class='cls-3' x='20' y='45' width='20' height='2'/><rect class='cls-3' x='20' y='55' width='25' height='2'/><rect class='cls-3' x='20' y='65' width='15' height='2'/><circle class='cls-2' cx='70' cy='60' r='15'/><text x='70' y='67' text-anchor='middle' class='cls-3' font-family='Arial' font-size='16' font-weight='bold'>$</text><path class='cls-2' d='M15,80 Q15,85 20,85 L75,85 Q80,85 80,80 L80,75 L15,75 Z'/></svg>" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/css/footer-styles.css">
+  <style>
+    body { font-family: 'Montserrat', Arial, sans-serif; background: #f7fafd; margin: 0; padding: 0; color: #222; }
+    .container { max-width: 1200px; margin: 30px auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); padding: 32px; }
+    h1 { color: #1a7ee7; font-size: 2.5rem; margin-bottom: 60px; text-align: center; letter-spacing: 1px; }
+    h2 { color: #1a7ee7; font-size: 1.8rem; margin-bottom: 18px; margin-top: 30px; }
+    h3 { color: #1a7ee7; font-size: 1.3rem; margin-bottom: 12px; margin-top: 24px; }
+    .btn { background: #1a7ee7; color: #fff; border: none; border-radius: 6px; padding: 12px 24px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin: 8px 4px; box-shadow: 0 2px 8px rgba(26,126,231,0.15); transition: all 0.2s; }
+    .btn:hover { background: #1766b8; transform: translateY(-2px); box-shadow: 0 4px 16px rgba(26,126,231,0.25); }
+    .btn-success { background: #27ae60; }
+    .btn-success:hover { background: #219a52; }
+    .btn-danger { background: #e74c3c; }
+    .btn-danger:hover { background: #c0392b; }
+    .btn-secondary { background: #95a5a6; }
+    .btn-secondary:hover { background: #7f8c8d; }
+    .form-group { margin-bottom: 20px; }
+    .form-row { display: flex; gap: 16px; margin-bottom: 16px; }
+    .form-row > div { flex: 1; }
+    label { font-weight: 600; margin-bottom: 6px; display: block; color: #333; }
+    input, select, textarea { width: 100%; padding: 12px; border: 1px solid #c7e0f7; border-radius: 6px; font-size: 1rem; font-family: inherit; background: #fafdff; transition: border 0.2s; box-sizing: border-box; }
+    input:focus, select:focus, textarea:focus { border: 1.5px solid #1a7ee7; outline: none; }
+    .table-container { overflow-x: auto; margin: 20px 0; }
+    table { width: 100%; border-collapse: collapse; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-radius: 8px; overflow: hidden; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e9ecef; }
+    th { background: #f4f8fb; font-weight: 600; color: #1a7ee7; }
+    tr:hover { background: #f8f9fa; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0; }
+    .stat-card { background: linear-gradient(135deg, #1a7ee7, #0f5bb8); color: white; padding: 24px; border-radius: 12px; text-align: center; box-shadow: 0 4px 16px rgba(26,126,231,0.2); }
+    .stat-card h3 { margin: 0 0 12px 0; font-size: 1.2rem; opacity: 0.9; }
+    .stat-card .value { font-size: 2.2rem; font-weight: 700; margin-bottom: 8px; }
+    .stat-card .label { font-size: 0.9rem; opacity: 0.8; }
+    .main-header {
+      width: 100%;
+      height: 3cm;
+      background: #f7fafd;
+      box-shadow: 0 4px 18px 0 rgba(26,126,231,0.08);
+      border: none;
+      margin: 0;
+      padding: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-logo {
+      height: 57px;
+      max-height: 57px;
+      margin-left: 96px;
+      margin-top: 0;
+      margin-bottom: 0;
+      margin-right: 18px;
+      vertical-align: middle;
+      display: inline-block;
+      cursor: pointer;
+      transition: transform 0.3s ease, filter 0.3s ease;
+    }
+    .header-logo:hover {
+      transform: scale(1.1);
+      filter: brightness(1.1) drop-shadow(0 4px 8px rgba(26,126,231,0.3));
+    }
+    .header-buttons {
+      display: flex;
+      gap: 16px;
+      margin-right: 96px;
+    }
+    .header-button {
+      background: #1a7ee7;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: 'Montserrat', Arial, sans-serif;
+    }
+    .header-button:hover {
+      background: #1766b8;
+    }
+    .header-button.active {
+      background: #0f5bb8;
+    }
+    .empty-state { text-align: center; padding: 60px 20px; color: #666; }
+    .empty-state i { font-size: 3rem; margin-bottom: 16px; color: #1a7ee7; }
+    .filters { background: #f4f8fb; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+    .filters h3 { margin-top: 0; }
+    .facture-card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #1a7ee7; }
+    .facture-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .facture-number { font-size: 1.4rem; font-weight: 700; color: #1a7ee7; }
+    .facture-date { color: #666; font-size: 0.9rem; }
+    .facture-client { font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; }
+    .facture-amount { font-size: 1.2rem; font-weight: 700; color: #27ae60; }
+    .facture-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .facture-actions .btn { font-size: 0.9rem; padding: 8px 12px; }
+    .facture-actions .btn:hover { transform: translateY(-1px); }
+    .facture-status { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; }
+    .status-generated { background: #e8f5e8; color: #27ae60; }
+    .status-sent { background: #e8f0ff; color: #1a7ee7; }
+    .status-paid { background: #f0f9ff; color: #3b82f6; }
+    @media (max-width: 768px) {
+      .container { margin: 15px; padding: 20px; }
+      .form-row { flex-direction: column; gap: 0; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .header-buttons { flex-direction: column; gap: 8px; }
+      .header-logo { margin-left: 20px; }
+      .header-buttons { margin-right: 20px; }
+      .facture-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="main-header">
+    <img src="../assets/images/logo_capslock.png" alt="Logo CAPSLOCK" class="header-logo" onclick="window.location.href='../index.html'">
+    <div class="header-buttons">
+      <button class="header-button" onclick="window.location.href='facture.html'">Devis/Facture</button>
+      <button class="header-button active">Factur-X</button>
+      <button class="header-button" onclick="window.location.href='registre_achat.html'">Registre d'achat</button>
+      <button class="header-button" onclick="window.location.href='livre_recette.html'">Livre de recette</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1>🧾 Factur-X - Facturation Conforme 2026</h1>
+    
+
+
+    <!-- Filtres -->
+    <div class="filters">
+      <h3>🔍 Filtres</h3>
+      <div class="form-row">
+        <div>
+          <label for="filtreAnnee">Année</label>
+          <select id="filtreAnnee">
+            <option value="">Toutes les années</option>
+          </select>
+        </div>
+        <div>
+          <label for="filtreMois">Mois</label>
+          <select id="filtreMois">
+            <option value="">Tous les mois</option>
+            <option value="01">Janvier</option>
+            <option value="02">Février</option>
+            <option value="03">Mars</option>
+            <option value="04">Avril</option>
+            <option value="05">Mai</option>
+            <option value="06">Juin</option>
+            <option value="07">Juillet</option>
+            <option value="08">Août</option>
+            <option value="09">Septembre</option>
+            <option value="10">Octobre</option>
+            <option value="11">Novembre</option>
+            <option value="12">Décembre</option>
+          </select>
+        </div>
+        <div>
+          <label for="filtreClient">Client</label>
+          <input type="text" id="filtreClient" placeholder="Nom du client">
+        </div>
+        <div style="display: flex; align-items: end;">
+          <button type="button" class="btn btn-secondary" onclick="reinitialiserFiltres()">Réinitialiser</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste des factures -->
+    <h2>📋 Factures PDF générées</h2>
+    
+    <div id="facturesContainer">
+      <!-- Les factures seront affichées ici -->
+    </div>
+    
+    <div id="emptyState" class="empty-state" style="display: none;">
+      <i>🧾</i>
+      <h3>Aucune facture PDF générée</h3>
+      <p>Les factures générées depuis la page "Devis/Facture" apparaîtront ici automatiquement.</p>
+      <button class="btn" onclick="window.location.href='facture.html'">Créer une facture</button>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div style="text-align: center; margin-top: 30px;">
+      <button class="btn" onclick="exporterListeCSV()">📊 Exporter la liste en CSV</button>
+      <button class="btn btn-danger" onclick="viderFactures()">🗑️ Vider la liste</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    Made with ❤️ by <a href="https://github.com/AllieEco" target="_blank">AllieEco</a>
+  </div>
+
+  <script>
+    let facturesPdf = JSON.parse(localStorage.getItem('facturesPdf')) || [];
+    let facturesFiltered = [...facturesPdf];
+
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', function() {
+      // Filtres
+      document.getElementById('filtreAnnee').addEventListener('change', appliquerFiltres);
+      document.getElementById('filtreMois').addEventListener('change', appliquerFiltres);
+      document.getElementById('filtreClient').addEventListener('input', appliquerFiltres);
+      
+      // Remplir les années disponibles
+      remplirAnnees();
+      
+      // Charger les données
+      afficherFactures();
+    });
+
+    function afficherFactures() {
+      const container = document.getElementById('facturesContainer');
+      const emptyState = document.getElementById('emptyState');
+      
+      if (facturesFiltered.length === 0) {
+        container.style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      container.style.display = 'block';
+      emptyState.style.display = 'none';
+      
+      // Trier par date décroissante
+      facturesFiltered.sort((a, b) => new Date(b.dateGeneration) - new Date(a.dateGeneration));
+      
+      container.innerHTML = facturesFiltered.map(facture => `
+        <div class="facture-card">
+          <div class="facture-header">
+            <div>
+              <div class="facture-number">${facture.numeroFacture}</div>
+              <div class="facture-date">Générée le ${new Date(facture.dateGeneration).toLocaleDateString('fr-FR')}</div>
+            </div>
+            <div class="facture-status status-generated">PDF Généré</div>
+          </div>
+          <div class="facture-client">${facture.client}</div>
+          <div style="margin-bottom: 12px;">
+            <strong>Date facture:</strong> ${new Date(facture.dateFacture).toLocaleDateString('fr-FR')}
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="facture-amount">${facture.montantTTC.toFixed(2)} €</div>
+            <div class="facture-actions">
+              <button class="btn btn-secondary" onclick="voirDetails(${facture.id})" title="Voir détails">👁️</button>
+              <button class="btn" onclick="modifierFacture(${facture.id})" title="Modifier">✏️</button>
+              <button class="btn btn-success" onclick="genererPdfFacture(${facture.id})" title="Générer PDF">📄</button>
+              <button class="btn btn-secondary" onclick="telechargerLogs(${facture.id})" title="Télécharger logs">📋</button>
+              <button class="btn btn-danger" onclick="supprimerFacture(${facture.id})" title="Supprimer">🗑️</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+
+
+    function remplirAnnees() {
+      const select = document.getElementById('filtreAnnee');
+      const annees = [...new Set(facturesPdf.map(f => new Date(f.dateGeneration).getFullYear()))].sort((a, b) => b - a);
+      
+      const optionsExistantes = Array.from(select.options).map(o => o.value);
+      
+      annees.forEach(annee => {
+        if (!optionsExistantes.includes(annee.toString())) {
+          const option = document.createElement('option');
+          option.value = annee;
+          option.textContent = annee;
+          select.appendChild(option);
+        }
+      });
+    }
+
+    function appliquerFiltres() {
+      const filtreAnnee = document.getElementById('filtreAnnee').value;
+      const filtreMois = document.getElementById('filtreMois').value;
+      const filtreClient = document.getElementById('filtreClient').value.toLowerCase();
+      
+      facturesFiltered = facturesPdf.filter(facture => {
+        const dateFacture = new Date(facture.dateGeneration);
+        const anneeFacture = dateFacture.getFullYear().toString();
+        const moisFacture = (dateFacture.getMonth() + 1).toString().padStart(2, '0');
+        
+        return (!filtreAnnee || anneeFacture === filtreAnnee) &&
+               (!filtreMois || moisFacture === filtreMois) &&
+               (!filtreClient || facture.client.toLowerCase().includes(filtreClient));
+      });
+      
+      afficherFactures();
+    }
+
+    function reinitialiserFiltres() {
+      document.getElementById('filtreAnnee').value = '';
+      document.getElementById('filtreMois').value = '';
+      document.getElementById('filtreClient').value = '';
+      facturesFiltered = [...facturesPdf];
+      afficherFactures();
+    }
+
+    function voirDetails(id) {
+      const facture = facturesPdf.find(f => f.id === id);
+      if (!facture) return;
+      
+      alert(`Détails de la facture ${facture.numeroFacture}:\n\n` +
+            `Client: ${facture.client}\n` +
+            `Date facture: ${new Date(facture.dateFacture).toLocaleDateString('fr-FR')}\n` +
+            `Montant TTC: ${facture.montantTTC.toFixed(2)} €\n` +
+            `Statut: ${facture.statutJuridique}\n` +
+            `Fichier PDF: ${facture.nomFichier}\n` +
+            `Généré le: ${new Date(facture.dateGeneration).toLocaleDateString('fr-FR')} à ${new Date(facture.dateGeneration).toLocaleTimeString('fr-FR')}`);
+    }
+
+    function supprimerFacture(id) {
+      if (confirm('Êtes-vous sûr de vouloir supprimer cette facture de la liste ?')) {
+        const facture = facturesPdf.find(f => f.id === id);
+        if (facture) {
+          ajouterLogAudit(facture, 'suppression_facture', 'system', {
+            numeroFacture: facture.numeroFacture,
+            client: facture.client,
+            montant: facture.montantTTC
+          });
+        }
+        
+        facturesPdf = facturesPdf.filter(f => f.id !== id);
+        localStorage.setItem('facturesPdf', JSON.stringify(facturesPdf));
+        facturesFiltered = [...facturesPdf];
+        afficherFactures();
+        remplirAnnees();
+      }
+    }
+
+    function modifierFacture(id) {
+      const facture = facturesPdf.find(f => f.id === id);
+      if (!facture) return;
+      
+      // Créer le modal de modification complet
+      const modal = document.createElement('div');
+      modal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+        background: rgba(0,0,0,0.5); display: flex; align-items: center; 
+        justify-content: center; z-index: 1000;
+      `;
+      
+      const inputStyle = "width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; margin-bottom: 10px;";
+      const labelStyle = "display: block; margin-bottom: 6px; font-weight: 600; color: #333;";
+      const sectionStyle = "background: #f8f9fa; padding: 15px; margin-bottom: 15px; border-radius: 8px;";
+      
+      modal.innerHTML = `
+        <div style="background: white; padding: 30px; border-radius: 12px; max-width: 900px; width: 95%; max-height: 90vh; overflow-y: auto;">
+          <h2 style="color: #1a7ee7; margin-bottom: 30px; text-align: center;">Modifier la facture ${facture.numeroFacture}</h2>
+          
+          <form id="modifierFactureForm">
+            <!-- Informations Document -->
+            <div style="${sectionStyle}">
+              <h3 style="color: #1a7ee7; margin-top: 0; margin-bottom: 15px;">📋 Informations Document</h3>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div>
+                  <label style="${labelStyle}">Numéro de facture</label>
+                  <input type="text" id="editNumero" value="${facture.numeroFacture}" style="${inputStyle}">
+                </div>
+                <div>
+                  <label style="${labelStyle}">Date de facture</label>
+                  <input type="date" id="editDate" value="${facture.dateFacture}" style="${inputStyle}">
+                </div>
+                <div>
+                  <label style="${labelStyle}">Période facturée</label>
+                  <input type="text" id="editPeriode" value="${facture.periode || ''}" style="${inputStyle}">
+                </div>
+                <div>
+                  <label style="${labelStyle}">Date de prestation</label>
+                  <input type="date" id="editDatePrestation" value="${facture.datePrestation || ''}" style="${inputStyle}">
+                </div>
+              </div>
+            </div>
+
+            <!-- Informations Émetteur -->
+            <div style="${sectionStyle}">
+              <h3 style="color: #1a7ee7; margin-top: 0; margin-bottom: 15px;">🏢 Informations Émetteur</h3>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div>
+                  <label style="${labelStyle}">Statut juridique</label>
+                  <select id="editStatut" onchange="changerStatutModal()" style="${inputStyle}">
+                    <option value="micro" ${facture.statutJuridique === 'micro' ? 'selected' : ''}>Micro-entreprise</option>
+                    <option value="sasu" ${facture.statutJuridique === 'sasu' ? 'selected' : ''}>SASU</option>
+                    <option value="eurl" ${facture.statutJuridique === 'eurl' ? 'selected' : ''}>EURL</option>
+                    <option value="sarl" ${facture.statutJuridique === 'sarl' ? 'selected' : ''}>SARL</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="${labelStyle}">Nom de l'entreprise</label>
+                  <input type="text" id="editEmetteurNom" value="${facture.emetteurNom || ''}" style="${inputStyle}">
+                </div>
+                <div id="editContactDiv">
+                  <label style="${labelStyle}">Contact</label>
+                  <input type="text" id="editEmetteurContact" value="${facture.emetteurContact || ''}" style="${inputStyle}">
+                </div>
+                <div id="editPresidentDiv" style="display: none;">
+                  <label style="${labelStyle}">Président SASU</label>
+                  <input type="text" id="editPresidentSasu" value="${facture.presidentSasu || ''}" style="${inputStyle}">
+                </div>
+                <div>
+                  <label style="${labelStyle}">Adresse</label>
+                  <input type="text" id="editEmetteurAdresse" value="${facture.emetteurAdresse || ''}" style="${inputStyle}">
+                </div>
+                <div>
+                  <label style="${labelStyle}">Code postal</label>
+                  <input type="text" id="editEmetteurCodePostal" value="${facture.emetteurCodePostal || ''}" style="${inputStyle}">
+                </div>
+                <div>
+                  <label style="${labelStyle}">Ville</label>
+                  <input type="text" id="editEmetteurVille" value="${facture.emetteurVille || ''}" style="${inputStyle}">
+                </div>
+                <div>
+                  <label style="${labelStyle}">SIRET</label>
+                  <input type="text" id="editEmetteurSiret" value="${facture.emetteurSiret || ''}" style="${inputStyle}">
+                </div>
+                <div>
+                  <label style="${labelStyle}">RCS</label>
+                  <input type="text" id="editEmetteurRcs" value="${facture.emetteurRcs || ''}" style="${inputStyle}">
+                </div>
+                <div>
+                  <label style="${labelStyle}">Ville RCS</label>
+                  <input type="text" id="editEmetteurVilleRcs" value="${facture.emetteurVilleRcs || ''}" style="${inputStyle}">
+                </div>
+                <div>
+                  <label style="${labelStyle}">Email</label>
+                  <input type="email" id="editEmetteurEmail" value="${facture.emetteurEmail || ''}" style="${inputStyle}">
+                </div>
+                <div>
+                  <label style="${labelStyle}">Téléphone</label>
+                  <input type="tel" id="editEmetteurTel" value="${facture.emetteurTel || ''}" style="${inputStyle}">
+                </div>
+              </div>
+              
+              <!-- Champs spécifiques selon statut -->
+              <div id="editChampsSasu" style="display: none;">
+                <h4 style="color: #1a7ee7; margin: 15px 0 10px 0;">Informations SASU</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                  <div>
+                    <label style="${labelStyle}">Capital social (€)</label>
+                    <input type="number" id="editCapitalSocial" value="${facture.capitalSocial || ''}" style="${inputStyle}">
+                  </div>
+                  <div>
+                    <label style="${labelStyle}">N° TVA intracommunautaire</label>
+                    <input type="text" id="editNumTva" value="${facture.numTva || ''}" style="${inputStyle}">
+                  </div>
+                  <div>
+                    <label style="${labelStyle}">Date de création</label>
+                    <input type="date" id="editDateCreationSasu" value="${facture.dateCreationSasu || ''}" style="${inputStyle}">
+                  </div>
+                </div>
+              </div>
+              
+              <div id="editChampsEurl" style="display: none;">
+                <h4 style="color: #1a7ee7; margin: 15px 0 10px 0;">Informations EURL</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                  <div>
+                    <label style="${labelStyle}">Capital social EURL (€)</label>
+                    <input type="number" id="editCapitalSocialEurl" value="${facture.capitalSocialEurl || ''}" style="${inputStyle}">
+                  </div>
+                  <div>
+                    <label style="${labelStyle}">N° TVA intracommunautaire</label>
+                    <input type="text" id="editNumTvaEurl" value="${facture.numTvaEurl || ''}" style="${inputStyle}">
+                  </div>
+                  <div>
+                    <label style="${labelStyle}">Date de création EURL</label>
+                    <input type="date" id="editDateCreationEurl" value="${facture.dateCreationEurl || ''}" style="${inputStyle}">
+                  </div>
+                  <div>
+                    <label style="${labelStyle}">Gérant</label>
+                    <input type="text" id="editGerantEurl" value="${facture.gerantEurl || ''}" style="${inputStyle}">
+                  </div>
+                  <div style="grid-column: span 2;">
+                    <label style="${labelStyle}">Associé unique</label>
+                    <input type="text" id="editAssocieUniqueEurl" value="${facture.associeUniqueEurl || ''}" style="${inputStyle}">
+                  </div>
+                </div>
+              </div>
+              
+              <div id="editChampsSarl" style="display: none;">
+                <h4 style="color: #1a7ee7; margin: 15px 0 10px 0;">Informations SARL</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                  <div>
+                    <label style="${labelStyle}">Capital social SARL (€)</label>
+                    <input type="number" id="editCapitalSocialSarl" value="${facture.capitalSocialSarl || ''}" style="${inputStyle}">
+                  </div>
+                  <div>
+                    <label style="${labelStyle}">N° TVA intracommunautaire</label>
+                    <input type="text" id="editNumTvaSarl" value="${facture.numTvaSarl || ''}" style="${inputStyle}">
+                  </div>
+                  <div>
+                    <label style="${labelStyle}">Date de création SARL</label>
+                    <input type="date" id="editDateCreationSarl" value="${facture.dateCreationSarl || ''}" style="${inputStyle}">
+                  </div>
+                  <div>
+                    <label style="${labelStyle}">Gérant</label>
+                    <input type="text" id="editGerantSarl" value="${facture.gerantSarl || ''}" style="${inputStyle}">
+                  </div>
+                  <div style="grid-column: span 2;">
+                    <label style="${labelStyle}">Associés</label>
+                    <input type="text" id="editAssociesSarl" value="${facture.associesSarl || ''}" style="${inputStyle}">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Informations Client -->
+            <div style="${sectionStyle}">
+              <h3 style="color: #1a7ee7; margin-top: 0; margin-bottom: 15px;">👤 Informations Client</h3>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div>
+                  <label style="${labelStyle}">Nom du client</label>
+                  <input type="text" id="editClient" value="${facture.client}" style="${inputStyle}">
+                </div>
+                <div>
+                  <label style="${labelStyle}">Adresse du client</label>
+                  <input type="text" id="editClientAdresse" value="${facture.clientAdresse || ''}" style="${inputStyle}">
+                </div>
+                <div style="grid-column: span 2;">
+                  <label style="${labelStyle}">Code postal & Ville</label>
+                  <input type="text" id="editClientVille" value="${facture.clientVille || ''}" style="${inputStyle}">
+                </div>
+                <div>
+                  <label style="${labelStyle}">
+                    <input type="checkbox" id="editClientEntreprise" ${facture.clientEntreprise ? 'checked' : ''} onchange="changerClientEntrepriseModal()"> 
+                    Le client est une entreprise
+                  </label>
+                </div>
+              </div>
+              <div id="editChampsClientEntreprise" style="display: ${facture.clientEntreprise ? 'block' : 'none'}; margin-top: 15px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                  <div>
+                    <label style="${labelStyle}">SIRET du client</label>
+                    <input type="text" id="editClientSiret" value="${facture.clientSiret || ''}" style="${inputStyle}">
+                  </div>
+                  <div>
+                    <label style="${labelStyle}">N° TVA client</label>
+                    <input type="text" id="editClientTva" value="${facture.clientTva || ''}" style="${inputStyle}">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Informations Bancaires -->
+            <div style="${sectionStyle}">
+              <h3 style="color: #1a7ee7; margin-top: 0; margin-bottom: 15px;">💳 Informations Bancaires</h3>
+              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 15px;">
+                <div>
+                  <label style="${labelStyle}">Mode de paiement</label>
+                  <select id="editModePaiement" style="${inputStyle}">
+                    <option value="virement" ${facture.modePaiement === 'virement' ? 'selected' : ''}>Virement bancaire</option>
+                    <option value="cheque" ${facture.modePaiement === 'cheque' ? 'selected' : ''}>Chèque</option>
+                    <option value="carte" ${facture.modePaiement === 'carte' ? 'selected' : ''}>Carte bancaire</option>
+                    <option value="espece" ${facture.modePaiement === 'espece' ? 'selected' : ''}>Espèce</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="${labelStyle}">IBAN</label>
+                  <input type="text" id="editIban" value="${facture.iban || ''}" style="${inputStyle}">
+                </div>
+                <div>
+                  <label style="${labelStyle}">BIC</label>
+                  <input type="text" id="editBic" value="${facture.bic || ''}" style="${inputStyle}">
+                </div>
+                <div>
+                  <label style="${labelStyle}">Banque</label>
+                  <input type="text" id="editBanque" value="${facture.banque || ''}" style="${inputStyle}">
+                </div>
+              </div>
+            </div>
+
+            <!-- Prestations -->
+            <div style="${sectionStyle}">
+              <h3 style="color: #1a7ee7; margin-top: 0; margin-bottom: 15px;">💰 Gestion des Prestations</h3>
+              
+              <!-- Ajouter une prestation -->
+              <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <h4 style="color: #27ae60; margin-top: 0; margin-bottom: 15px;">➕ Ajouter une prestation</h4>
+                <div style="display: grid; grid-template-columns: 2fr 3fr 1fr 1fr 1fr auto; gap: 10px; align-items: end;">
+                  <div>
+                    <label style="${labelStyle}">Titre</label>
+                    <input type="text" id="editTitrePresta" placeholder="Titre de la prestation" style="${inputStyle}">
+                  </div>
+                  <div>
+                    <label style="${labelStyle}">Description</label>
+                    <input type="text" id="editDescPresta" placeholder="Description détaillée" style="${inputStyle}">
+                  </div>
+                  <div>
+                    <label style="${labelStyle}">Type</label>
+                    <select id="editTypePrestation" style="${inputStyle}">
+                      <option value="">Type</option>
+                      <option value="bien">Bien</option>
+                      <option value="service">Service</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style="${labelStyle}">Prix (€)</label>
+                    <input type="number" id="editPrixPresta" placeholder="0.00" min="0" step="0.01" style="${inputStyle}">
+                  </div>
+                  <div>
+                    <label style="${labelStyle}">Qté</label>
+                    <input type="number" id="editQtePresta" placeholder="1" min="1" step="1" value="1" style="${inputStyle}">
+                  </div>
+                  <div>
+                    <button type="button" onclick="ajouterPrestationModal()" style="padding: 8px 16px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; margin-top: 20px;">Ajouter</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Liste des prestations existantes -->
+              <div id="editPrestationsList" style="margin-bottom: 20px;">
+                <!-- Les prestations seront affichées ici -->
+              </div>
+
+              <!-- Montant total -->
+              <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; border: 2px solid #1a7ee7;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <h4 style="color: #1a7ee7; margin: 0;">Total des prestations :</h4>
+                  <div style="font-size: 1.5rem; font-weight: 700; color: #1a7ee7;" id="editMontantTotal">0,00 €</div>
+                </div>
+              </div>
+            </div>
+            
+            <div style="display: flex; gap: 15px; justify-content: end; margin-top: 30px;">
+              <button type="button" onclick="fermerModal()" style="padding: 12px 24px; border: 1px solid #ddd; background: #f5f5f5; border-radius: 6px; cursor: pointer; font-weight: 600;">Annuler</button>
+              <button type="submit" style="padding: 12px 24px; background: #1a7ee7; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">💾 Sauvegarder</button>
+            </div>
+          </form>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+      
+      // Initialiser l'affichage selon le statut
+      changerStatutModal();
+      
+      // Charger les prestations existantes
+      chargerPrestationsModal(facture.prestations || []);
+      
+      // Gestionnaire du formulaire
+      document.getElementById('modifierFactureForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        sauvegarderModificationComplete(id);
+      });
+      
+      // Fermer le modal en cliquant à l'extérieur
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          fermerModal();
+        }
+      });
+    }
+
+    function changerStatutModal() {
+      const statut = document.getElementById('editStatut').value;
+      const contactDiv = document.getElementById('editContactDiv');
+      const presidentDiv = document.getElementById('editPresidentDiv');
+      const champsSasu = document.getElementById('editChampsSasu');
+      const champsEurl = document.getElementById('editChampsEurl');
+      const champsSarl = document.getElementById('editChampsSarl');
+      
+      // Masquer tous les champs spécifiques
+      champsSasu.style.display = 'none';
+      champsEurl.style.display = 'none';
+      champsSarl.style.display = 'none';
+      
+      if (statut === 'sasu') {
+        contactDiv.style.display = 'none';
+        presidentDiv.style.display = 'block';
+        champsSasu.style.display = 'block';
+      } else {
+        contactDiv.style.display = 'block';
+        presidentDiv.style.display = 'none';
+        
+        if (statut === 'eurl') {
+          champsEurl.style.display = 'block';
+        } else if (statut === 'sarl') {
+          champsSarl.style.display = 'block';
+        }
+      }
+    }
+
+    function changerClientEntrepriseModal() {
+      const isEntreprise = document.getElementById('editClientEntreprise').checked;
+      const champsEntreprise = document.getElementById('editChampsClientEntreprise');
+      champsEntreprise.style.display = isEntreprise ? 'block' : 'none';
+    }
+
+    function sauvegarderModificationComplete(id) {
+      const facture = facturesPdf.find(f => f.id === id);
+      if (!facture) return;
+      
+      try {
+        // Sauvegarder les anciennes valeurs pour le log
+        const anciensValeurs = { ...facture };
+        
+        // Récupérer toutes les nouvelles valeurs
+        const nouveauxValeurs = {
+          numeroFacture: document.getElementById('editNumero').value,
+          client: document.getElementById('editClient').value,
+          dateFacture: document.getElementById('editDate').value,
+          periode: document.getElementById('editPeriode').value,
+          datePrestation: document.getElementById('editDatePrestation').value,
+          
+          // Informations émetteur
+          statutJuridique: document.getElementById('editStatut').value,
+          emetteurNom: document.getElementById('editEmetteurNom').value,
+          emetteurContact: document.getElementById('editEmetteurContact').value,
+          presidentSasu: document.getElementById('editPresidentSasu').value,
+          emetteurAdresse: document.getElementById('editEmetteurAdresse').value,
+          emetteurCodePostal: document.getElementById('editEmetteurCodePostal').value,
+          emetteurVille: document.getElementById('editEmetteurVille').value,
+          emetteurSiret: document.getElementById('editEmetteurSiret').value,
+          emetteurRcs: document.getElementById('editEmetteurRcs').value,
+          emetteurVilleRcs: document.getElementById('editEmetteurVilleRcs').value,
+          emetteurEmail: document.getElementById('editEmetteurEmail').value,
+          emetteurTel: document.getElementById('editEmetteurTel').value,
+          
+          // Informations spécifiques selon statut
+          capitalSocial: document.getElementById('editCapitalSocial')?.value || '',
+          numTva: document.getElementById('editNumTva')?.value || '',
+          dateCreationSasu: document.getElementById('editDateCreationSasu')?.value || '',
+          capitalSocialEurl: document.getElementById('editCapitalSocialEurl')?.value || '',
+          numTvaEurl: document.getElementById('editNumTvaEurl')?.value || '',
+          dateCreationEurl: document.getElementById('editDateCreationEurl')?.value || '',
+          gerantEurl: document.getElementById('editGerantEurl')?.value || '',
+          associeUniqueEurl: document.getElementById('editAssocieUniqueEurl')?.value || '',
+          capitalSocialSarl: document.getElementById('editCapitalSocialSarl')?.value || '',
+          numTvaSarl: document.getElementById('editNumTvaSarl')?.value || '',
+          dateCreationSarl: document.getElementById('editDateCreationSarl')?.value || '',
+          gerantSarl: document.getElementById('editGerantSarl')?.value || '',
+          associesSarl: document.getElementById('editAssociesSarl')?.value || '',
+          
+          // Informations client
+          clientAdresse: document.getElementById('editClientAdresse').value,
+          clientVille: document.getElementById('editClientVille').value,
+          clientEntreprise: document.getElementById('editClientEntreprise').checked,
+          clientSiret: document.getElementById('editClientSiret').value,
+          clientTva: document.getElementById('editClientTva').value,
+          
+          // Informations bancaires
+          modePaiement: document.getElementById('editModePaiement').value,
+          iban: document.getElementById('editIban').value,
+          bic: document.getElementById('editBic').value,
+          banque: document.getElementById('editBanque').value,
+          
+          // Montant et prestations - calculer selon le statut juridique
+          montantTTC: (() => {
+            const totalPrestations = prestationsEditModal.reduce((sum, p) => sum + (p.prix * p.quantite), 0);
+            // Le montant TTC est toujours le total des prestations car les prix sont saisis en TTC
+            return totalPrestations;
+          })()
+        };
+        
+        // Gestion des prestations
+        nouveauxValeurs.prestations = prestationsEditModal;
+        
+        // Créer les logs pour chaque modification
+        const modifications = [];
+        Object.keys(nouveauxValeurs).forEach(key => {
+          if (JSON.stringify(anciensValeurs[key]) !== JSON.stringify(nouveauxValeurs[key])) {
+            modifications.push({
+              champ: key,
+              ancienneValeur: anciensValeurs[key],
+              nouvelleValeur: nouveauxValeurs[key]
+            });
+          }
+        });
+        
+        if (modifications.length > 0) {
+          // Mettre à jour la facture avec toutes les nouvelles valeurs
+          Object.assign(facture, nouveauxValeurs);
+          
+          // Ajouter un log global de modification
+          ajouterLogAudit(facture, 'modification_complete_facture', 'utilisateur', {
+            numeroFacture: facture.numeroFacture,
+            nombreChampsModifies: modifications.length,
+            champsModifies: modifications.map(m => m.champ),
+            dateModification: new Date().toISOString()
+          });
+          
+          // Ajouter un log détaillé pour chaque modification importante
+          modifications.forEach(modif => {
+            if (['numeroFacture', 'client', 'montantTTC', 'statutJuridique'].includes(modif.champ)) {
+              ajouterLogAudit(facture, 'modification_facture', 'utilisateur', {
+                numeroFacture: facture.numeroFacture,
+                champ: modif.champ,
+                ancienneValeur: modif.ancienneValeur,
+                nouvelleValeur: modif.nouvelleValeur
+              });
+            }
+          });
+          
+          // Sauvegarder
+          localStorage.setItem('facturesPdf', JSON.stringify(facturesPdf));
+          facturesFiltered = [...facturesPdf];
+          afficherFactures();
+          remplirAnnees();
+          
+          alert(`Facture modifiée avec succès ! ${modifications.length} champ(s) modifié(s).`);
+        } else {
+          alert('Aucune modification détectée.');
+        }
+        
+      } catch (error) {
+        console.error('Erreur lors de la modification:', error);
+        alert('Erreur lors de la modification de la facture. Veuillez réessayer.');
+      }
+      
+      fermerModal();
+    }
+
+    // Variables pour les prestations du modal
+    let prestationsEditModal = [];
+
+    function chargerPrestationsModal(prestations) {
+      prestationsEditModal = prestations ? [...prestations] : [];
+      afficherPrestationsModal();
+      calculerMontantTotalModal();
+    }
+
+    function afficherPrestationsModal() {
+      const container = document.getElementById('editPrestationsList');
+      
+      if (prestationsEditModal.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #666; font-style: italic;">Aucune prestation ajoutée</p>';
+        return;
+      }
+      
+      container.innerHTML = prestationsEditModal.map((prestation, index) => {
+        const typeLabel = prestation.type === 'bien' ? '🛍️ Bien' : '🔧 Service';
+        const montantPrestation = prestation.prix * prestation.quantite;
+        
+        return `
+          <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; margin-bottom: 10px;">
+            <div style="display: flex; justify-content: between; align-items: center;">
+              <div style="flex: 1;">
+                <h4 style="margin: 0 0 8px 0; color: #333;">
+                  ${typeLabel} ${prestation.titre}
+                </h4>
+                <p style="margin: 0 0 8px 0; color: #666; font-size: 0.9rem;">
+                  ${prestation.description}
+                </p>
+                <div style="display: flex; gap: 15px; font-size: 0.9rem;">
+                  <span><strong>Prix unitaire:</strong> ${prestation.prix.toFixed(2)} €</span>
+                  <span><strong>Quantité:</strong> ${prestation.quantite}</span>
+                  <span><strong>Total:</strong> ${montantPrestation.toFixed(2)} €</span>
+                </div>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button onclick="modifierPrestationModal(${index})" style="padding: 6px 12px; background: #17a2b8; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">✏️ Modifier</button>
+                <button onclick="supprimerPrestationModal(${index})" style="padding: 6px 12px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">🗑️ Supprimer</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function ajouterPrestationModal() {
+      const titre = document.getElementById('editTitrePresta').value.trim();
+      const description = document.getElementById('editDescPresta').value.trim();
+      const type = document.getElementById('editTypePrestation').value;
+      const prix = parseFloat(document.getElementById('editPrixPresta').value);
+      const quantite = parseInt(document.getElementById('editQtePresta').value);
+      
+      if (!titre || !description || !type || !prix || !quantite) {
+        alert('Veuillez remplir tous les champs de la prestation');
+        return;
+      }
+      
+      if (prix <= 0) {
+        alert('Le prix doit être supérieur à 0');
+        return;
+      }
+      
+      if (quantite <= 0) {
+        alert('La quantité doit être supérieure à 0');
+        return;
+      }
+      
+      const nouvellePrestation = {
+        titre: titre,
+        description: description,
+        type: type,
+        prix: prix,
+        quantite: quantite
+      };
+      
+      prestationsEditModal.push(nouvellePrestation);
+      
+      // Réinitialiser le formulaire
+      document.getElementById('editTitrePresta').value = '';
+      document.getElementById('editDescPresta').value = '';
+      document.getElementById('editTypePrestation').value = '';
+      document.getElementById('editPrixPresta').value = '';
+      document.getElementById('editQtePresta').value = '1';
+      
+      afficherPrestationsModal();
+      calculerMontantTotalModal();
+    }
+
+    function modifierPrestationModal(index) {
+      const prestation = prestationsEditModal[index];
+      
+      // Remplir le formulaire avec les valeurs existantes
+      document.getElementById('editTitrePresta').value = prestation.titre;
+      document.getElementById('editDescPresta').value = prestation.description;
+      document.getElementById('editTypePrestation').value = prestation.type;
+      document.getElementById('editPrixPresta').value = prestation.prix;
+      document.getElementById('editQtePresta').value = prestation.quantite;
+      
+      // Supprimer l'ancienne prestation
+      prestationsEditModal.splice(index, 1);
+      
+      afficherPrestationsModal();
+      calculerMontantTotalModal();
+    }
+
+    function supprimerPrestationModal(index) {
+      if (confirm('Êtes-vous sûr de vouloir supprimer cette prestation ?')) {
+        prestationsEditModal.splice(index, 1);
+        afficherPrestationsModal();
+        calculerMontantTotalModal();
+      }
+    }
+
+    function calculerMontantTotalModal() {
+      const total = prestationsEditModal.reduce((sum, prestation) => {
+        return sum + (prestation.prix * prestation.quantite);
+      }, 0);
+      
+      document.getElementById('editMontantTotal').textContent = total.toFixed(2) + ' €';
+    }
+
+    function fermerModal() {
+      const modal = document.querySelector('div[style*="position: fixed"]');
+      if (modal) {
+        modal.remove();
+      }
+    }
+
+    function ajouterLogAudit(facture, action, utilisateur, details) {
+      const logs = JSON.parse(localStorage.getItem('auditLogs')) || {};
+      
+      if (!logs[facture.id]) {
+        logs[facture.id] = [];
+      }
+      
+      const maintenant = new Date();
+      const logEntry = {
+        action: action,
+        timestamp: maintenant.toISOString(),
+        timestampLocal: maintenant.toLocaleString('fr-FR', {
+          timeZone: 'Europe/Paris',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        }),
+        utilisateur: utilisateur,
+        details: {
+          numeroFacture: facture.numeroFacture,
+          client: facture.client,
+          montantTTC: facture.montantTTC,
+          statutJuridique: facture.statutJuridique,
+          dateFacture: facture.dateFacture,
+          nomFichier: facture.nomFichier,
+          ...details
+        }
+      };
+      
+      logs[facture.id].push(logEntry);
+      localStorage.setItem('auditLogs', JSON.stringify(logs));
+    }
+
+    function telechargerLogs(id) {
+      const logs = JSON.parse(localStorage.getItem('auditLogs')) || {};
+      const facture = facturesPdf.find(f => f.id === id);
+      
+      if (!facture) {
+        alert('Facture introuvable');
+        return;
+      }
+      
+      const factureLog = logs[id] || [];
+      
+      if (factureLog.length === 0) {
+        alert('Aucun log disponible pour cette facture');
+        return;
+      }
+      
+      const auditLog = {
+        factureId: id,
+        numeroFacture: facture.numeroFacture,
+        client: facture.client,
+        logs: factureLog
+      };
+      
+      const blob = new Blob([JSON.stringify(auditLog, null, 2)], { type: 'application/json' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `audit_log_${facture.numeroFacture}_${new Date().toISOString().split('T')[0]}.json`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function exporterListeCSV() {
+      if (facturesFiltered.length === 0) {
+        alert('Aucune facture à exporter');
+        return;
+      }
+      
+      let csvContent = '\uFEFF'; // BOM UTF-8
+      csvContent += 'Numéro Facture,Client,Date Facture,Date Génération,Montant TTC,Statut Juridique,Nom Fichier PDF\n';
+      
+      facturesFiltered.forEach(facture => {
+        csvContent += `${facture.numeroFacture},"${facture.client}",${facture.dateFacture},${facture.dateGeneration},${facture.montantTTC.toFixed(2)},${facture.statutJuridique},"${facture.nomFichier}"\n`;
+      });
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `factures_pdf_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function viderFactures() {
+      if (confirm('Êtes-vous sûr de vouloir supprimer toutes les factures ? Cette action est irréversible.')) {
+        if (confirm('Confirmation finale : toutes les factures seront supprimées définitivement.')) {
+          facturesPdf = [];
+          facturesFiltered = [];
+          localStorage.removeItem('facturesPdf');
+          afficherFactures();
+          remplirAnnees();
+          alert('Liste des factures vidée avec succès');
+        }
+      }
+    }
+
+    // Fonction pour ajouter une facture à la liste (appelée depuis facture.html)
+    window.ajouterFacturePdf = function(factureData) {
+      facturesPdf.push(factureData);
+      localStorage.setItem('facturesPdf', JSON.stringify(facturesPdf));
+      facturesFiltered = [...facturesPdf];
+      afficherFactures();
+      remplirAnnees();
+    };
+
+             // Fonction pour obtenir le label du mode de paiement
+    function getModePaiementLabel(mode) {
+      const labels = {
+        'virement': 'Virement bancaire',
+        'cheque': 'Chèque',
+        'carte': 'Carte bancaire',
+        'espece': 'Espèce'
+      };
+      return labels[mode] || mode;
+    }
+
+    // Fonction pour générer un PDF de la facture via la page facture.html
+    function genererPdfFacture(id) {
+      const facture = facturesPdf.find(f => f.id === id);
+      if (!facture) {
+        alert('Facture introuvable');
+        return;
+      }
+
+      // Encoder les données de la facture pour les passer à la page facture.html
+      const factureData = encodeURIComponent(JSON.stringify(facture));
+      
+      // Ouvrir la page facture.html avec les données pré-remplies
+      const url = `facture.html?generate_pdf=1&facture_data=${factureData}`;
+      
+      // Ouvrir dans une nouvelle fenêtre
+      const newWindow = window.open(url, '_blank', 'width=1200,height=800');
+      
+      if (newWindow) {
+        // Ajouter un log pour la génération PDF
+        ajouterLogAudit(facture, 'generation_pdf', 'utilisateur', {
+          numeroFacture: facture.numeroFacture,
+          client: facture.client,
+          montantTTC: facture.montantTTC,
+          action: 'Génération PDF via facture.html'
+        });
+        
+        alert('📄 Génération PDF en cours dans une nouvelle fenêtre...');
+      } else {
+        alert('❌ Impossible d\'ouvrir la page de génération PDF. Veuillez autoriser les pop-ups.');
+      }
+    }
+
+    // Fonction supprimée - Le PDF est maintenant généré via la page facture.html
+
+    function getModePaiementLabel(mode) {
+      const labels = {
+        'virement': 'Virement bancaire',
+        'cheque': 'Chèque',
+        'carte': 'Carte bancaire',
+        'espece': 'Espèce'
+      };
+      return labels[mode] || mode;
+    }
+  </script>
+  
+  <!-- Scripts nécessaires -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</body>
+</html> 
