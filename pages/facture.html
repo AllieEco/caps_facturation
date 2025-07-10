@@ -847,6 +847,15 @@
         <label>Ajouter une prestation</label>
         <input type="text" id="titrePresta" placeholder="Titre de la tâche">
         <input type="text" id="descPresta" placeholder="Description détaillée">
+        <label>Type de prestation (obligatoire 2026)</label>
+        <select id="typePrestation" required>
+          <option value="">Sélectionnez le type</option>
+          <option value="bien">Bien</option>
+          <option value="service">Service</option>
+        </select>
+        <div style="font-size: 0.9rem; color: #666; margin-top: 5px; margin-bottom: 10px;">
+          <strong>Nouvelle obligation 2026 :</strong> La loi française exige maintenant de préciser si chaque prestation est un bien ou un service.
+        </div>
         <div style="display: flex; gap: 10px;">
           <input type="number" id="prixHT" placeholder="Prix HT (€)" min="0" step="0.01" style="flex: 1;" oninput="calculerTTCDepuisHT()">
           <input type="number" id="prixPresta" placeholder="Prix TTC (€)" min="0" step="0.01" style="flex: 1;" oninput="calculerHTDepuisTTC()" disabled>
@@ -1192,6 +1201,7 @@
     function ajouterPrestation() {
       const titre = document.getElementById('titrePresta').value.trim();
       const desc = document.getElementById('descPresta').value.trim();
+      const typePrestation = document.getElementById('typePrestation').value;
       const prixTTC = parseFloat(document.getElementById('prixPresta').value);
       const prixHT = parseFloat(document.getElementById('prixHT').value);
       const statutJuridique = document.getElementById('statutJuridique').value;
@@ -1200,8 +1210,8 @@
         qte = parseInt(document.getElementById('qtePresta').value) || 1;
       }
       
-      // Vérifier qu'on a au moins un prix (HT ou TTC selon le statut)
-      if (!titre || !desc) return;
+      // Vérifier qu'on a au moins un prix (HT ou TTC selon le statut) et le type
+      if (!titre || !desc || !typePrestation) return;
       
       let prixFinal;
       if (statutJuridique === 'sasu' || statutJuridique === 'eurl' || statutJuridique === 'sarl') {
@@ -1224,9 +1234,10 @@
         }
       }
       
-      prestations.push({ titre, desc, prix: prixFinal, qte });
+      prestations.push({ titre, desc, typePrestation, prix: prixFinal, qte });
       document.getElementById('titrePresta').value = '';
       document.getElementById('descPresta').value = '';
+      document.getElementById('typePrestation').value = '';
       document.getElementById('prixPresta').value = '';
       document.getElementById('prixHT').value = '';
       if (document.getElementById('qtePresta')) document.getElementById('qtePresta').value = '';
@@ -1283,7 +1294,8 @@
         } else {
           prixLabel = `${p.prix.toFixed(2)} € HT`;
         }
-        list.innerHTML += `<div class='prest-item'><span><b>${p.titre}</b><br>${p.desc} — <b>${prixLabel}</b></span><button onclick='supprimerPrestation(${i})' title='Supprimer'>&times;</button></div>`;
+        const typeLabel = p.typePrestation === 'bien' ? '🛍️ Bien' : '🔧 Service';
+        list.innerHTML += `<div class='prest-item'><span><b>${p.titre}</b><br>${p.desc} — ${typeLabel} — <b>${prixLabel}</b></span><button onclick='supprimerPrestation(${i})' title='Supprimer'>&times;</button></div>`;
       });
     }
     function majApercu() {
@@ -1399,17 +1411,19 @@
         
         <table class="facture-table">
           <tr>
-                         <th>DÉSIGNATION</th>
+            <th>DÉSIGNATION</th>
+            <th>TYPE</th>
             <th>QUANTITÉ</th>
             <th>PRIX UNITAIRE HT</th>
             <th>TVA</th>
             <th>TOTAL HT</th>
           </tr>
-          ${prestations.length === 0 ? `<tr><td colspan='5' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
+          ${prestations.length === 0 ? `<tr><td colspan='6' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
             prestations.map(p => {
               const prixHT = p.prix / 1.20; // Pour SARL, HT = TTC / 1.20
               const totalHT = prixHT * (p.qte || 1);
-              return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:center;'>20%</td><td style='text-align:right;'>${totalHT.toFixed(2)} €</td></tr>`;
+              const typeLabel = p.typePrestation === 'bien' ? '🛍️ Bien' : '🔧 Service';
+              return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}</td><td style='text-align:center;'>${typeLabel}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:center;'>20%</td><td style='text-align:right;'>${totalHT.toFixed(2)} €</td></tr>`;
             }).join('')}
         </table>
         
@@ -1511,6 +1525,7 @@
         <table class="facture-table">
           <tr>
             <th>Description des prestations</th>
+            <th>Type</th>
             <th>Période</th>
             <th>Qté</th>
             <th>Prix unit. HT</th>
@@ -1518,12 +1533,13 @@
             <th>Total HT</th>
             <th>Total TTC</th>
           </tr>
-          ${prestations.length === 0 ? `<tr><td colspan='7' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
+          ${prestations.length === 0 ? `<tr><td colspan='8' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
             prestations.map(p => {
               const prixHT = p.prix / 1.20; // Pour SARL, HT = TTC / 1.20
               const totalHT = prixHT * (p.qte || 1);
               const totalTTC = p.prix * (p.qte || 1);
-              return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}</td><td>${periode}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:right;'>${p.prix.toFixed(2)} €</td><td style='text-align:right;'>${totalHT.toFixed(2)} €</td><td style='text-align:right;'>${totalTTC.toFixed(2)} €</td></tr>`;
+              const typeLabel = p.typePrestation === 'bien' ? '🛍️ Bien' : '🔧 Service';
+              return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}</td><td style='text-align:center;'>${typeLabel}</td><td>${periode}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:right;'>${p.prix.toFixed(2)} €</td><td style='text-align:right;'>${totalHT.toFixed(2)} €</td><td style='text-align:right;'>${totalTTC.toFixed(2)} €</td></tr>`;
             }).join('')}
         </table>
         
@@ -1638,16 +1654,18 @@
         <table class="facture-table">
           <tr>
             <th>Description des prestations</th>
+            <th>Type</th>
             <th>Période</th>
             <th>Quantité</th>
             <th>Prix unit. HT</th>
             <th>Total HT</th>
           </tr>
-          ${prestations.length === 0 ? `<tr><td colspan='5' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
+          ${prestations.length === 0 ? `<tr><td colspan='6' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
             prestations.map(p => {
               const prixHT = p.prix; // Pour micro-entreprise, le prix stocké est HT
               const totalHT = prixHT * (p.qte || 1);
-              return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}</td><td>${periode}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:right;'>${totalHT.toFixed(2)} €</td></tr>`;
+              const typeLabel = p.typePrestation === 'bien' ? '🛍️ Bien' : '🔧 Service';
+              return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}</td><td style='text-align:center;'>${typeLabel}</td><td>${periode}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:right;'>${totalHT.toFixed(2)} €</td></tr>`;
             }).join('')}
         </table>
         <div class="facture-total">Total HT : ${totalHT.toFixed(2)} €<br>TVA : Non applicable<br><span style="font-size:1.25em; font-weight:800;">TOTAL TTC : ${totalHT.toFixed(2)} €</span></div>
@@ -1729,17 +1747,19 @@
         
         <table class="facture-table">
           <tr>
-            <th style="width: 45%;">Description détaillée</th>
+            <th style="width: 35%;">Description détaillée</th>
+            <th style="width: 10%;">Type</th>
             <th style="width: 15%;">Durée estimée</th>
             <th style="width: 8%;">Qté</th>
             <th style="width: 16%;">Prix unitaire</th>
             <th style="width: 16%;">Total</th>
           </tr>
-          ${prestations.length === 0 ? `<tr><td colspan='5' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
+          ${prestations.length === 0 ? `<tr><td colspan='6' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
             prestations.map(p => {
               const prixHT = p.prix; // Pour micro-entreprise, le prix stocké est HT
               const totalHT = prixHT * (p.qte || 1);
-              return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}<br><i style="color: #666;">Livrable : Document détaillé</i></td><td style='text-align:center;'>${p.qte || 1} jour${(p.qte || 1) > 1 ? 's' : ''}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:right;'>${totalHT.toFixed(2)} €</td></tr>`;
+              const typeLabel = p.typePrestation === 'bien' ? '🛍️ Bien' : '🔧 Service';
+              return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}<br><i style="color: #666;">Livrable : Document détaillé</i></td><td style='text-align:center;'>${typeLabel}</td><td style='text-align:center;'>${p.qte || 1} jour${(p.qte || 1) > 1 ? 's' : ''}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:right;'>${totalHT.toFixed(2)} €</td></tr>`;
             }).join('')}
         </table>
         
@@ -1857,6 +1877,7 @@
         <table class="facture-table">
           <tr>
             <th>Description des prestations</th>
+            <th>Type</th>
             <th>Période</th>
             <th>Qté</th>
             <th>Prix unit. HT</th>
@@ -1864,12 +1885,13 @@
             <th>Total HT</th>
             <th>Total TTC</th>
           </tr>
-          ${prestations.length === 0 ? `<tr><td colspan='7' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
+          ${prestations.length === 0 ? `<tr><td colspan='8' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
             prestations.map(p => {
               const prixHT = p.prix / 1.20; // Pour EURL, HT = TTC / 1.20
               const totalHT = prixHT * (p.qte || 1);
               const totalTTC = p.prix * (p.qte || 1);
-              return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}</td><td>${periode}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:right;'>${p.prix.toFixed(2)} €</td><td style='text-align:right;'>${totalHT.toFixed(2)} €</td><td style='text-align:right;'>${totalTTC.toFixed(2)} €</td></tr>`;
+              const typeLabel = p.typePrestation === 'bien' ? '🛍️ Bien' : '🔧 Service';
+              return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}</td><td style='text-align:center;'>${typeLabel}</td><td>${periode}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:right;'>${p.prix.toFixed(2)} €</td><td style='text-align:right;'>${totalHT.toFixed(2)} €</td><td style='text-align:right;'>${totalTTC.toFixed(2)} €</td></tr>`;
             }).join('')}
         </table>
         <div style="margin: 20px 0;">
@@ -2118,6 +2140,7 @@
                  <table class="facture-table">
            <tr>
              <th>Description des prestations</th>
+             <th>Type</th>
              <th>Période</th>
              <th>Qté</th>
              <th>Prix unit. HT</th>
@@ -2125,12 +2148,13 @@
              <th>Total HT</th>
              <th>Total TTC</th>
            </tr>
-           ${prestations.length === 0 ? `<tr><td colspan='7' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
+           ${prestations.length === 0 ? `<tr><td colspan='8' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
              prestations.map(p => {
                const prixHT = p.prix / 1.20; // Pour SASU, HT = TTC / 1.20
                const totalHT = prixHT * (p.qte || 1);
                const totalTTC = p.prix * (p.qte || 1);
-               return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}</td><td>${periode}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:right;'>${p.prix.toFixed(2)} €</td><td style='text-align:right;'>${totalHT.toFixed(2)} €</td><td style='text-align:right;'>${totalTTC.toFixed(2)} €</td></tr>`;
+               const typeLabel = p.typePrestation === 'bien' ? '🛍️ Bien' : '🔧 Service';
+               return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}</td><td style='text-align:center;'>${typeLabel}</td><td>${periode}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:right;'>${p.prix.toFixed(2)} €</td><td style='text-align:right;'>${totalHT.toFixed(2)} €</td><td style='text-align:right;'>${totalTTC.toFixed(2)} €</td></tr>`;
              }).join('')}
          </table>
         <div style="margin: 20px 0;">
@@ -2239,18 +2263,20 @@
         
         <table class="facture-table">
           <tr>
-            <th style="width: 40%;">Description détaillée</th>
+            <th style="width: 30%;">Description détaillée</th>
+            <th style="width: 10%;">Type</th>
             <th style="width: 12%;">Durée estimée</th>
             <th style="width: 6%;">Qté</th>
             <th style="width: 14%;">Prix unit. HT</th>
             <th style="width: 14%;">Prix unit. TTC</th>
             <th style="width: 14%;">Total TTC</th>
           </tr>
-          ${prestations.length === 0 ? `<tr><td colspan='6' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
+          ${prestations.length === 0 ? `<tr><td colspan='7' style='text-align:center;color:#aaa;'>Aucune prestation</td></tr>` :
             prestations.map(p => {
               const prixHT = p.prix / 1.20; // Pour SASU, HT = TTC / 1.20
               const totalTTC = p.prix * (p.qte || 1);
-                             return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}<br><i style="color: #666;">Livrable : Document détaillé</i></td><td style='text-align:center;'>${p.qte || 1} jour${(p.qte || 1) > 1 ? 's' : ''}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:right;'>${p.prix.toFixed(2)} €</td><td style='text-align:right;'>${totalTTC.toFixed(2)} €</td></tr>`;
+              const typeLabel = p.typePrestation === 'bien' ? '🛍️ Bien' : '🔧 Service';
+                             return `<tr><td><b>${p.titre}</b><br>${p.desc.replace(/\n/g, '<br>')}<br><i style="color: #666;">Livrable : Document détaillé</i></td><td style='text-align:center;'>${typeLabel}</td><td style='text-align:center;'>${p.qte || 1} jour${(p.qte || 1) > 1 ? 's' : ''}</td><td style='text-align:center;'>${p.qte || 1}</td><td style='text-align:right;'>${prixHT.toFixed(2)} €</td><td style='text-align:right;'>${p.prix.toFixed(2)} €</td><td style='text-align:right;'>${totalTTC.toFixed(2)} €</td></tr>`;
             }).join('')}
         </table>
         
@@ -2616,6 +2642,7 @@
         'periode': '.facture-table',
         'titrePresta': '.facture-table',
         'descPresta': '.facture-table',
+        'typePrestation': '.facture-table',
         'prixHT': '.facture-table',
         'prixPresta': '.facture-table',
         'qtePresta': '.facture-table',

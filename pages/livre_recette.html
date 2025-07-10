@@ -631,6 +631,14 @@
       
       <div class="form-row">
         <div>
+          <label for="typePrestation">Type de prestation (obligatoire 2026)</label>
+          <select id="typePrestation" required>
+            <option value="">Sélectionnez le type</option>
+            <option value="bien">Bien</option>
+            <option value="service">Service</option>
+          </select>
+        </div>
+        <div>
           <label for="modePaiement">Mode de paiement</label>
           <select id="modePaiement" required>
             <option value="virement">Virement bancaire</option>
@@ -639,9 +647,17 @@
             <option value="espece">Espèce</option>
           </select>
         </div>
+      </div>
+      
+      <div class="form-row">
         <div>
           <label for="dateEncaissement">Date d'encaissement</label>
           <input type="date" id="dateEncaissement">
+        </div>
+        <div>
+          <div style="font-size: 0.9rem; color: #666; margin-top: 5px;">
+            <strong>Nouvelle obligation 2026 :</strong> La loi française exige maintenant de préciser si chaque prestation est un bien ou un service.
+          </div>
         </div>
       </div>
       
@@ -700,6 +716,7 @@
             <th>Date</th>
             <th>N° Facture</th>
             <th>Client</th>
+            <th>Type</th>
             <th>Montant HT</th>
             <th>TVA</th>
             <th>Montant TTC</th>
@@ -782,6 +799,7 @@
         date: document.getElementById('dateRecette').value,
         numeroFacture: document.getElementById('numeroFacture').value,
         client: document.getElementById('clientNom').value,
+        typePrestation: document.getElementById('typePrestation').value,
         montantHT: parseFloat(document.getElementById('montantHT').value),
         tauxTva: parseFloat(document.getElementById('tauxTva').value),
         montantTTC: parseFloat(document.getElementById('montantTTC').value),
@@ -826,7 +844,7 @@
       if (recettesFiltered.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="9" class="empty-state">
+            <td colspan="10" class="empty-state">
               <div>
                 <i>💰</i>
                 <p>Aucune recette trouvée</p>
@@ -841,11 +859,14 @@
       // Trier par date décroissante
       recettesFiltered.sort((a, b) => new Date(b.date) - new Date(a.date));
       
-      tbody.innerHTML = recettesFiltered.map(recette => `
+      tbody.innerHTML = recettesFiltered.map(recette => {
+        const typeLabel = recette.typePrestation === 'bien' ? '🛍️ Bien' : '🔧 Service';
+        return `
         <tr>
           <td>${new Date(recette.date).toLocaleDateString('fr-FR')}</td>
           <td><strong>${recette.numeroFacture}</strong></td>
           <td>${recette.client}</td>
+          <td style="text-align:center;">${typeLabel}</td>
           <td class="amount-positive">${recette.montantHT.toFixed(2)} €</td>
           <td>${recette.tauxTva}%</td>
           <td class="amount-positive"><strong>${recette.montantTTC.toFixed(2)} €</strong></td>
@@ -855,7 +876,8 @@
             <button class="btn btn-danger" onclick="supprimerRecette(${recette.id})" title="Supprimer">🗑️</button>
           </td>
         </tr>
-      `).join('');
+      `;
+      }).join('');
 
       // Ajouter une ligne de total
       const totalHT = recettesFiltered.reduce((sum, r) => sum + r.montantHT, 0);
@@ -864,7 +886,7 @@
       
       tbody.innerHTML += `
         <tr class="total-row">
-          <td colspan="3"><strong>TOTAL</strong></td>
+          <td colspan="4"><strong>TOTAL</strong></td>
           <td><strong>${totalHT.toFixed(2)} €</strong></td>
           <td><strong>${totalTVA.toFixed(2)} €</strong></td>
           <td><strong>${totalTTC.toFixed(2)} €</strong></td>
@@ -957,10 +979,11 @@
       }
       
       let csvContent = '\uFEFF'; // BOM UTF-8
-      csvContent += 'Date,Numéro Facture,Client,Montant HT,Taux TVA,Montant TTC,Mode Paiement,Date Encaissement,Description\n';
+      csvContent += 'Date,Numéro Facture,Client,Type Prestation,Montant HT,Taux TVA,Montant TTC,Mode Paiement,Date Encaissement,Description\n';
       
       recettesFiltered.forEach(recette => {
-        csvContent += `${recette.date},${recette.numeroFacture},"${recette.client}",${recette.montantHT.toFixed(2)},${recette.tauxTva},${recette.montantTTC.toFixed(2)},${getModePaiementLabel(recette.modePaiement)},${recette.dateEncaissement || ''},"${recette.description || ''}"\n`;
+        const typeLabel = recette.typePrestation === 'bien' ? 'Bien' : 'Service';
+        csvContent += `${recette.date},${recette.numeroFacture},"${recette.client}","${typeLabel}",${recette.montantHT.toFixed(2)},${recette.tauxTva},${recette.montantTTC.toFixed(2)},${getModePaiementLabel(recette.modePaiement)},${recette.dateEncaissement || ''},"${recette.description || ''}"\n`;
       });
       
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
