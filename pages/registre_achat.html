@@ -198,9 +198,20 @@
       
       <div class="form-row">
         <div>
+          <label for="typePrestation">Type de prestation (obligatoire 2026)</label>
+          <select id="typePrestation" required>
+            <option value="">Sélectionnez le type</option>
+            <option value="bien">Bien</option>
+            <option value="service">Service</option>
+          </select>
+        </div>
+        <div>
           <label for="montantTTC">Montant TTC (€)</label>
           <input type="number" id="montantTTC" step="0.01" min="0" placeholder="0.00" readonly>
         </div>
+      </div>
+      
+      <div class="form-row">
         <div>
           <label for="modePaiement">Mode de paiement</label>
           <select id="modePaiement" required>
@@ -210,6 +221,11 @@
             <option value="espece">Espèce</option>
             <option value="prelevement">Prélèvement</option>
           </select>
+        </div>
+        <div>
+          <div style="font-size: 0.9rem; color: #666; margin-top: 5px;">
+            <strong>Nouvelle obligation 2026 :</strong> La loi française exige maintenant de préciser si chaque prestation est un bien ou un service.
+          </div>
         </div>
       </div>
       
@@ -300,6 +316,7 @@
             <th>N° Facture</th>
             <th>Fournisseur</th>
             <th>Catégorie</th>
+            <th>Type</th>
             <th>Montant HT</th>
             <th>TVA</th>
             <th>Montant TTC</th>
@@ -310,7 +327,7 @@
         </thead>
         <tbody id="achatsTableBody">
           <tr>
-            <td colspan="10" class="empty-state">
+            <td colspan="11" class="empty-state">
               <div>
                 <i>🛒</i>
                 <p>Aucun achat enregistré</p>
@@ -384,6 +401,7 @@
         numeroFacture: document.getElementById('numeroFacture').value,
         fournisseur: document.getElementById('fournisseurNom').value,
         categorie: document.getElementById('categorieAchat').value,
+        typePrestation: document.getElementById('typePrestation').value,
         montantHT: parseFloat(document.getElementById('montantHT').value),
         tauxTva: parseFloat(document.getElementById('tauxTva').value),
         montantTTC: parseFloat(document.getElementById('montantTTC').value),
@@ -430,7 +448,7 @@
       if (achatsFiltered.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="10" class="empty-state">
+            <td colspan="11" class="empty-state">
               <div>
                 <i>🛒</i>
                 <p>Aucun achat trouvé</p>
@@ -445,12 +463,15 @@
       // Trier par date décroissante
       achatsFiltered.sort((a, b) => new Date(b.date) - new Date(a.date));
       
-      tbody.innerHTML = achatsFiltered.map(achat => `
+      tbody.innerHTML = achatsFiltered.map(achat => {
+        const typeLabel = achat.typePrestation === 'bien' ? '🛍️ Bien' : '🔧 Service';
+        return `
         <tr>
           <td>${new Date(achat.date).toLocaleDateString('fr-FR')}</td>
           <td><strong>${achat.numeroFacture}</strong></td>
           <td>${achat.fournisseur}</td>
           <td>${getCategorieLabel(achat.categorie)}</td>
+          <td style="text-align: center;">${typeLabel}</td>
           <td class="amount-negative">${achat.montantHT.toFixed(2)} €</td>
           <td>${achat.tauxTva}%</td>
           <td class="amount-negative"><strong>${achat.montantTTC.toFixed(2)} €</strong></td>
@@ -460,7 +481,7 @@
             <button class="btn btn-danger" onclick="supprimerAchat(${achat.id})" title="Supprimer">🗑️</button>
           </td>
         </tr>
-      `).join('');
+      `}).join('');
 
       // Ajouter une ligne de total
       const totalHT = achatsFiltered.reduce((sum, a) => sum + a.montantHT, 0);
@@ -469,7 +490,7 @@
       
       tbody.innerHTML += `
         <tr class="total-row">
-          <td colspan="4"><strong>TOTAL</strong></td>
+          <td colspan="5"><strong>TOTAL</strong></td>
           <td><strong>${totalHT.toFixed(2)} €</strong></td>
           <td><strong>${totalTVA.toFixed(2)} €</strong></td>
           <td><strong>${totalTTC.toFixed(2)} €</strong></td>
@@ -591,10 +612,11 @@
       }
       
       let csvContent = '\uFEFF'; // BOM UTF-8
-      csvContent += 'Date,Numéro Facture,Fournisseur,Catégorie,Montant HT,Taux TVA,Montant TTC,Mode Paiement,Date Paiement,Déductible,Description\n';
+      csvContent += 'Date,Numéro Facture,Fournisseur,Catégorie,Type Prestation,Montant HT,Taux TVA,Montant TTC,Mode Paiement,Date Paiement,Déductible,Description\n';
       
       achatsFiltered.forEach(achat => {
-        csvContent += `${achat.date},${achat.numeroFacture},"${achat.fournisseur}","${getCategorieLabel(achat.categorie)}",${achat.montantHT.toFixed(2)},${achat.tauxTva},${achat.montantTTC.toFixed(2)},${getModePaiementLabel(achat.modePaiement)},${achat.datePaiement || ''},${getDeductibleLabel(achat.deductible)},"${achat.description || ''}"\n`;
+        const typeLabel = achat.typePrestation === 'bien' ? 'Bien' : 'Service';
+        csvContent += `${achat.date},${achat.numeroFacture},"${achat.fournisseur}","${getCategorieLabel(achat.categorie)}","${typeLabel}",${achat.montantHT.toFixed(2)},${achat.tauxTva},${achat.montantTTC.toFixed(2)},${getModePaiementLabel(achat.modePaiement)},${achat.datePaiement || ''},${getDeductibleLabel(achat.deductible)},"${achat.description || ''}"\n`;
       });
       
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
@@ -794,7 +816,7 @@
         let maxLignes = 1;
         
         rowData.forEach((cellData, i) => {
-          const colWidths = [22, 26, 40, 35, 28, 30, 28, 25, 25]; // Largeurs colonnes
+          const colWidths = [20, 24, 35, 30, 15, 25, 25, 25, 22, 22]; // Largeurs colonnes
           const lignes = diviserTexte(cellData, colWidths[i], fontSize);
           maxLignes = Math.max(maxLignes, lignes.length);
         });
@@ -813,8 +835,8 @@
         currentY += 10;
         
         // Paramètres du tableau optimisés pour format paysage
-        const tableHeaders = ['Date', 'N° Facture', 'Fournisseur', 'Catégorie', 'Montant HT', 'Montant TTC', 'Mode paiement', 'Paiement', 'Déductible'];
-        const colWidths = [22, 26, 40, 35, 28, 30, 28, 25, 25]; // Total = 259mm
+        const tableHeaders = ['Date', 'N° Facture', 'Fournisseur', 'Catégorie', 'Type', 'Montant HT', 'Montant TTC', 'Mode paiement', 'Paiement', 'Déductible'];
+        const colWidths = [20, 24, 35, 30, 15, 25, 25, 25, 22, 22]; // Total = 243mm
         
         // En-têtes du tableau avec hauteur adaptative
         const headerRowData = tableHeaders;
@@ -872,11 +894,13 @@
             const datePaiementFormatee = achat.datePaiement ? new Date(achat.datePaiement).toLocaleDateString('fr-FR') : 'En attente';
             const deductibleLabel = achat.deductible === 'oui' ? 'Oui' : (achat.deductible === 'non' ? 'Non' : 'Partiel');
             
+            const typeLabel = achat.typePrestation === 'bien' ? 'Bien' : 'Service';
             const rowData = [
               dateFormatee,
               achat.numeroFacture,
               achat.fournisseur,
               categorieLabel,
+              typeLabel,
               achat.montantHT.toFixed(2) + ' €',
               achat.montantTTC.toFixed(2) + ' €',
               modePaiementLabel,
@@ -934,7 +958,7 @@
             const totalHTMois = achatsMois.reduce((sum, a) => sum + a.montantHT, 0);
             const totalTTCMois = achatsMois.reduce((sum, a) => sum + a.montantTTC, 0);
             
-            const totalData = ['', '', '', 'TOTAL MOIS', totalHTMois.toFixed(2) + ' €', totalTTCMois.toFixed(2) + ' €', '', '', ''];
+            const totalData = ['', '', '', '', 'TOTAL MOIS', totalHTMois.toFixed(2) + ' €', totalTTCMois.toFixed(2) + ' €', '', '', ''];
             const totalRowHeight = calculerHauteurRangee(totalData, 10);
             
             pdf.setFillColor(245, 245, 245);
