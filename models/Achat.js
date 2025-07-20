@@ -6,49 +6,17 @@ const achatSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  numeroFacture: {
+    type: String,
+    required: true,
+    trim: true
+  },
   date: {
     type: Date,
     required: true,
     default: Date.now
   },
-  description: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  montant: {
-    type: Number,
-    required: true,
-    min: 0
-  },
-  categorie: {
-    type: String,
-    enum: ['fournitures', 'equipement', 'logiciels', 'services', 'marketing', 'transport', 'autre'],
-    default: 'fournitures'
-  },
-  fournisseur: {
-    nom: String,
-    email: String,
-    telephone: String,
-    siret: String
-  },
-  modePaiement: {
-    type: String,
-    enum: ['virement', 'chèque', 'espèces', 'carte', 'paypal'],
-    default: 'virement'
-  },
-  factureFournisseur: String,
-  tva: {
-    type: Number,
-    default: 20,
-    min: 0
-  },
   montantHT: {
-    type: Number,
-    required: true,
-    min: 0
-  },
-  montantTVA: {
     type: Number,
     required: true,
     min: 0
@@ -58,10 +26,25 @@ const achatSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
-  statut: {
+  fournisseur: {
     type: String,
-    enum: ['en_attente', 'payée', 'annulée'],
-    default: 'payée'
+    required: true,
+    trim: true
+  },
+  description: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  typePrestation: {
+    type: String,
+    enum: ['bien', 'service'],
+    required: true
+  },
+  modePaiement: {
+    type: String,
+    enum: ['virement', 'cheque', 'carte', 'espece', 'paypal'],
+    required: true
   },
   notes: String,
   createdAt: {
@@ -82,6 +65,6 @@ achatSchema.pre('save', function(next) {
 
 // Index pour améliorer les performances
 achatSchema.index({ userId: 1, date: -1 });
-achatSchema.index({ userId: 1, categorie: 1 });
+achatSchema.index({ userId: 1, fournisseur: 1 });
 
 module.exports = mongoose.model('Achat', achatSchema); 

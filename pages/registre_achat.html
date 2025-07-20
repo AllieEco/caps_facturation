@@ -666,6 +666,32 @@
         </div>
       </div>
       
+      <div class="form-row">
+        <div class="form-group">
+          <label for="typePrestation">Type de prestation (obligatoire 2026)</label>
+          <select id="typePrestation" required>
+            <option value="">Sélectionnez le type</option>
+            <option value="bien">Bien</option>
+            <option value="service">Service</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="modePaiement">Mode de paiement</label>
+          <select id="modePaiement" required>
+            <option value="">Sélectionnez le mode</option>
+            <option value="virement">Virement bancaire</option>
+            <option value="cheque">Chèque</option>
+            <option value="carte">Carte bancaire</option>
+            <option value="espece">Espèce</option>
+            <option value="paypal">PayPal</option>
+          </select>
+        </div>
+      </div>
+      
+      <div style="font-size: 0.9rem; color: #666; margin-top: 5px; margin-bottom: 10px;">
+        <strong>Nouvelle obligation 2026 :</strong> La loi française exige maintenant de préciser si chaque prestation est un bien ou un service dans les devis et factures.
+      </div>
+      
       <div class="form-group">
         <label for="notes">Notes (optionnel)</label>
         <textarea id="notes" rows="3"></textarea>
@@ -683,6 +709,8 @@
             <th>N° Facture</th>
             <th>Fournisseur</th>
             <th>Description</th>
+            <th>Type</th>
+            <th>Paiement</th>
             <th>Montant HT</th>
             <th>Montant TTC</th>
             <th>Actions</th>
@@ -719,11 +747,9 @@
           loadAchatsFromAPI();
         } else {
           showAuthSection();
-          loadAchatsFromLocalStorage();
         }
       } else {
         showAuthSection();
-        loadAchatsFromLocalStorage();
       }
     }
 
@@ -838,74 +864,62 @@
     function loadAchatsFromAPI() {
       if (typeof apiService !== 'undefined' && apiService) {
         apiService.getAchats().then(result => {
-          if (result.success) {
-            achats = result.data || [];
-            achatsFiltered = [...achats];
-            updateAchatsTable();
-            updateStats();
-          } else {
-            console.warn('Erreur lors du chargement des achats:', result.message);
-            loadAchatsFromLocalStorage();
-          }
+          achats = result.data || [];
+          achatsFiltered = [...achats];
+          updateAchatsTable();
+          updateStats();
+          console.log('Achats chargés depuis MongoDB:', achats.length);
         }).catch(error => {
-          console.error('Erreur API:', error);
-          loadAchatsFromLocalStorage();
+          console.error('Erreur lors du chargement depuis MongoDB:', error);
+          alert('Erreur lors du chargement des achats depuis MongoDB');
         });
       } else {
-        loadAchatsFromLocalStorage();
+        alert('Service API non disponible');
       }
-    }
-
-    function loadAchatsFromLocalStorage() {
-      const saved = localStorage.getItem('achats');
-      achats = saved ? JSON.parse(saved) : [];
-      achatsFiltered = [...achats];
-      updateAchatsTable();
-      updateStats();
     }
 
     function saveAchatsToAPI(achat) {
       if (typeof apiService !== 'undefined' && apiService) {
-        return apiService.addAchat(achat).then(result => {
-          if (result.success) {
-            console.log('Achat sauvegardé sur le serveur');
-            return true;
-          } else {
-            console.warn('Erreur sauvegarde serveur:', result.message);
-            return false;
-          }
+        return apiService.createAchat(achat).then(result => {
+          console.log('Achat sauvegardé dans MongoDB');
+          return true;
         }).catch(error => {
-          console.error('Erreur API:', error);
+          console.error('Erreur MongoDB:', error);
           return false;
         });
       }
       return Promise.resolve(false);
     }
 
-    function saveAchatsToLocalStorage() {
-      localStorage.setItem('achats', JSON.stringify(achats));
-    }
-
     function addAchat(achat) {
-      achats.push(achat);
-      achatsFiltered = [...achats];
-      
-      // Sauvegarder
-      const apiSaved = saveAchatsToAPI(achat);
-      saveAchatsToLocalStorage();
-      
-      updateAchatsTable();
-      updateStats();
-      
-      return apiSaved;
+      // Sauvegarder directement dans MongoDB
+      saveAchatsToAPI(achat).then(success => {
+        if (success) {
+          // Recharger les données depuis MongoDB
+          loadAchatsFromAPI();
+          console.log('Achat sauvegardé dans MongoDB');
+        }
+      }).catch(error => {
+        console.error('Erreur sauvegarde MongoDB:', error);
+        alert('Erreur lors de la sauvegarde dans MongoDB');
+      });
     }
 
     function deleteAchat(index) {
-      achats.splice(index, 1);
-      achatsFiltered = [...achats];
-      saveAchatsToLocalStorage();
-      updateAchatsTable();
-      updateStats();
+      const achatToDelete = achats[index];
+      if (achatToDelete && achatToDelete._id) {
+        // Supprimer depuis MongoDB
+        if (typeof apiService !== 'undefined' && apiService) {
+          apiService.deleteAchat(achatToDelete._id).then(() => {
+            // Recharger les données depuis MongoDB
+            loadAchatsFromAPI();
+            console.log('Achat supprimé de MongoDB');
+          }).catch(error => {
+            console.error('Erreur suppression MongoDB:', error);
+            alert('Erreur lors de la suppression depuis MongoDB');
+          });
+        }
+      }
     }
 
     function updateAchatsTable() {
@@ -919,6 +933,8 @@
           <td>${achat.numeroFacture}</td>
           <td>${achat.fournisseur}</td>
           <td>${achat.description}</td>
+          <td>${achat.typePrestation || 'Non défini'}</td>
+          <td>${achat.modePaiement || 'Non défini'}</td>
           <td>${parseFloat(achat.montantHT).toFixed(2)} €</td>
           <td>${parseFloat(achat.montantTTC).toFixed(2)} €</td>
           <td>
@@ -962,6 +978,8 @@
         montantTTC: parseFloat(document.getElementById('montantTTC').value),
         fournisseur: document.getElementById('fournisseur').value,
         description: document.getElementById('description').value,
+        typePrestation: document.getElementById('typePrestation').value,
+        modePaiement: document.getElementById('modePaiement').value,
         notes: document.getElementById('notes').value
       };
       

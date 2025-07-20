@@ -854,22 +854,49 @@
     
     // Initialisation
     document.addEventListener('DOMContentLoaded', function() {
-      loadData();
       setupEventListeners();
-      updateDashboard();
+      // loadData() sera appelé après authentification
     });
     
     function loadData() {
-      // Charger les recettes depuis localStorage
-      const savedRecettes = localStorage.getItem('recettes');
-      if (savedRecettes) {
-        recettes = JSON.parse(savedRecettes);
+      // Charger les données depuis MongoDB
+      loadRecettesFromMongoDB();
+      loadAchatsFromMongoDB();
+    }
+
+    function loadRecettesFromMongoDB() {
+      if (typeof apiService !== 'undefined' && apiService) {
+        apiService.getRecettes().then(result => {
+          recettes = result.data || [];
+          console.log('Recettes chargées depuis MongoDB:', recettes.length);
+          updateDashboard();
+        }).catch(error => {
+          console.error('Erreur lors du chargement des recettes depuis MongoDB:', error);
+          recettes = [];
+          updateDashboard();
+        });
+      } else {
+        console.error('Service API non disponible');
+        recettes = [];
+        updateDashboard();
       }
-      
-      // Charger les achats depuis localStorage
-      const savedAchats = localStorage.getItem('achats');
-      if (savedAchats) {
-        achats = JSON.parse(savedAchats);
+    }
+
+    function loadAchatsFromMongoDB() {
+      if (typeof apiService !== 'undefined' && apiService) {
+        apiService.getAchats().then(result => {
+          achats = result.data || [];
+          console.log('Achats chargés depuis MongoDB:', achats.length);
+          updateDashboard();
+        }).catch(error => {
+          console.error('Erreur lors du chargement des achats depuis MongoDB:', error);
+          achats = [];
+          updateDashboard();
+        });
+      } else {
+        console.error('Service API non disponible');
+        achats = [];
+        updateDashboard();
       }
     }
     
@@ -1476,33 +1503,13 @@
       }).join('');
     }
     
-    // Rafraîchir les données périodiquement
+    // Rafraîchir les données périodiquement depuis MongoDB
     setInterval(function() {
-      const newRecettes = localStorage.getItem('recettes');
-      const newAchats = localStorage.getItem('achats');
-      
-      let dataChanged = false;
-      
-      if (newRecettes) {
-        const parsedRecettes = JSON.parse(newRecettes);
-        if (JSON.stringify(parsedRecettes) !== JSON.stringify(recettes)) {
-          recettes = parsedRecettes;
-          dataChanged = true;
-        }
+      if (typeof apiService !== 'undefined' && apiService && apiService.isAuthenticated()) {
+        loadRecettesFromMongoDB();
+        loadAchatsFromMongoDB();
       }
-      
-      if (newAchats) {
-        const parsedAchats = JSON.parse(newAchats);
-        if (JSON.stringify(parsedAchats) !== JSON.stringify(achats)) {
-          achats = parsedAchats;
-          dataChanged = true;
-        }
-      }
-      
-      if (dataChanged) {
-        updateDashboard();
-      }
-    }, 5000);
+    }, 10000); // Rafraîchir toutes les 10 secondes
 
     // ===== AUTHENTIFICATION =====
     
@@ -1516,6 +1523,7 @@
       if (typeof apiService !== 'undefined' && apiService && apiService.isAuthenticated()) {
         showUserSection();
         loadUserData();
+        loadData(); // Charger les données MongoDB après authentification
       } else {
         showAuthSection();
       }
@@ -1566,6 +1574,7 @@
         
         showUserSection();
         loadUserData();
+        loadData(); // Charger les données MongoDB après connexion
         closeLoginModal();
         showSuccess('Connexion réussie !');
       } catch (error) {
@@ -1630,6 +1639,7 @@
         
         showUserSection();
         loadUserData();
+        loadData(); // Charger les données MongoDB après inscription
         closeRegisterModal();
         showSuccess('Compte créé avec succès !');
       } catch (error) {

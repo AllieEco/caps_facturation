@@ -27,7 +27,8 @@ router.get('/', authenticateToken, async (req, res) => {
     const total = await Achat.countDocuments(filter);
 
     res.json({
-      achats,
+      success: true,
+      data: achats,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
       total

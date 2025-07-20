@@ -6,46 +6,52 @@ const recetteSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  numeroFacture: {
+    type: String,
+    required: true,
+    trim: true
+  },
   date: {
     type: Date,
     required: true,
     default: Date.now
+  },
+  statutJuridique: {
+    type: String,
+    enum: ['micro', 'sasu', 'eurl', 'sarl'],
+    default: 'micro'
+  },
+  montantHT: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+  montantTTC: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+  client: {
+    type: String,
+    required: true,
+    trim: true
   },
   description: {
     type: String,
     required: true,
     trim: true
   },
-  montant: {
-    type: Number,
-    required: true,
-    min: 0
-  },
-  categorie: {
+  typePrestation: {
     type: String,
-    enum: ['vente', 'service', 'consultation', 'formation', 'autre'],
-    default: 'vente'
+    enum: ['bien', 'service'],
+    required: true
   },
   modePaiement: {
     type: String,
-    enum: ['virement', 'chèque', 'espèces', 'carte', 'paypal'],
-    default: 'virement'
-  },
-  client: {
-    nom: String,
-    email: String,
-    telephone: String
-  },
-  factureAssociee: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Facture'
+    enum: ['virement', 'cheque', 'carte', 'espece', 'paypal'],
+    required: true
   },
   notes: String,
-  statut: {
-    type: String,
-    enum: ['en_attente', 'payée', 'annulée'],
-    default: 'payée'
-  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -64,6 +70,6 @@ recetteSchema.pre('save', function(next) {
 
 // Index pour améliorer les performances
 recetteSchema.index({ userId: 1, date: -1 });
-recetteSchema.index({ userId: 1, categorie: 1 });
+recetteSchema.index({ userId: 1, statutJuridique: 1 });
 
 module.exports = mongoose.model('Recette', recetteSchema); 

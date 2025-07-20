@@ -646,24 +646,69 @@
       
       <div class="form-row">
         <div class="form-group">
-          <label for="montantHT">Montant HT (€)</label>
-          <input type="number" id="montantHT" step="0.01" min="0" value="0.00" required>
+          <label for="statutJuridique">Statut juridique</label>
+          <select id="statutJuridique" onchange="changerStatut()" required>
+            <option value="micro">Micro-entreprise</option>
+            <option value="sasu">SASU</option>
+            <option value="eurl">EURL</option>
+            <option value="sarl">SARL</option>
+          </select>
         </div>
         <div class="form-group">
-          <label for="montantTTC">Montant TTC (€)</label>
-          <input type="number" id="montantTTC" step="0.01" min="0" value="0.00" required>
+          <label for="client">Client</label>
+          <input type="text" id="client" required>
         </div>
       </div>
       
       <div class="form-row">
         <div class="form-group">
-          <label for="client">Client</label>
-          <input type="text" id="client" required>
+          <label for="montantHT">Montant HT (€)</label>
+          <input type="number" id="montantHT" step="0.01" min="0" value="0.00" required oninput="calculerTTCDepuisHT()">
         </div>
+        <div class="form-group">
+          <label for="montantTTC">Montant TTC (€)</label>
+          <input type="number" id="montantTTC" step="0.01" min="0" value="0.00" required oninput="calculerHTDepuisTTC()">
+        </div>
+      </div>
+      
+      <div id="infoTVA" style="font-size: 0.9rem; color: #666; margin-top: 5px; display: none;">
+        Le prix TTC n'est pas calculé pour les micro entreprises au vu de leur statut juridique.
+      </div>
+      <div id="infoMicro" style="font-size: 0.9rem; color: #666; margin-top: 5px;">
+        Pour les micro-entreprises : saisissez uniquement le prix HT (TVA non applicable).
+      </div>
+      
+      <div class="form-row">
         <div class="form-group">
           <label for="description">Description</label>
           <input type="text" id="description" required>
         </div>
+        <div class="form-group">
+          <label for="typePrestation">Type de prestation (obligatoire 2026)</label>
+          <select id="typePrestation" required>
+            <option value="">Sélectionnez le type</option>
+            <option value="bien">Bien</option>
+            <option value="service">Service</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="modePaiement">Mode de paiement</label>
+          <select id="modePaiement" required>
+            <option value="">Sélectionnez le mode</option>
+            <option value="virement">Virement bancaire</option>
+            <option value="cheque">Chèque</option>
+            <option value="carte">Carte bancaire</option>
+            <option value="espece">Espèce</option>
+            <option value="paypal">PayPal</option>
+          </select>
+        </div>
+      </div>
+      
+      <div style="font-size: 0.9rem; color: #666; margin-top: 5px; margin-bottom: 10px;">
+        <strong>Nouvelle obligation 2026 :</strong> La loi française exige maintenant de préciser si chaque prestation est un bien ou un service dans les devis et factures.
       </div>
       
       <div class="form-group">
@@ -683,6 +728,8 @@
             <th>N° Facture</th>
             <th>Client</th>
             <th>Description</th>
+            <th>Type</th>
+            <th>Paiement</th>
             <th>Montant HT</th>
             <th>Montant TTC</th>
             <th>Actions</th>
@@ -697,6 +744,65 @@
   <script>
     let recettes = [];
     let recettesFiltered = [];
+
+    // Fonctions pour gérer le statut juridique et les calculs HT/TTC
+    function changerStatut() {
+      const statut = document.getElementById('statutJuridique').value;
+      const montantTTCInput = document.getElementById('montantTTC');
+      const infoTVA = document.getElementById('infoTVA');
+      const infoMicro = document.getElementById('infoMicro');
+      
+      if (statut === 'micro') {
+        montantTTCInput.disabled = true;
+        montantTTCInput.value = '';
+        infoTVA.style.display = 'none';
+        infoMicro.style.display = 'block';
+      } else {
+        montantTTCInput.disabled = false;
+        infoTVA.style.display = 'block';
+        infoMicro.style.display = 'none';
+        
+        // Recalculer le TTC si un montant HT est présent
+        const montantHT = document.getElementById('montantHT').value;
+        if (montantHT && !isNaN(parseFloat(montantHT))) {
+          calculerTTCDepuisHT();
+        }
+      }
+    }
+
+    function calculerTTCDepuisHT() {
+      const montantHT = parseFloat(document.getElementById('montantHT').value);
+      const statutJuridique = document.getElementById('statutJuridique').value;
+      
+      if (!isNaN(montantHT) && montantHT >= 0) {
+        if (statutJuridique === 'sasu' || statutJuridique === 'eurl' || statutJuridique === 'sarl') {
+          const montantTTC = montantHT * 1.20; // TVA 20%
+          document.getElementById('montantTTC').value = montantTTC.toFixed(2);
+        } else {
+          // Pour micro-entreprise, on ne calcule pas de TTC
+          document.getElementById('montantTTC').value = '';
+        }
+      } else if (montantHT === '' || isNaN(montantHT)) {
+        document.getElementById('montantTTC').value = '';
+      }
+    }
+
+    function calculerHTDepuisTTC() {
+      const montantTTC = parseFloat(document.getElementById('montantTTC').value);
+      const statutJuridique = document.getElementById('statutJuridique').value;
+      
+      if (!isNaN(montantTTC) && montantTTC >= 0) {
+        if (statutJuridique === 'sasu' || statutJuridique === 'eurl' || statutJuridique === 'sarl') {
+          const montantHT = montantTTC / 1.20; // TVA 20%
+          document.getElementById('montantHT').value = montantHT.toFixed(2);
+        } else {
+          // Pour micro-entreprise, HT = TTC
+          document.getElementById('montantHT').value = montantTTC.toFixed(2);
+        }
+      } else if (montantTTC === '' || isNaN(montantTTC)) {
+        document.getElementById('montantHT').value = '';
+      }
+    }
 
     // Fonctions d'authentification
     function showAuthSection() {
@@ -719,11 +825,9 @@
           loadRecettesFromAPI();
         } else {
           showAuthSection();
-          loadRecettesFromLocalStorage();
         }
       } else {
         showAuthSection();
-        loadRecettesFromLocalStorage();
       }
     }
 
@@ -838,74 +942,62 @@
     function loadRecettesFromAPI() {
       if (typeof apiService !== 'undefined' && apiService) {
         apiService.getRecettes().then(result => {
-          if (result.success) {
-            recettes = result.data || [];
-            recettesFiltered = [...recettes];
-            updateRecettesTable();
-            updateStats();
-          } else {
-            console.warn('Erreur lors du chargement des recettes:', result.message);
-            loadRecettesFromLocalStorage();
-          }
+          recettes = result.data || [];
+          recettesFiltered = [...recettes];
+          updateRecettesTable();
+          updateStats();
+          console.log('Recettes chargées depuis MongoDB:', recettes.length);
         }).catch(error => {
-          console.error('Erreur API:', error);
-          loadRecettesFromLocalStorage();
+          console.error('Erreur lors du chargement depuis MongoDB:', error);
+          alert('Erreur lors du chargement des recettes depuis MongoDB');
         });
       } else {
-        loadRecettesFromLocalStorage();
+        alert('Service API non disponible');
       }
-    }
-
-    function loadRecettesFromLocalStorage() {
-      const saved = localStorage.getItem('recettes');
-      recettes = saved ? JSON.parse(saved) : [];
-      recettesFiltered = [...recettes];
-      updateRecettesTable();
-      updateStats();
     }
 
     function saveRecettesToAPI(recette) {
       if (typeof apiService !== 'undefined' && apiService) {
-        return apiService.addRecette(recette).then(result => {
-          if (result.success) {
-            console.log('Recette sauvegardée sur le serveur');
-            return true;
-          } else {
-            console.warn('Erreur sauvegarde serveur:', result.message);
-            return false;
-          }
+        return apiService.createRecette(recette).then(result => {
+          console.log('Recette sauvegardée dans MongoDB');
+          return true;
         }).catch(error => {
-          console.error('Erreur API:', error);
+          console.error('Erreur MongoDB:', error);
           return false;
         });
       }
       return Promise.resolve(false);
     }
 
-    function saveRecettesToLocalStorage() {
-      localStorage.setItem('recettes', JSON.stringify(recettes));
-    }
-
     function addRecette(recette) {
-      recettes.push(recette);
-      recettesFiltered = [...recettes];
-      
-      // Sauvegarder
-      const apiSaved = saveRecettesToAPI(recette);
-      saveRecettesToLocalStorage();
-      
-      updateRecettesTable();
-      updateStats();
-      
-      return apiSaved;
+      // Sauvegarder directement dans MongoDB
+      saveRecettesToAPI(recette).then(success => {
+        if (success) {
+          // Recharger les données depuis MongoDB
+          loadRecettesFromAPI();
+          console.log('Recette sauvegardée dans MongoDB');
+        }
+      }).catch(error => {
+        console.error('Erreur sauvegarde MongoDB:', error);
+        alert('Erreur lors de la sauvegarde dans MongoDB');
+      });
     }
 
     function deleteRecette(index) {
-      recettes.splice(index, 1);
-      recettesFiltered = [...recettes];
-      saveRecettesToLocalStorage();
-      updateRecettesTable();
-      updateStats();
+      const recetteToDelete = recettes[index];
+      if (recetteToDelete && recetteToDelete._id) {
+        // Supprimer depuis MongoDB
+        if (typeof apiService !== 'undefined' && apiService) {
+          apiService.deleteRecette(recetteToDelete._id).then(() => {
+            // Recharger les données depuis MongoDB
+            loadRecettesFromAPI();
+            console.log('Recette supprimée de MongoDB');
+          }).catch(error => {
+            console.error('Erreur suppression MongoDB:', error);
+            alert('Erreur lors de la suppression depuis MongoDB');
+          });
+        }
+      }
     }
 
     function updateRecettesTable() {
@@ -919,6 +1011,8 @@
           <td>${recette.numeroFacture}</td>
           <td>${recette.client}</td>
           <td>${recette.description}</td>
+          <td>${recette.typePrestation || 'Non défini'}</td>
+          <td>${recette.modePaiement || 'Non défini'}</td>
           <td>${parseFloat(recette.montantHT).toFixed(2)} €</td>
           <td>${parseFloat(recette.montantTTC).toFixed(2)} €</td>
           <td>
@@ -955,13 +1049,25 @@
     document.getElementById('recetteForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
+      const statutJuridique = document.getElementById('statutJuridique').value;
+      const montantHT = parseFloat(document.getElementById('montantHT').value);
+      let montantTTC = parseFloat(document.getElementById('montantTTC').value);
+      
+      // Pour les micro-entreprises, TTC = HT (pas de TVA)
+      if (statutJuridique === 'micro') {
+        montantTTC = montantHT;
+      }
+      
       const recette = {
         numeroFacture: document.getElementById('numeroFacture').value,
         date: document.getElementById('dateFacture').value,
-        montantHT: parseFloat(document.getElementById('montantHT').value),
-        montantTTC: parseFloat(document.getElementById('montantTTC').value),
+        statutJuridique: statutJuridique,
+        montantHT: montantHT,
+        montantTTC: montantTTC,
         client: document.getElementById('client').value,
         description: document.getElementById('description').value,
+        typePrestation: document.getElementById('typePrestation').value,
+        modePaiement: document.getElementById('modePaiement').value,
         notes: document.getElementById('notes').value
       };
       
@@ -971,6 +1077,8 @@
       document.getElementById('recetteForm').reset();
       document.getElementById('numeroFacture').value = 'F' + String(recettes.length + 1).padStart(3, '0');
       document.getElementById('dateFacture').value = new Date().toISOString().split('T')[0];
+      document.getElementById('statutJuridique').value = 'micro'; // Réinitialiser à micro par défaut
+      changerStatut(); // Appliquer les règles du statut
     });
 
     // Initialisation
@@ -980,6 +1088,10 @@
       
       // Initialiser le numéro de facture
       document.getElementById('numeroFacture').value = 'F001';
+      
+      // Initialiser le statut juridique et appliquer les règles
+      document.getElementById('statutJuridique').value = 'micro';
+      changerStatut();
       
       // Vérifier l'état d'authentification
       checkAuthStatus();

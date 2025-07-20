@@ -24,7 +24,29 @@ app.use(helmet({
 }));
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.static('.'));
+
+// Middleware pour gérer les erreurs de parsing JSON
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    console.error('=== ERREUR JSON DÉTECTÉE ===');
+    console.error('Erreur de parsing JSON:', err.message);
+    console.error('URL de la requête:', req.url);
+    console.error('Méthode:', req.method);
+    console.error('Content-Type:', req.headers['content-type']);
+    console.error('Body brut:', req.body);
+    console.error('============================');
+    
+    // Retourner une réponse plus détaillée
+    return res.status(400).json({ 
+      error: 'Données JSON invalides',
+      message: 'Le format des données envoyées n\'est pas valide',
+      details: err.message
+    });
+  }
+  next();
+});
 
 // Rate limiting
 const limiter = rateLimit({
