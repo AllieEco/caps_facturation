@@ -3,10 +3,89 @@
   <img src="../assets/images/logo_capslock.png" alt="Logo CAPSLOCK" class="header-logo" onclick="window.location.href='../index.html'">
   <div class="header-buttons">
     <button class="header-button" onclick="window.location.href='facture.html'">Devis/Facture</button>
+    <button class="header-button" onclick="window.location.href='factur_x.html'">Factur-X</button>
     <button class="header-button" onclick="window.location.href='registre_achat.html'">Registre d'achat</button>
     <button class="header-button" onclick="window.location.href='livre_recette.html'">Livre de recette</button>
+    
+    <!-- Section d'authentification -->
+    <div id="authSection" class="auth-buttons">
+      <button class="auth-button" onclick="showLoginModal()">Se connecter</button>
+      <button class="auth-button primary" onclick="showRegisterModal()">Créer un compte</button>
+    </div>
+    
+    <div id="userSection" class="user-menu" style="display: none;">
+      <button class="user-menu-btn" onclick="toggleUserMenu()">
+        <span class="user-name" id="userName">Mon Compte</span>
+        <span class="dropdown-arrow">▼</span>
+      </button>
+      <div class="user-dropdown" id="userDropdown">
+        <a href="informations.html" class="dropdown-item">Mes infos</a>
+        <a href="#" class="dropdown-item" onclick="deleteAccount()">Supprimer mon compte</a>
+        <a href="#" class="dropdown-item" onclick="logout()">Déconnexion</a>
+      </div>
+    </div>
   </div>
 </header>
+
+<!-- Modal de connexion -->
+<div id="loginModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span class="close" onclick="closeLoginModal()">&times;</span>
+    <h2>Connexion</h2>
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="loginEmail">Email</label>
+        <input type="email" id="loginEmail" required>
+      </div>
+      <div class="form-group">
+        <label for="loginPassword">Mot de passe</label>
+        <input type="password" id="loginPassword" required>
+      </div>
+      <button type="submit" class="submit-btn">Se connecter</button>
+    </form>
+    <p class="modal-footer">
+      Pas de compte ? <a href="#" onclick="showRegisterModal()">Créer un compte</a>
+    </p>
+  </div>
+</div>
+
+<!-- Modal d'inscription -->
+<div id="registerModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span class="close" onclick="closeRegisterModal()">&times;</span>
+    <h2>Créer un compte</h2>
+    <form id="registerForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="registerNom">Nom complet</label>
+          <input type="text" id="registerNom" required>
+        </div>
+        <div class="form-group">
+          <label for="registerEntreprise">Entreprise</label>
+          <input type="text" id="registerEntreprise" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="registerEmail">Email</label>
+        <input type="email" id="registerEmail" required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="registerPassword">Mot de passe</label>
+          <input type="password" id="registerPassword" required minlength="6">
+        </div>
+        <div class="form-group">
+          <label for="registerConfirmPassword">Confirmer</label>
+          <input type="password" id="registerConfirmPassword" required>
+        </div>
+      </div>
+      <button type="submit" class="submit-btn">Créer le compte</button>
+    </form>
+    <p class="modal-footer">
+      Déjà un compte ? <a href="#" onclick="showLoginModal()">Se connecter</a>
+    </p>
+  </div>
+</div>
 
 <!-- Instructions d'utilisation :
 1. Copier ce template dans chaque page

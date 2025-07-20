@@ -7,6 +7,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><style>.cls-1{fill:%23f4d03f;}.cls-2{fill:%23333;stroke:%23333;stroke-width:2;fill:none;}.cls-3{fill:%23333;}</style></defs><polygon class='cls-1' points='45,10 50,20 60,20 52,28 55,38 45,33 35,38 38,28 30,20 40,20'/><polygon class='cls-1' points='70,25 73,30 78,30 75,33 76,38 70,35 64,38 65,33 62,30 67,30'/><polygon class='cls-1' points='58,45 61,50 66,50 63,53 64,58 58,55 52,58 53,53 50,50 55,50'/><rect class='cls-2' x='15' y='25' width='45' height='60' rx='3'/><rect class='cls-3' x='20' y='35' width='25' height='2'/><rect class='cls-3' x='20' y='45' width='20' height='2'/><rect class='cls-3' x='20' y='55' width='25' height='2'/><rect class='cls-3' x='20' y='65' width='15' height='2'/><circle class='cls-2' cx='70' cy='60' r='15'/><text x='70' y='67' text-anchor='middle' class='cls-3' font-family='Arial' font-size='16' font-weight='bold'>$</text><path class='cls-2' d='M15,80 Q15,85 20,85 L75,85 Q80,85 80,80 L80,75 L15,75 Z'/></svg>" type="image/svg+xml">
   <link rel="stylesheet" href="../assets/css/footer-styles.css">
+  <link rel="stylesheet" href="../assets/css/header-styles.css">
+  <script src="../assets/js/api-service.js"></script>
   <style>
     body { font-family: 'Montserrat', Arial, sans-serif; background: #f7fafd; margin: 0; padding: 0; color: #222; }
     .container { max-width: 1100px; margin: 30px auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); padding: 32px 24px; display: flex; gap: 40px; align-items: flex-start; }
@@ -196,178 +198,7 @@
       background: #0f5bb8;
     }
 
-    /* Styles pour l'authentification */
-    .auth-buttons {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
 
-    .auth-button {
-      background: transparent;
-      color: #1a7ee7;
-      border: 2px solid #1a7ee7;
-      border-radius: 8px;
-      padding: 10px 20px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: 'Montserrat', Arial, sans-serif;
-      text-decoration: none;
-      display: inline-block;
-    }
-
-    .auth-button:hover {
-      background: #1a7ee7;
-      color: white;
-    }
-
-    .auth-button.primary {
-      background: #1a7ee7;
-      color: white;
-    }
-
-    .auth-button.primary:hover {
-      background: #1766b8;
-    }
-
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: #1a7ee7;
-      font-weight: 600;
-    }
-
-    .user-avatar {
-      width: 32px;
-      height: 32px;
-      background: linear-gradient(135deg, #1a7ee7, #0f5bb8);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: bold;
-      font-size: 0.9rem;
-    }
-
-    .logout-btn {
-      background: #e74c3c;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 8px 16px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .logout-btn:hover {
-      background: #c0392b;
-    }
-
-    /* Styles pour les modales */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.5);
-      backdrop-filter: blur(5px);
-    }
-
-    .modal-content {
-      background-color: white;
-      margin: 5% auto;
-      padding: 30px;
-      border-radius: 16px;
-      width: 90%;
-      max-width: 500px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-      position: relative;
-    }
-
-    .close {
-      color: #aaa;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
-      position: absolute;
-      right: 20px;
-      top: 15px;
-    }
-
-    .close:hover {
-      color: #1a7ee7;
-    }
-
-    .modal h2 {
-      color: #1a7ee7;
-      margin-bottom: 25px;
-      text-align: center;
-      font-size: 1.8rem;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      color: #333;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-
-    .form-group input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 2px solid #e1e8ed;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-family: 'Montserrat', Arial, sans-serif;
-      transition: border-color 0.3s ease;
-      box-sizing: border-box;
-    }
-
-    .form-group input:focus {
-      outline: none;
-      border-color: #1a7ee7;
-    }
-
-    .submit-btn {
-      width: 100%;
-      background: linear-gradient(135deg, #1a7ee7, #0f5bb8);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      padding: 14px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      font-family: 'Montserrat', Arial, sans-serif;
-      margin-top: 10px;
-    }
-
-    .submit-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(26,126,231,0.3);
-    }
 
     .submit-btn:disabled {
       opacity: 0.6;
@@ -452,13 +283,79 @@
         <button class="auth-button primary" onclick="showRegisterModal()">Créer un compte</button>
       </div>
       
-      <div id="userSection" class="user-info" style="display: none;">
-        <div class="user-avatar" id="userAvatar">U</div>
-        <span id="userName">Utilisateur</span>
-        <button class="logout-btn" onclick="logout()">Déconnexion</button>
+      <div id="userSection" class="user-menu" style="display: none;">
+        <button class="user-menu-btn" onclick="toggleUserMenu()">
+          <span class="user-name" id="userName">Mon Compte</span>
+          <span class="dropdown-arrow">▼</span>
+        </button>
+        <div class="user-dropdown" id="userDropdown">
+          <a href="informations.html" class="dropdown-item">Mes infos</a>
+          <a href="#" class="dropdown-item" onclick="deleteAccount()">Supprimer mon compte</a>
+          <a href="#" class="dropdown-item" onclick="logout()">Déconnexion</a>
+        </div>
       </div>
     </div>
   </header>
+
+  <!-- Modal de connexion -->
+  <div id="loginModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close" onclick="closeLoginModal()">&times;</span>
+      <h2>Connexion</h2>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Mot de passe</label>
+          <input type="password" id="loginPassword" required>
+        </div>
+        <button type="submit" class="submit-btn">Se connecter</button>
+      </form>
+      <p class="modal-footer">
+        Pas de compte ? <a href="#" onclick="showRegisterModal()">Créer un compte</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Modal d'inscription -->
+  <div id="registerModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close" onclick="closeRegisterModal()">&times;</span>
+      <h2>Créer un compte</h2>
+      <form id="registerForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="registerNom">Nom complet</label>
+            <input type="text" id="registerNom" required>
+          </div>
+          <div class="form-group">
+            <label for="registerEntreprise">Entreprise</label>
+            <input type="text" id="registerEntreprise" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="registerEmail">Email</label>
+          <input type="email" id="registerEmail" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="registerPassword">Mot de passe</label>
+            <input type="password" id="registerPassword" required minlength="6">
+          </div>
+          <div class="form-group">
+            <label for="registerConfirmPassword">Confirmer</label>
+            <input type="password" id="registerConfirmPassword" required>
+          </div>
+        </div>
+        <button type="submit" class="submit-btn">Créer le compte</button>
+      </form>
+      <p class="modal-footer">
+        Déjà un compte ? <a href="#" onclick="showLoginModal()">Se connecter</a>
+      </p>
+    </div>
+  </div>
   <div class="container">
     <div class="sync-indicator" id="syncIndicator">Aperçu synchronisé</div>
     <div class="form-section">
@@ -2958,175 +2855,9 @@
       document.getElementById('userSection').style.display = 'flex';
     }
 
-    function loadUserData() {
-      if (typeof apiService !== 'undefined' && apiService) {
-        const user = apiService.getCurrentUser();
-        if (user) {
-          document.getElementById('userName').textContent = user.nom;
-          document.getElementById('userAvatar').textContent = user.nom.charAt(0).toUpperCase();
-        }
-      }
-    }
-
-    // Vérifier l'état d'authentification au chargement
-    document.addEventListener('DOMContentLoaded', function() {
-      checkAuthStatus();
-    });
-
-    function checkAuthStatus() {
-      if (typeof apiService !== 'undefined' && apiService && apiService.isAuthenticated()) {
-        showUserSection();
-        loadUserData();
-      } else {
-        showAuthSection();
-      }
-    }
-
-    // Gestion des formulaires
-    document.addEventListener('DOMContentLoaded', function() {
-      document.getElementById('loginForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-        
-        try {
-          if (typeof apiService !== 'undefined' && apiService) {
-            const response = await apiService.login({ email, password });
-          } else {
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
-            const user = users.find(u => u.email === email && u.password === password);
-            
-            if (!user) {
-              throw new Error('Email ou mot de passe incorrect');
-            }
-            
-            localStorage.setItem('authToken', 'local_token_' + Date.now());
-            localStorage.setItem('user', JSON.stringify(user));
-          }
-          
-          showUserSection();
-          loadUserData();
-          closeLoginModal();
-          showSuccess('Connexion réussie !');
-        } catch (error) {
-          showError('Erreur de connexion : ' + (error.message || 'Vérifiez vos identifiants'));
-        }
-      });
-
-      document.getElementById('registerForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const nom = document.getElementById('registerNom').value;
-        const entreprise = document.getElementById('registerEntreprise').value;
-        const email = document.getElementById('registerEmail').value;
-        const password = document.getElementById('registerPassword').value;
-        const confirmPassword = document.getElementById('registerConfirmPassword').value;
-        
-        if (password !== confirmPassword) {
-          showError('Les mots de passe ne correspondent pas');
-          return;
-        }
-        
-        try {
-          const userData = {
-            email,
-            password,
-            nom,
-            entreprise,
-            config: {
-              statutJuridique: 'micro',
-              emetteurNom: entreprise,
-              emetteurContact: nom,
-              emetteurAdresse: '',
-              emetteurCodePostal: '',
-              emetteurVille: '',
-              emetteurSiret: '',
-              emetteurEmail: email,
-              emetteurTel: ''
-            }
-          };
-          
-          if (typeof apiService !== 'undefined' && apiService) {
-            const response = await apiService.register(userData);
-          } else {
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
-            
-            if (users.find(u => u.email === email)) {
-              throw new Error('Un utilisateur avec cet email existe déjà');
-            }
-            
-            const newUser = {
-              _id: 'user_' + Date.now(),
-              ...userData,
-              createdAt: new Date().toISOString()
-            };
-            
-            users.push(newUser);
-            localStorage.setItem('users', JSON.stringify(users));
-            localStorage.setItem('authToken', 'local_token_' + Date.now());
-            localStorage.setItem('user', JSON.stringify(newUser));
-          }
-          
-          showUserSection();
-          loadUserData();
-          closeRegisterModal();
-          showSuccess('Compte créé avec succès !');
-        } catch (error) {
-          showError('Erreur d\'inscription : ' + (error.message || 'Vérifiez vos informations'));
-        }
-      });
-    });
-
-    function showError(message) {
-      const errorDiv = document.createElement('div');
-      errorDiv.className = 'error-message';
-      errorDiv.textContent = message;
-      errorDiv.style.display = 'block';
-      errorDiv.style.position = 'fixed';
-      errorDiv.style.top = '20px';
-      errorDiv.style.right = '20px';
-      errorDiv.style.zIndex = '10000';
-      errorDiv.style.maxWidth = '300px';
-      
-      document.body.appendChild(errorDiv);
-      
-      setTimeout(() => {
-        errorDiv.remove();
-      }, 5000);
-    }
-
-    function showSuccess(message) {
-      const successDiv = document.createElement('div');
-      successDiv.className = 'success-message';
-      successDiv.textContent = message;
-      successDiv.style.display = 'block';
-      successDiv.style.position = 'fixed';
-      successDiv.style.top = '20px';
-      successDiv.style.right = '20px';
-      successDiv.style.zIndex = '10000';
-      successDiv.style.maxWidth = '300px';
-      
-      document.body.appendChild(successDiv);
-      
-      setTimeout(() => {
-        successDiv.remove();
-      }, 3000);
-    }
-
-    // Fermer les modales en cliquant à l'extérieur
-    window.onclick = function(event) {
-      const loginModal = document.getElementById('loginModal');
-      const registerModal = document.getElementById('registerModal');
-      
-      if (event.target === loginModal) {
-        closeLoginModal();
-      }
-      if (event.target === registerModal) {
-        closeRegisterModal();
-      }
-    }
   </script>
+  
+  <script src="../assets/js/header-script.js"></script>
   
   <div class="footer">
     Made with ❤️ by <a href="https://github.com/AllieEco" target="_blank">AllieEco</a>

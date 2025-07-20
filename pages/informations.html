@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Informations - CAPSLOCK</title>
+    <link rel="stylesheet" href="../assets/css/header-styles.css">
+    <link rel="stylesheet" href="../assets/css/footer-styles.css">
+    <script src="../assets/js/api-service.js"></script>
+    <script src="../assets/js/header-script.js"></script>
+    <style>
+        body {
+            font-family: 'Montserrat', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            color: #1a7ee7;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            text-shadow: 0 2px 4px rgba(26,126,231,0.1);
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(26,126,231,0.1);
+            margin-bottom: 40px;
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            color: #1a7ee7;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e3f2fd;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #1a7ee7;
+            box-shadow: 0 0 0 3px rgba(26,126,231,0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .btn-container {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .btn-save {
+            background: #1a7ee7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn-save:hover {
+            background: #1766b8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26,126,231,0.3);
+        }
+
+        .btn-save:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .alert {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #1a7ee7;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 10px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <img src="../assets/images/logo_capslock.png" alt="Logo CAPSLOCK" class="header-logo" onclick="window.location.href='../index.html'">
+        <div class="header-buttons">
+            <button class="header-button" onclick="window.location.href='facture.html'">Devis/Facture</button>
+            <button class="header-button" onclick="window.location.href='registre_achat.html'">Registre d'achat</button>
+            <button class="header-button" onclick="window.location.href='livre_recette.html'">Livre de recette</button>
+            <div class="user-menu">
+                <button class="user-menu-btn" onclick="toggleUserMenu()">
+                    <span class="user-name">Mon Compte</span>
+                    <span class="dropdown-arrow">▼</span>
+                </button>
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="informations.html" class="dropdown-item">Mes infos</a>
+                    <a href="#" class="dropdown-item" onclick="deleteAccount()">Supprimer mon compte</a>
+                    <a href="#" class="dropdown-item" onclick="logout()">Déconnexion</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 class="page-title">Mes Informations</h1>
+        
+        <div id="alertContainer"></div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Chargement en cours...</p>
+        </div>
+
+        <form id="userInfoForm" class="form-container">
+            <!-- Informations de base -->
+            <div class="form-section">
+                <h2 class="section-title">Informations de base</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="nom">Nom complet *</label>
+                        <input type="text" id="nom" name="nom" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="entreprise">Nom de l'entreprise *</label>
+                        <input type="text" id="entreprise" name="entreprise" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="statutJuridique">Statut juridique *</label>
+                        <select id="statutJuridique" name="statutJuridique" required>
+                            <option value="micro">Micro-entreprise</option>
+                            <option value="sasu">SASU</option>
+                            <option value="eurl">EURL</option>
+                            <option value="sarl">SARL</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informations de contact -->
+            <div class="form-section">
+                <h2 class="section-title">Informations de contact</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="emetteurNom">Nom de l'émetteur</label>
+                        <input type="text" id="emetteurNom" name="emetteurNom">
+                    </div>
+                    <div class="form-group">
+                        <label for="emetteurContact">Contact</label>
+                        <input type="text" id="emetteurContact" name="emetteurContact">
+                    </div>
+                    <div class="form-group">
+                        <label for="emetteurAdresse">Adresse</label>
+                        <input type="text" id="emetteurAdresse" name="emetteurAdresse">
+                    </div>
+                    <div class="form-group">
+                        <label for="emetteurCodePostal">Code postal</label>
+                        <input type="text" id="emetteurCodePostal" name="emetteurCodePostal">
+                    </div>
+                    <div class="form-group">
+                        <label for="emetteurVille">Ville</label>
+                        <input type="text" id="emetteurVille" name="emetteurVille">
+                    </div>
+                    <div class="form-group">
+                        <label for="emetteurEmail">Email</label>
+                        <input type="email" id="emetteurEmail" name="emetteurEmail">
+                    </div>
+                    <div class="form-group">
+                        <label for="emetteurTel">Téléphone</label>
+                        <input type="tel" id="emetteurTel" name="emetteurTel">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informations légales -->
+            <div class="form-section">
+                <h2 class="section-title">Informations légales</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="emetteurSiret">Numéro SIRET</label>
+                        <input type="text" id="emetteurSiret" name="emetteurSiret">
+                    </div>
+                    <div class="form-group">
+                        <label for="numTva">Numéro de TVA</label>
+                        <input type="text" id="numTva" name="numTva">
+                    </div>
+                    <div class="form-group">
+                        <label for="emetteurRcs">RCS</label>
+                        <input type="text" id="emetteurRcs" name="emetteurRcs">
+                    </div>
+                    <div class="form-group">
+                        <label for="emetteurVilleRcs">Ville RCS</label>
+                        <input type="text" id="emetteurVilleRcs" name="emetteurVilleRcs">
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="microAUnRcs" name="microAUnRcs">
+                            <label for="microAUnRcs">Micro-entreprise avec RCS</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informations bancaires -->
+            <div class="form-section">
+                <h2 class="section-title">Informations bancaires</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="iban">IBAN</label>
+                        <input type="text" id="iban" name="iban">
+                    </div>
+                    <div class="form-group">
+                        <label for="bic">BIC</label>
+                        <input type="text" id="bic" name="bic">
+                    </div>
+                    <div class="form-group">
+                        <label for="banque">Nom de la banque</label>
+                        <input type="text" id="banque" name="banque">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informations spécifiques selon le statut -->
+            <div id="specificInfo" class="form-section">
+                <!-- Les champs spécifiques seront ajoutés dynamiquement -->
+            </div>
+
+            <div class="btn-container">
+                <button type="submit" class="btn-save" id="saveBtn">Enregistrer les modifications</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <p>&copy; 2024 CAPSLOCK. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="../assets/js/api-service.js"></script>
+    <script src="../assets/js/header-script.js"></script>
+    <script>
+        // Variables globales
+        let currentUser = null;
+
+        // Initialisation de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            loadUserInfo();
+            setupFormHandlers();
+        });
+
+        // Vérification de l'authentification
+        async function checkAuth() {
+            try {
+                if (typeof apiService !== 'undefined' && apiService && apiService.isAuthenticated()) {
+                    const data = await apiService.getProfile();
+                    currentUser = data.user;
+                    updateUserMenu();
+                } else {
+                    window.location.href = '../login.html';
+                }
+            } catch (error) {
+                console.error('Erreur lors de la vérification de l\'authentification:', error);
+                window.location.href = '../login.html';
+            }
+        }
+
+        // Chargement des informations utilisateur
+        async function loadUserInfo() {
+            try {
+                showLoading(true);
+                
+                if (typeof apiService !== 'undefined' && apiService && apiService.isAuthenticated()) {
+                    const data = await apiService.getProfile();
+                    currentUser = data.user;
+                    populateForm(data.user);
+                } else {
+                    throw new Error('Utilisateur non connecté');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showAlert('Erreur lors du chargement des informations', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Remplissage du formulaire avec les données utilisateur
+        function populateForm(user) {
+            // Informations de base
+            document.getElementById('nom').value = user.nom || '';
+            document.getElementById('email').value = user.email || '';
+            document.getElementById('entreprise').value = user.entreprise || '';
+            document.getElementById('statutJuridique').value = user.config?.statutJuridique || 'micro';
+
+            // Informations de contact
+            document.getElementById('emetteurNom').value = user.config?.emetteurNom || '';
+            document.getElementById('emetteurContact').value = user.config?.emetteurContact || '';
+            document.getElementById('emetteurAdresse').value = user.config?.emetteurAdresse || '';
+            document.getElementById('emetteurCodePostal').value = user.config?.emetteurCodePostal || '';
+            document.getElementById('emetteurVille').value = user.config?.emetteurVille || '';
+            document.getElementById('emetteurEmail').value = user.config?.emetteurEmail || '';
+            document.getElementById('emetteurTel').value = user.config?.emetteurTel || '';
+
+            // Informations légales
+            document.getElementById('emetteurSiret').value = user.config?.emetteurSiret || '';
+            document.getElementById('numTva').value = user.config?.numTva || '';
+            document.getElementById('emetteurRcs').value = user.config?.emetteurRcs || '';
+            document.getElementById('emetteurVilleRcs').value = user.config?.emetteurVilleRcs || '';
+            document.getElementById('microAUnRcs').checked = user.config?.microAUnRcs || false;
+
+            // Informations bancaires
+            document.getElementById('iban').value = user.config?.iban || '';
+            document.getElementById('bic').value = user.config?.bic || '';
+            document.getElementById('banque').value = user.config?.banque || '';
+
+            // Mise à jour des champs spécifiques selon le statut
+            updateSpecificFields(user.config?.statutJuridique || 'micro');
+        }
+
+        // Configuration des gestionnaires d'événements
+        function setupFormHandlers() {
+            // Gestionnaire pour le changement de statut juridique
+            document.getElementById('statutJuridique').addEventListener('change', function() {
+                updateSpecificFields(this.value);
+            });
+
+            // Gestionnaire pour la soumission du formulaire
+            document.getElementById('userInfoForm').addEventListener('submit', handleFormSubmit);
+        }
+
+        // Mise à jour des champs spécifiques selon le statut juridique
+        function updateSpecificFields(statut) {
+            const specificInfoDiv = document.getElementById('specificInfo');
+            specificInfoDiv.innerHTML = '';
+
+            if (statut === 'sasu') {
+                specificInfoDiv.innerHTML = `
+                    <h2 class="section-title">Informations SASU</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="capitalSocial">Capital social</label>
+                            <input type="text" id="capitalSocial" name="capitalSocial" value="${currentUser?.config?.capitalSocial || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="numTvaSasu">Numéro de TVA</label>
+                            <input type="text" id="numTvaSasu" name="numTvaSasu" value="${currentUser?.config?.numTva || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="dateCreationSasu">Date de création</label>
+                            <input type="date" id="dateCreationSasu" name="dateCreationSasu" value="${currentUser?.config?.dateCreationSasu || ''}">
+                        </div>
+                    </div>
+                `;
+            } else if (statut === 'eurl') {
+                specificInfoDiv.innerHTML = `
+                    <h2 class="section-title">Informations EURL</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="capitalSocialEurl">Capital social</label>
+                            <input type="text" id="capitalSocialEurl" name="capitalSocialEurl" value="${currentUser?.config?.capitalSocialEurl || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="numTvaEurl">Numéro de TVA</label>
+                            <input type="text" id="numTvaEurl" name="numTvaEurl" value="${currentUser?.config?.numTvaEurl || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="dateCreationEurl">Date de création</label>
+                            <input type="date" id="dateCreationEurl" name="dateCreationEurl" value="${currentUser?.config?.dateCreationEurl || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="gerantEurl">Gérant</label>
+                            <input type="text" id="gerantEurl" name="gerantEurl" value="${currentUser?.config?.gerantEurl || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="associeUniqueEurl">Associé unique</label>
+                            <input type="text" id="associeUniqueEurl" name="associeUniqueEurl" value="${currentUser?.config?.associeUniqueEurl || ''}">
+                        </div>
+                    </div>
+                `;
+            } else if (statut === 'sarl') {
+                specificInfoDiv.innerHTML = `
+                    <h2 class="section-title">Informations SARL</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="capitalSocialSarl">Capital social</label>
+                            <input type="text" id="capitalSocialSarl" name="capitalSocialSarl" value="${currentUser?.config?.capitalSocialSarl || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="numTvaSarl">Numéro de TVA</label>
+                            <input type="text" id="numTvaSarl" name="numTvaSarl" value="${currentUser?.config?.numTvaSarl || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="dateCreationSarl">Date de création</label>
+                            <input type="date" id="dateCreationSarl" name="dateCreationSarl" value="${currentUser?.config?.dateCreationSarl || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="gerantSarl">Gérant</label>
+                            <input type="text" id="gerantSarl" name="gerantSarl" value="${currentUser?.config?.gerantSarl || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="associesSarl">Associés</label>
+                            <textarea id="associesSarl" name="associesSarl">${currentUser?.config?.associesSarl || ''}</textarea>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Gestion de la soumission du formulaire
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            try {
+                showLoading(true);
+                const formData = new FormData(event.target);
+                const data = Object.fromEntries(formData.entries());
+                
+                // Ajout des champs checkbox
+                data.microAUnRcs = document.getElementById('microAUnRcs').checked;
+                
+                // Ajout des champs spécifiques selon le statut
+                const statut = data.statutJuridique;
+                if (statut === 'sasu') {
+                    data.capitalSocial = document.getElementById('capitalSocial')?.value || '';
+                    data.numTva = document.getElementById('numTvaSasu')?.value || '';
+                    data.dateCreationSasu = document.getElementById('dateCreationSasu')?.value || '';
+                } else if (statut === 'eurl') {
+                    data.capitalSocialEurl = document.getElementById('capitalSocialEurl')?.value || '';
+                    data.numTvaEurl = document.getElementById('numTvaEurl')?.value || '';
+                    data.dateCreationEurl = document.getElementById('dateCreationEurl')?.value || '';
+                    data.gerantEurl = document.getElementById('gerantEurl')?.value || '';
+                    data.associeUniqueEurl = document.getElementById('associeUniqueEurl')?.value || '';
+                } else if (statut === 'sarl') {
+                    data.capitalSocialSarl = document.getElementById('capitalSocialSarl')?.value || '';
+                    data.numTvaSarl = document.getElementById('numTvaSarl')?.value || '';
+                    data.dateCreationSarl = document.getElementById('dateCreationSarl')?.value || '';
+                    data.gerantSarl = document.getElementById('gerantSarl')?.value || '';
+                    data.associesSarl = document.getElementById('associesSarl')?.value || '';
+                }
+
+                if (typeof apiService !== 'undefined' && apiService && apiService.isAuthenticated()) {
+                    const result = await apiService.updateProfile(data);
+                    showAlert('Informations mises à jour avec succès !', 'success');
+                    
+                    // Mise à jour des données utilisateur locales
+                    currentUser = result.user;
+                    updateUserMenu();
+                } else {
+                    throw new Error('Service API non disponible');
+                }
+                
+            } catch (error) {
+                console.error('Erreur:', error);
+                showAlert('Erreur lors de la mise à jour des informations', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Affichage des alertes
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            
+            alertContainer.innerHTML = '';
+            alertContainer.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+
+        // Affichage/masquage du loading
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            const saveBtn = document.getElementById('saveBtn');
+            
+            if (show) {
+                loading.style.display = 'block';
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Enregistrement...';
+            } else {
+                loading.style.display = 'none';
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Enregistrer les modifications';
+            }
+        }
+
+        // Mise à jour du menu utilisateur
+        function updateUserMenu() {
+            if (currentUser) {
+                const userNameElement = document.querySelector('.user-name');
+                if (userNameElement) {
+                    userNameElement.textContent = currentUser.nom || 'Mon Compte';
+                }
+            }
+        }
+
+        // Fonctions du menu utilisateur
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        function logout() {
+            if (typeof apiService !== 'undefined' && apiService) {
+                apiService.logout();
+            }
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
+            window.location.href = '../login.html';
+        }
+
+        function deleteAccount() {
+            if (confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.')) {
+                // Implémentation de la suppression de compte
+                console.log('Suppression de compte demandée');
+            }
+        }
+
+        // Fermeture du menu au clic en dehors
+        document.addEventListener('click', function(event) {
+            const userMenu = document.querySelector('.user-menu');
+            const dropdown = document.getElementById('userDropdown');
+            
+            if (!userMenu.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html> 

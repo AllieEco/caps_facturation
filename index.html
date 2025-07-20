@@ -104,6 +104,94 @@
       align-items: center;
     }
 
+    /* Menu utilisateur */
+    .user-menu {
+      position: relative;
+      display: inline-block;
+    }
+
+    .user-menu-btn {
+      background: #1a7ee7;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: 'Montserrat', Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .user-menu-btn:hover {
+      background: #1766b8;
+    }
+
+    .dropdown-arrow {
+      font-size: 0.8rem;
+      transition: transform 0.3s ease;
+    }
+
+    .user-menu-btn:hover .dropdown-arrow {
+      transform: rotate(180deg);
+    }
+
+    .user-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background: white;
+      min-width: 200px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      z-index: 1000;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .user-dropdown.show {
+      display: block;
+      animation: fadeInDown 0.3s ease;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .dropdown-item {
+      display: block;
+      padding: 12px 16px;
+      color: #333;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.2s;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .dropdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .dropdown-item:hover {
+      background: #f8f9fa;
+      color: #1a7ee7;
+    }
+
+    .dropdown-item:active {
+      background: #e9ecef;
+    }
+
     .auth-buttons {
       display: flex;
       gap: 12px;
@@ -684,10 +772,16 @@
         <button class="auth-button primary" onclick="showRegisterModal()">Créer un compte</button>
       </div>
       
-      <div id="userSection" class="user-info" style="display: none;">
-        <div class="user-avatar" id="userAvatar">U</div>
-        <span id="userName">Utilisateur</span>
-        <button class="logout-btn" onclick="logout()">Déconnexion</button>
+      <div id="userSection" class="user-menu" style="display: none;">
+        <button class="user-menu-btn" onclick="toggleUserMenu()">
+          <span class="user-name" id="userName">Mon Compte</span>
+          <span class="dropdown-arrow">▼</span>
+        </button>
+        <div class="user-dropdown" id="userDropdown">
+          <a href="pages/informations.html" class="dropdown-item">Mes infos</a>
+          <a href="#" class="dropdown-item" onclick="deleteAccount()">Supprimer mon compte</a>
+          <a href="#" class="dropdown-item" onclick="logout()">Déconnexion</a>
+        </div>
       </div>
     </div>
   </header>
@@ -1543,11 +1637,35 @@
       if (typeof apiService !== 'undefined' && apiService) {
         const user = apiService.getCurrentUser();
         if (user) {
-          document.getElementById('userName').textContent = user.nom;
-          document.getElementById('userAvatar').textContent = user.nom.charAt(0).toUpperCase();
+          document.getElementById('userName').textContent = user.nom || 'Mon Compte';
         }
       }
     }
+
+    // Fonctions du menu utilisateur
+    function toggleUserMenu() {
+      const dropdown = document.getElementById('userDropdown');
+      if (dropdown) {
+        dropdown.classList.toggle('show');
+      }
+    }
+
+    function deleteAccount() {
+      if (confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.')) {
+        // TODO: Implémenter la suppression de compte
+        console.log('Suppression de compte demandée');
+      }
+    }
+
+    // Fermeture du menu au clic en dehors
+    document.addEventListener('click', function(event) {
+      const userMenu = document.querySelector('.user-menu');
+      const dropdown = document.getElementById('userDropdown');
+      
+      if (userMenu && dropdown && !userMenu.contains(event.target)) {
+        dropdown.classList.remove('show');
+      }
+    });
 
     // Gestion des formulaires
     document.getElementById('loginForm').addEventListener('submit', async function(e) {

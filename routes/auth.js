@@ -108,6 +108,16 @@ router.get('/profile', authenticateToken, async (req, res) => {
   }
 });
 
+// Récupération des informations utilisateur connecté
+router.get('/me', authenticateToken, async (req, res) => {
+  try {
+    res.json(req.user.toPublicJSON());
+  } catch (error) {
+    console.error('Erreur lors de la récupération des informations utilisateur:', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des informations' });
+  }
+});
+
 // Mise à jour du profil utilisateur
 router.put('/profile', authenticateToken, async (req, res) => {
   try {
@@ -117,6 +127,77 @@ router.put('/profile', authenticateToken, async (req, res) => {
     if (nom) updates.nom = nom;
     if (entreprise) updates.entreprise = entreprise;
     if (config) updates.config = { ...req.user.config, ...config };
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      updates,
+      { new: true, runValidators: true }
+    );
+
+    res.json({
+      message: 'Profil mis à jour avec succès',
+      user: user.toPublicJSON()
+    });
+
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour du profil:', error);
+    res.status(500).json({ error: 'Erreur lors de la mise à jour du profil' });
+  }
+});
+
+// Mise à jour complète du profil avec informations d'entreprise
+router.put('/update-profile', authenticateToken, async (req, res) => {
+  try {
+    const {
+      nom, entreprise, statutJuridique,
+      emetteurNom, emetteurContact, emetteurAdresse, emetteurCodePostal, emetteurVille,
+      emetteurSiret, emetteurRcs, emetteurVilleRcs, microAUnRcs,
+      emetteurEmail, emetteurTel, numTva,
+      capitalSocial, dateCreationSasu,
+      capitalSocialEurl, dateCreationEurl, gerantEurl, associeUniqueEurl,
+      capitalSocialSarl, dateCreationSarl, gerantSarl, associesSarl,
+      iban, bic, banque
+    } = req.body;
+
+    const updates = {};
+    
+    // Mise à jour des informations de base
+    if (nom) updates.nom = nom;
+    if (entreprise) updates.entreprise = entreprise;
+    
+    // Mise à jour de la configuration
+    const configUpdates = {};
+    if (statutJuridique) configUpdates.statutJuridique = statutJuridique;
+    if (emetteurNom) configUpdates.emetteurNom = emetteurNom;
+    if (emetteurContact) configUpdates.emetteurContact = emetteurContact;
+    if (emetteurAdresse) configUpdates.emetteurAdresse = emetteurAdresse;
+    if (emetteurCodePostal) configUpdates.emetteurCodePostal = emetteurCodePostal;
+    if (emetteurVille) configUpdates.emetteurVille = emetteurVille;
+    if (emetteurSiret) configUpdates.emetteurSiret = emetteurSiret;
+    if (emetteurRcs) configUpdates.emetteurRcs = emetteurRcs;
+    if (emetteurVilleRcs) configUpdates.emetteurVilleRcs = emetteurVilleRcs;
+    if (typeof microAUnRcs === 'boolean') configUpdates.microAUnRcs = microAUnRcs;
+    if (emetteurEmail) configUpdates.emetteurEmail = emetteurEmail;
+    if (emetteurTel) configUpdates.emetteurTel = emetteurTel;
+    if (numTva) configUpdates.numTva = numTva;
+    if (iban) configUpdates.iban = iban;
+    if (bic) configUpdates.bic = bic;
+    if (banque) configUpdates.banque = banque;
+    
+    // Informations spécifiques selon le statut juridique
+    if (capitalSocial) configUpdates.capitalSocial = capitalSocial;
+    if (dateCreationSasu) configUpdates.dateCreationSasu = dateCreationSasu;
+    if (capitalSocialEurl) configUpdates.capitalSocialEurl = capitalSocialEurl;
+    if (dateCreationEurl) configUpdates.dateCreationEurl = dateCreationEurl;
+    if (gerantEurl) configUpdates.gerantEurl = gerantEurl;
+    if (associeUniqueEurl) configUpdates.associeUniqueEurl = associeUniqueEurl;
+    if (capitalSocialSarl) configUpdates.capitalSocialSarl = capitalSocialSarl;
+    if (dateCreationSarl) configUpdates.dateCreationSarl = dateCreationSarl;
+    if (gerantSarl) configUpdates.gerantSarl = gerantSarl;
+    if (associesSarl) configUpdates.associesSarl = associesSarl;
+
+    // Fusion avec la configuration existante
+    updates.config = { ...req.user.config, ...configUpdates };
 
     const user = await User.findByIdAndUpdate(
       req.user._id,

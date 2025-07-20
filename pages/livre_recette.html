@@ -9,6 +9,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="../config/config.js"></script>
   <script src="../assets/js/api-service.js"></script>
+  <link rel="stylesheet" href="../assets/css/header-styles.css">
   <script>
     // Initialiser l'API service globalement
     let apiService;
@@ -544,10 +545,16 @@
         <button class="auth-button primary" onclick="showRegisterModal()">Créer un compte</button>
       </div>
       
-      <div id="userSection" class="user-info" style="display: none;">
-        <div class="user-avatar" id="userAvatar">U</div>
-        <span id="userName">Utilisateur</span>
-        <button class="logout-btn" onclick="logout()">Déconnexion</button>
+      <div id="userSection" class="user-menu" style="display: none;">
+        <button class="user-menu-btn" onclick="toggleUserMenu()">
+          <span class="user-name" id="userName">Mon Compte</span>
+          <span class="dropdown-arrow">▼</span>
+        </button>
+        <div class="user-dropdown" id="userDropdown">
+          <a href="informations.html" class="dropdown-item">Mes infos</a>
+          <a href="#" class="dropdown-item" onclick="deleteAccount()">Supprimer mon compte</a>
+          <a href="#" class="dropdown-item" onclick="logout()">Déconnexion</a>
+        </div>
       </div>
     </div>
   </header>
@@ -1491,5 +1498,7 @@
       doc.save(`livre_recettes_filtres_${new Date().toISOString().split('T')[0]}.pdf`);
     }
   </script>
+  
+  <script src="../assets/js/header-script.js"></script>
 </body>
 </html> 
