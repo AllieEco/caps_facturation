@@ -779,6 +779,7 @@
         </button>
         <div class="user-dropdown" id="userDropdown">
           <a href="pages/informations.html" class="dropdown-item">Mes infos</a>
+          <a href="#" class="dropdown-item" onclick="forceSync()">🔄 Synchroniser</a>
           <a href="#" class="dropdown-item" onclick="deleteAccount()">Supprimer mon compte</a>
           <a href="#" class="dropdown-item" onclick="logout()">Déconnexion</a>
         </div>
@@ -1603,7 +1604,24 @@
         loadRecettesFromMongoDB();
         loadAchatsFromMongoDB();
       }
-    }, 10000); // Rafraîchir toutes les 10 secondes
+    }, 5000); // Rafraîchir toutes les 5 secondes
+
+    // Écouter les événements de stockage pour synchroniser les données
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'dataUpdated' && typeof apiService !== 'undefined' && apiService && apiService.isAuthenticated()) {
+        console.log('Données mises à jour, rechargement...');
+        loadData();
+      }
+    });
+
+    // Fonction pour forcer la synchronisation manuelle
+    function forceSync() {
+      if (typeof apiService !== 'undefined' && apiService && apiService.isAuthenticated()) {
+        console.log('Synchronisation manuelle...');
+        loadData();
+        showSuccess('Données synchronisées !');
+      }
+    }
 
     // ===== AUTHENTIFICATION =====
     

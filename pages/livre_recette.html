@@ -879,7 +879,7 @@
     }
 
     function checkAuthStatus() {
-      if (typeof apiService !== 'undefined' && apiService) {
+      if (typeof apiService !== 'undefined' && apiService && apiService.isAuthenticated()) {
         const user = apiService.getCurrentUser();
         if (user) {
           showUserSection(user);
@@ -1030,36 +1030,42 @@
       return Promise.resolve(false);
     }
 
-    function addRecette(recette) {
-      // Sauvegarder directement dans MongoDB
-      saveRecettesToAPI(recette).then(success => {
-        if (success) {
-          // Recharger les données depuis MongoDB
-          loadRecettesFromAPI();
-          console.log('Recette sauvegardée dans MongoDB');
-        }
-      }).catch(error => {
-        console.error('Erreur sauvegarde MongoDB:', error);
-        alert('Erreur lors de la sauvegarde dans MongoDB');
-      });
-    }
-
-    function deleteRecette(index) {
-      const recetteToDelete = recettes[index];
-      if (recetteToDelete && recetteToDelete._id) {
-        // Supprimer depuis MongoDB
-        if (typeof apiService !== 'undefined' && apiService) {
-          apiService.deleteRecette(recetteToDelete._id).then(() => {
-            // Recharger les données depuis MongoDB
-            loadRecettesFromAPI();
-            console.log('Recette supprimée de MongoDB');
+            function addRecette(recette) {
+          // Sauvegarder directement dans MongoDB
+          saveRecettesToAPI(recette).then(success => {
+            if (success) {
+              // Recharger les données depuis MongoDB
+              loadRecettesFromAPI();
+              console.log('Recette sauvegardée dans MongoDB');
+              
+              // Notifier les autres pages que les données ont été mises à jour
+              localStorage.setItem('dataUpdated', Date.now().toString());
+            }
           }).catch(error => {
-            console.error('Erreur suppression MongoDB:', error);
-            alert('Erreur lors de la suppression depuis MongoDB');
+            console.error('Erreur sauvegarde MongoDB:', error);
+            alert('Erreur lors de la sauvegarde dans MongoDB');
           });
         }
-      }
-    }
+
+            function deleteRecette(index) {
+          const recetteToDelete = recettes[index];
+          if (recetteToDelete && recetteToDelete._id) {
+            // Supprimer depuis MongoDB
+            if (typeof apiService !== 'undefined' && apiService) {
+              apiService.deleteRecette(recetteToDelete._id).then(() => {
+                // Recharger les données depuis MongoDB
+                loadRecettesFromAPI();
+                console.log('Recette supprimée de MongoDB');
+                
+                // Notifier les autres pages que les données ont été mises à jour
+                localStorage.setItem('dataUpdated', Date.now().toString());
+              }).catch(error => {
+                console.error('Erreur suppression MongoDB:', error);
+                alert('Erreur lors de la suppression depuis MongoDB');
+              });
+            }
+          }
+        }
 
     function updateRecettesTable() {
       const tbody = document.getElementById('recettesTableBody');
@@ -1149,6 +1155,13 @@
       
       // Vérifier l'état d'authentification
       checkAuthStatus();
+      
+      // Rafraîchir les données toutes les 10 secondes si connecté
+      setInterval(function() {
+        if (typeof apiService !== 'undefined' && apiService && apiService.isAuthenticated()) {
+          loadRecettesFromAPI();
+        }
+      }, 10000);
     });
 
     // Fonctions de filtrage pour les recettes

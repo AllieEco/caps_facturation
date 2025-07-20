@@ -885,7 +885,7 @@
     }
 
     function checkAuthStatus() {
-      if (typeof apiService !== 'undefined' && apiService) {
+      if (typeof apiService !== 'undefined' && apiService && apiService.isAuthenticated()) {
         const user = apiService.getCurrentUser();
         if (user) {
           showUserSection(user);
@@ -1036,36 +1036,42 @@
       return Promise.resolve(false);
     }
 
-    function addAchat(achat) {
-      // Sauvegarder directement dans MongoDB
-      saveAchatsToAPI(achat).then(success => {
-        if (success) {
-          // Recharger les données depuis MongoDB
-          loadAchatsFromAPI();
-          console.log('Achat sauvegardé dans MongoDB');
-        }
-      }).catch(error => {
-        console.error('Erreur sauvegarde MongoDB:', error);
-        alert('Erreur lors de la sauvegarde dans MongoDB');
-      });
-    }
-
-    function deleteAchat(index) {
-      const achatToDelete = achats[index];
-      if (achatToDelete && achatToDelete._id) {
-        // Supprimer depuis MongoDB
-        if (typeof apiService !== 'undefined' && apiService) {
-          apiService.deleteAchat(achatToDelete._id).then(() => {
-            // Recharger les données depuis MongoDB
-            loadAchatsFromAPI();
-            console.log('Achat supprimé de MongoDB');
+            function addAchat(achat) {
+          // Sauvegarder directement dans MongoDB
+          saveAchatsToAPI(achat).then(success => {
+            if (success) {
+              // Recharger les données depuis MongoDB
+              loadAchatsFromAPI();
+              console.log('Achat sauvegardé dans MongoDB');
+              
+              // Notifier les autres pages que les données ont été mises à jour
+              localStorage.setItem('dataUpdated', Date.now().toString());
+            }
           }).catch(error => {
-            console.error('Erreur suppression MongoDB:', error);
-            alert('Erreur lors de la suppression depuis MongoDB');
+            console.error('Erreur sauvegarde MongoDB:', error);
+            alert('Erreur lors de la sauvegarde dans MongoDB');
           });
         }
-      }
-    }
+
+            function deleteAchat(index) {
+          const achatToDelete = achats[index];
+          if (achatToDelete && achatToDelete._id) {
+            // Supprimer depuis MongoDB
+            if (typeof apiService !== 'undefined' && apiService) {
+              apiService.deleteAchat(achatToDelete._id).then(() => {
+                // Recharger les données depuis MongoDB
+                loadAchatsFromAPI();
+                console.log('Achat supprimé de MongoDB');
+                
+                // Notifier les autres pages que les données ont été mises à jour
+                localStorage.setItem('dataUpdated', Date.now().toString());
+              }).catch(error => {
+                console.error('Erreur suppression MongoDB:', error);
+                alert('Erreur lors de la suppression depuis MongoDB');
+              });
+            }
+          }
+        }
 
     function updateAchatsTable() {
       const tbody = document.getElementById('achatsTableBody');
@@ -1197,13 +1203,20 @@
       // Initialiser le numéro de facture
       document.getElementById('numeroFacture').value = 'A001';
       
-              // Ajouter les écouteurs pour le calcul automatique
-        document.getElementById('montantHT').addEventListener('input', calculateTVA);
-        document.getElementById('montantTTC').addEventListener('input', calculateTVA);
-        document.getElementById('tauxTVA').addEventListener('change', calculateTVA);
+      // Ajouter les écouteurs pour le calcul automatique
+      document.getElementById('montantHT').addEventListener('input', calculateTVA);
+      document.getElementById('montantTTC').addEventListener('input', calculateTVA);
+      document.getElementById('tauxTVA').addEventListener('change', calculateTVA);
       
       // Vérifier l'état d'authentification
       checkAuthStatus();
+      
+      // Rafraîchir les données toutes les 10 secondes si connecté
+      setInterval(function() {
+        if (typeof apiService !== 'undefined' && apiService && apiService.isAuthenticated()) {
+          loadAchatsFromAPI();
+        }
+      }, 10000);
     });
 
     // Fonctions de filtrage
