@@ -21,6 +21,19 @@ const achatSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
+  tauxTVA: {
+    type: Number,
+    required: true,
+    min: 0,
+    max: 100,
+    default: 20
+  },
+  montantTVA: {
+    type: Number,
+    required: true,
+    min: 0,
+    default: 0
+  },
   montantTTC: {
     type: Number,
     required: true,
@@ -40,6 +53,12 @@ const achatSchema = new mongoose.Schema({
     type: String,
     enum: ['bien', 'service'],
     required: true
+  },
+  typeDepense: {
+    type: String,
+    enum: ['achat_materiel', 'fournitures_bureau', 'logiciels', 'services_web', 'telecommunications', 'transport', 'restauration', 'formation', 'marketing', 'assurance', 'comptabilite', 'maintenance', 'loyer', 'energie', 'autres'],
+    required: false,
+    default: 'autres'
   },
   modePaiement: {
     type: String,

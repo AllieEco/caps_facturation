@@ -524,6 +524,8 @@
       }
     }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
   <script src="../config/config.js"></script>
@@ -646,43 +648,44 @@
       
       <div class="form-row">
         <div class="form-group">
-          <label for="statutJuridique">Statut juridique</label>
-          <select id="statutJuridique" onchange="changerStatut()" required>
-            <option value="micro">Micro-entreprise</option>
-            <option value="sasu">SASU</option>
-            <option value="eurl">EURL</option>
-            <option value="sarl">SARL</option>
-          </select>
-        </div>
-        <div class="form-group">
           <label for="client">Client</label>
           <input type="text" id="client" required>
+        </div>
+        <div class="form-group">
+          <label for="description">Description</label>
+          <input type="text" id="description" required>
         </div>
       </div>
       
       <div class="form-row">
         <div class="form-group">
           <label for="montantHT">Montant HT (€)</label>
-          <input type="number" id="montantHT" step="0.01" min="0" value="0.00" required oninput="calculerTTCDepuisHT()">
+          <input type="number" id="montantHT" step="0.01" min="0" value="0.00" required oninput="calculerMontants()">
         </div>
         <div class="form-group">
           <label for="montantTTC">Montant TTC (€)</label>
-          <input type="number" id="montantTTC" step="0.01" min="0" value="0.00" required oninput="calculerHTDepuisTTC()">
+          <input type="number" id="montantTTC" step="0.01" min="0" value="0.00" required oninput="calculerMontants()">
         </div>
-      </div>
-      
-      <div id="infoTVA" style="font-size: 0.9rem; color: #666; margin-top: 5px; display: none;">
-        Le prix TTC n'est pas calculé pour les micro entreprises au vu de leur statut juridique.
-      </div>
-      <div id="infoMicro" style="font-size: 0.9rem; color: #666; margin-top: 5px;">
-        Pour les micro-entreprises : saisissez uniquement le prix HT (TVA non applicable).
       </div>
       
       <div class="form-row">
         <div class="form-group">
-          <label for="description">Description</label>
-          <input type="text" id="description" required>
+          <label for="tauxTVA">TVA (%)</label>
+          <select id="tauxTVA" onchange="calculerMontants()">
+            <option value="0">0% - Exonéré</option>
+            <option value="2.1">2.1% - Médicaments</option>
+            <option value="5.5">5.5% - Livres, presse</option>
+            <option value="10">10% - Restauration, transport</option>
+            <option value="20" selected>20% - Taux normal</option>
+          </select>
         </div>
+        <div class="form-group">
+          <label for="montantTVA">Montant TVA (€)</label>
+          <input type="number" id="montantTVA" step="0.01" min="0" value="0.00" readonly style="background-color: #f5f5f5;">
+        </div>
+      </div>
+      
+      <div class="form-row">
         <div class="form-group">
           <label for="typePrestation">Type de prestation (obligatoire 2026)</label>
           <select id="typePrestation" required>
@@ -691,9 +694,6 @@
             <option value="service">Service</option>
           </select>
         </div>
-      </div>
-      
-      <div class="form-row">
         <div class="form-group">
           <label for="modePaiement">Mode de paiement</label>
           <select id="modePaiement" required>
@@ -706,6 +706,8 @@
           </select>
         </div>
       </div>
+      
+
       
       <div style="font-size: 0.9rem; color: #666; margin-top: 5px; margin-bottom: 10px;">
         <strong>Nouvelle obligation 2026 :</strong> La loi française exige maintenant de préciser si chaque prestation est un bien ou un service dans les devis et factures.
@@ -720,6 +722,59 @@
     </form>
 
     <h2>Liste des recettes</h2>
+    
+    <!-- Encart des filtres -->
+    <div class="filters-container" style="background: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 15px; border: 1px solid #e9ecef;">
+      <h3 style="margin-top: 0; margin-bottom: 10px; color: #1a7ee7; font-size: 1rem;">🔍 Filtres</h3>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="filterDateDebut">Date de début</label>
+          <input type="date" id="filterDateDebut">
+        </div>
+        <div class="form-group">
+          <label for="filterDateFin">Date de fin</label>
+          <input type="date" id="filterDateFin">
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="filterClient">Client</label>
+          <input type="text" id="filterClient" placeholder="Rechercher un client">
+        </div>
+        <div class="form-group">
+          <label for="filterTypePrestation">Type de prestation</label>
+          <select id="filterTypePrestation">
+            <option value="">Tous les types</option>
+            <option value="bien">Bien</option>
+            <option value="service">Service</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="filterMontantMin">Montant minimum (€)</label>
+          <input type="number" id="filterMontantMin" placeholder="0.00" step="0.01" min="0">
+        </div>
+        <div class="form-group">
+          <label for="filterMontantMax">Montant maximum (€)</label>
+          <input type="number" id="filterMontantMax" placeholder="9999.99" step="0.01" min="0">
+        </div>
+      </div>
+      
+      <div style="display: flex; gap: 8px; margin-top: 12px;">
+        <button type="button" class="btn btn-primary" onclick="appliquerFiltres()">🔍 Appliquer</button>
+        <button type="button" class="btn btn-secondary" onclick="reinitialiserFiltres()">🔄 Reset</button>
+        <button type="button" class="btn btn-success" onclick="exporterFiltres()">📊 CSV</button>
+      </div>
+      
+      <div id="filtresInfo" style="margin-top: 8px; font-size: 0.85rem; color: #666;">
+        <span id="nombreResultats">0</span> recettes trouvées
+      </div>
+    </div>
+    
     <div class="table-container">
       <table id="recettesTable">
         <thead>
@@ -731,6 +786,7 @@
             <th>Type</th>
             <th>Paiement</th>
             <th>Montant HT</th>
+            <th>TVA</th>
             <th>Montant TTC</th>
             <th>Actions</th>
           </tr>
@@ -739,68 +795,66 @@
         </tbody>
       </table>
     </div>
+    
+    <!-- Section d'export PDF -->
+    <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
+      <h3 style="margin-top: 0; margin-bottom: 15px; color: #1a7ee7; font-size: 1.1rem;">📄 Export PDF</h3>
+      <p style="margin-bottom: 15px; color: #666; font-size: 0.9rem;">
+        Exportez votre livre de recettes en PDF au format paysage pour une meilleure lisibilité de toutes les colonnes.
+      </p>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button type="button" class="btn btn-primary" onclick="exporterPDF()" style="background: #1a7ee7;">
+          📄 Exporter en PDF (Paysage)
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="exporterPDFFiltres()" style="background: #6c757d;">
+          📄 Exporter filtres en PDF
+        </button>
+      </div>
+    </div>
   </div>
 
   <script>
     let recettes = [];
     let recettesFiltered = [];
 
-    // Fonctions pour gérer le statut juridique et les calculs HT/TTC
-    function changerStatut() {
-      const statut = document.getElementById('statutJuridique').value;
-      const montantTTCInput = document.getElementById('montantTTC');
-      const infoTVA = document.getElementById('infoTVA');
-      const infoMicro = document.getElementById('infoMicro');
+    // Fonctions pour gérer les calculs HT/TTC/TVA
+    function calculerMontants() {
+      const montantHT = parseFloat(document.getElementById('montantHT').value) || 0;
+      const montantTTC = parseFloat(document.getElementById('montantTTC').value) || 0;
+      const tauxTVA = parseFloat(document.getElementById('tauxTVA').value) || 0;
       
-      if (statut === 'micro') {
-        montantTTCInput.disabled = true;
-        montantTTCInput.value = '';
-        infoTVA.style.display = 'none';
-        infoMicro.style.display = 'block';
-      } else {
-        montantTTCInput.disabled = false;
-        infoTVA.style.display = 'block';
-        infoMicro.style.display = 'none';
+      // Détecter quel champ a été modifié en dernier
+      const activeElement = document.activeElement;
+      
+      if (activeElement.id === 'montantHT' && montantHT > 0) {
+        // Calcul depuis HT
+        const montantTVA = montantHT * (tauxTVA / 100);
+        const nouveauTTC = montantHT + montantTVA;
         
-        // Recalculer le TTC si un montant HT est présent
-        const montantHT = document.getElementById('montantHT').value;
-        if (montantHT && !isNaN(parseFloat(montantHT))) {
-          calculerTTCDepuisHT();
+        document.getElementById('montantTTC').value = nouveauTTC.toFixed(2);
+        document.getElementById('montantTVA').value = montantTVA.toFixed(2);
+      } else if (activeElement.id === 'montantTTC' && montantTTC > 0) {
+        // Calcul depuis TTC
+        const montantTVA = montantTTC * (tauxTVA / (100 + tauxTVA));
+        const nouveauHT = montantTTC - montantTVA;
+        
+        document.getElementById('montantHT').value = nouveauHT.toFixed(2);
+        document.getElementById('montantTVA').value = montantTVA.toFixed(2);
+      } else if (activeElement.id === 'tauxTVA') {
+        // Recalculer depuis HT si disponible, sinon depuis TTC
+        if (montantHT > 0) {
+          const montantTVA = montantHT * (tauxTVA / 100);
+          const nouveauTTC = montantHT + montantTVA;
+          
+          document.getElementById('montantTTC').value = nouveauTTC.toFixed(2);
+          document.getElementById('montantTVA').value = montantTVA.toFixed(2);
+        } else if (montantTTC > 0) {
+          const montantTVA = montantTTC * (tauxTVA / (100 + tauxTVA));
+          const nouveauHT = montantTTC - montantTVA;
+          
+          document.getElementById('montantHT').value = nouveauHT.toFixed(2);
+          document.getElementById('montantTVA').value = montantTVA.toFixed(2);
         }
-      }
-    }
-
-    function calculerTTCDepuisHT() {
-      const montantHT = parseFloat(document.getElementById('montantHT').value);
-      const statutJuridique = document.getElementById('statutJuridique').value;
-      
-      if (!isNaN(montantHT) && montantHT >= 0) {
-        if (statutJuridique === 'sasu' || statutJuridique === 'eurl' || statutJuridique === 'sarl') {
-          const montantTTC = montantHT * 1.20; // TVA 20%
-          document.getElementById('montantTTC').value = montantTTC.toFixed(2);
-        } else {
-          // Pour micro-entreprise, on ne calcule pas de TTC
-          document.getElementById('montantTTC').value = '';
-        }
-      } else if (montantHT === '' || isNaN(montantHT)) {
-        document.getElementById('montantTTC').value = '';
-      }
-    }
-
-    function calculerHTDepuisTTC() {
-      const montantTTC = parseFloat(document.getElementById('montantTTC').value);
-      const statutJuridique = document.getElementById('statutJuridique').value;
-      
-      if (!isNaN(montantTTC) && montantTTC >= 0) {
-        if (statutJuridique === 'sasu' || statutJuridique === 'eurl' || statutJuridique === 'sarl') {
-          const montantHT = montantTTC / 1.20; // TVA 20%
-          document.getElementById('montantHT').value = montantHT.toFixed(2);
-        } else {
-          // Pour micro-entreprise, HT = TTC
-          document.getElementById('montantHT').value = montantTTC.toFixed(2);
-        }
-      } else if (montantTTC === '' || isNaN(montantTTC)) {
-        document.getElementById('montantHT').value = '';
       }
     }
 
@@ -1014,6 +1068,7 @@
           <td>${recette.typePrestation || 'Non défini'}</td>
           <td>${recette.modePaiement || 'Non défini'}</td>
           <td>${parseFloat(recette.montantHT).toFixed(2)} €</td>
+          <td>${recette.tauxTVA ? recette.tauxTVA + '%' : '0%'} (${parseFloat(recette.montantTVA || 0).toFixed(2)} €)</td>
           <td>${parseFloat(recette.montantTTC).toFixed(2)} €</td>
           <td>
             <button class="btn btn-danger" onclick="deleteRecette(${index})">Supprimer</button>
@@ -1049,21 +1104,18 @@
     document.getElementById('recetteForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
-      const statutJuridique = document.getElementById('statutJuridique').value;
       const montantHT = parseFloat(document.getElementById('montantHT').value);
-      let montantTTC = parseFloat(document.getElementById('montantTTC').value);
-      
-      // Pour les micro-entreprises, TTC = HT (pas de TVA)
-      if (statutJuridique === 'micro') {
-        montantTTC = montantHT;
-      }
+      const montantTTC = parseFloat(document.getElementById('montantTTC').value);
+      const tauxTVA = parseFloat(document.getElementById('tauxTVA').value);
+      const montantTVA = parseFloat(document.getElementById('montantTVA').value);
       
       const recette = {
         numeroFacture: document.getElementById('numeroFacture').value,
         date: document.getElementById('dateFacture').value,
-        statutJuridique: statutJuridique,
         montantHT: montantHT,
         montantTTC: montantTTC,
+        tauxTVA: tauxTVA,
+        montantTVA: montantTVA,
         client: document.getElementById('client').value,
         description: document.getElementById('description').value,
         typePrestation: document.getElementById('typePrestation').value,
@@ -1077,8 +1129,7 @@
       document.getElementById('recetteForm').reset();
       document.getElementById('numeroFacture').value = 'F' + String(recettes.length + 1).padStart(3, '0');
       document.getElementById('dateFacture').value = new Date().toISOString().split('T')[0];
-      document.getElementById('statutJuridique').value = 'micro'; // Réinitialiser à micro par défaut
-      changerStatut(); // Appliquer les règles du statut
+      document.getElementById('tauxTVA').value = '20'; // Réinitialiser le taux TVA à 20%
     });
 
     // Initialisation
@@ -1089,13 +1140,356 @@
       // Initialiser le numéro de facture
       document.getElementById('numeroFacture').value = 'F001';
       
-      // Initialiser le statut juridique et appliquer les règles
-      document.getElementById('statutJuridique').value = 'micro';
-      changerStatut();
-      
       // Vérifier l'état d'authentification
       checkAuthStatus();
     });
+
+    // Fonctions de filtrage pour les recettes
+    function appliquerFiltres() {
+      const dateDebut = document.getElementById('filterDateDebut').value;
+      const dateFin = document.getElementById('filterDateFin').value;
+      const client = document.getElementById('filterClient').value.toLowerCase();
+      const typePrestation = document.getElementById('filterTypePrestation').value;
+      const montantMin = parseFloat(document.getElementById('filterMontantMin').value) || 0;
+      const montantMax = parseFloat(document.getElementById('filterMontantMax').value) || Infinity;
+
+      recettesFiltered = recettes.filter(recette => {
+        // Filtre par date
+        if (dateDebut && new Date(recette.date) < new Date(dateDebut)) return false;
+        if (dateFin && new Date(recette.date) > new Date(dateFin)) return false;
+
+        // Filtre par client
+        if (client && !recette.client.toLowerCase().includes(client)) return false;
+
+        // Filtre par type de prestation
+        if (typePrestation && recette.typePrestation !== typePrestation) return false;
+
+        // Filtre par montant
+        const montantTTC = parseFloat(recette.montantTTC);
+        if (montantTTC < montantMin || montantTTC > montantMax) return false;
+
+        return true;
+      });
+
+      updateRecettesTable();
+      updateFiltresInfo();
+    }
+
+    function reinitialiserFiltres() {
+      document.getElementById('filterDateDebut').value = '';
+      document.getElementById('filterDateFin').value = '';
+      document.getElementById('filterClient').value = '';
+      document.getElementById('filterTypePrestation').value = '';
+      document.getElementById('filterMontantMin').value = '';
+      document.getElementById('filterMontantMax').value = '';
+
+      recettesFiltered = [...recettes];
+      updateRecettesTable();
+      updateFiltresInfo();
+    }
+
+    function updateFiltresInfo() {
+      const total = recettes.length;
+      const filtres = recettesFiltered.length;
+      document.getElementById('nombreResultats').textContent = filtres;
+      
+      if (filtres < total) {
+        document.getElementById('filtresInfo').style.color = '#1a7ee7';
+        document.getElementById('filtresInfo').innerHTML = 
+          `<span id="nombreResultats">${filtres}</span> recettes trouvées sur ${total} (filtres actifs)`;
+      } else {
+        document.getElementById('filtresInfo').style.color = '#666';
+        document.getElementById('filtresInfo').innerHTML = 
+          `<span id="nombreResultats">${filtres}</span> recettes trouvées`;
+      }
+    }
+
+    function exporterFiltres() {
+      if (recettesFiltered.length === 0) {
+        alert('Aucune recette à exporter');
+        return;
+      }
+
+      // Créer le contenu CSV
+      const headers = ['Date', 'N° Facture', 'Client', 'Description', 'Type Prestation', 'Mode Paiement', 'Montant HT', 'TVA', 'Montant TTC'];
+      const csvContent = [
+        headers.join(','),
+        ...recettesFiltered.map(recette => [
+          new Date(recette.date).toLocaleDateString('fr-FR'),
+          recette.numeroFacture,
+          `"${recette.client}"`,
+          `"${recette.description}"`,
+          recette.typePrestation || '',
+          recette.modePaiement || '',
+          parseFloat(recette.montantHT).toFixed(2),
+          `${recette.tauxTVA || 0}% (${parseFloat(recette.montantTVA || 0).toFixed(2)} €)`,
+          parseFloat(recette.montantTTC).toFixed(2)
+        ].join(','))
+      ].join('\n');
+
+      // Créer et télécharger le fichier
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `recettes_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Mettre à jour les informations de filtres après chargement des données
+    function updateRecettesTable() {
+      const tbody = document.getElementById('recettesTableBody');
+      tbody.innerHTML = '';
+      
+      recettesFiltered.forEach((recette, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${new Date(recette.date).toLocaleDateString('fr-FR')}</td>
+          <td>${recette.numeroFacture}</td>
+          <td>${recette.client}</td>
+          <td>${recette.description}</td>
+          <td>${recette.typePrestation || 'Non défini'}</td>
+          <td>${recette.modePaiement || 'Non défini'}</td>
+          <td>${parseFloat(recette.montantHT).toFixed(2)} €</td>
+          <td>${recette.tauxTVA ? recette.tauxTVA + '%' : '0%'} (${parseFloat(recette.montantTVA || 0).toFixed(2)} €)</td>
+          <td>${parseFloat(recette.montantTTC).toFixed(2)} €</td>
+          <td>
+            <button class="btn btn-danger" onclick="deleteRecette(${index})">Supprimer</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+      
+      updateFiltresInfo();
+    }
+
+    // Fonctions d'export PDF
+    function exporterPDF() {
+      if (recettes.length === 0) {
+        alert('Aucune recette à exporter');
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('landscape', 'mm', 'a4');
+      
+      // En-tête légal du livre de recettes
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('LIVRE DE RECETTES', 140, 15, { align: 'center' });
+      
+      // Informations de l'entreprise (à récupérer depuis la config utilisateur)
+      const user = apiService ? apiService.getCurrentUser() : JSON.parse(localStorage.getItem('user') || '{}');
+      const config = user.config || {};
+      
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text('IDENTIFICATION DE L\'ENTREPRISE :', 20, 30);
+      
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Raison sociale : ${config.emetteurNom || 'Non renseigné'}`, 20, 37);
+      doc.text(`Adresse : ${config.emetteurAdresse || 'Non renseigné'}`, 20, 42);
+      doc.text(`Code postal : ${config.emetteurCodePostal || 'Non renseigné'} - Ville : ${config.emetteurVille || 'Non renseigné'}`, 20, 47);
+      doc.text(`SIRET : ${config.emetteurSiret || 'Non renseigné'}`, 20, 52);
+      doc.text(`Téléphone : ${config.emetteurTel || 'Non renseigné'} - Email : ${config.emetteurEmail || 'Non renseigné'}`, 20, 57);
+      
+      // Informations légales
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.text('INFORMATIONS LÉGALES :', 20, 67);
+      
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.text('• Ce livre de recettes est conforme à l\'article L. 123-22 du Code de commerce', 20, 72);
+      doc.text('• Il doit être conservé pendant 10 ans à compter de la clôture de l\'exercice', 20, 76);
+      doc.text('• Chaque recette doit être numérotée de manière chronologique', 20, 80);
+      doc.text('• Les montants doivent être exprimés en euros (€)', 20, 84);
+      
+      // Informations de génération
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Généré le ${new Date().toLocaleDateString('fr-FR')} à ${new Date().toLocaleTimeString('fr-FR')}`, 140, 30, { align: 'center' });
+      doc.text(`Période : Du ${recettes.length > 0 ? new Date(Math.min(...recettes.map(r => new Date(r.date)))).toLocaleDateString('fr-FR') : 'N/A'} au ${recettes.length > 0 ? new Date(Math.max(...recettes.map(r => new Date(r.date)))).toLocaleDateString('fr-FR') : 'N/A'}`, 140, 35, { align: 'center' });
+      doc.text(`Total des recettes : ${recettes.length} factures`, 140, 40, { align: 'center' });
+      
+      // Calculs des totaux
+      const totalHT = recettes.reduce((sum, r) => sum + parseFloat(r.montantHT || 0), 0);
+      const totalTVA = recettes.reduce((sum, r) => sum + parseFloat(r.montantTVA || 0), 0);
+      const totalTTC = recettes.reduce((sum, r) => sum + parseFloat(r.montantTTC || 0), 0);
+      
+      doc.text(`Montant total HT : ${totalHT.toFixed(2)} €`, 140, 45, { align: 'center' });
+      doc.text(`Montant total TVA : ${totalTVA.toFixed(2)} €`, 140, 50, { align: 'center' });
+      doc.text(`Montant total TTC : ${totalTTC.toFixed(2)} €`, 140, 55, { align: 'center' });
+      
+      // Préparer les données pour le tableau
+      const headers = [
+        'Date', 'N° Facture', 'Client', 'Description', 'Type', 'Paiement', 'Montant HT', 'TVA', 'Montant TTC'
+      ];
+      
+      const data = recettes.map(recette => [
+        new Date(recette.date).toLocaleDateString('fr-FR'),
+        recette.numeroFacture,
+        recette.client,
+        recette.description,
+        recette.typePrestation || 'Non défini',
+        recette.modePaiement || 'Non défini',
+        parseFloat(recette.montantHT).toFixed(2) + ' €',
+        `${recette.tauxTVA || 0}% (${parseFloat(recette.montantTVA || 0).toFixed(2)} €)`,
+        parseFloat(recette.montantTTC).toFixed(2) + ' €'
+      ]);
+      
+      // Générer le tableau
+      doc.autoTable({
+        head: [headers],
+        body: data,
+        startY: 90,
+        theme: 'grid',
+        styles: {
+          fontSize: 8,
+          cellPadding: 2
+        },
+        headStyles: {
+          fillColor: [26, 126, 231],
+          textColor: 255,
+          fontStyle: 'bold'
+        },
+        columnStyles: {
+          0: { cellWidth: 20 }, // Date
+          1: { cellWidth: 25 }, // N° Facture
+          2: { cellWidth: 35 }, // Client
+          3: { cellWidth: 40 }, // Description
+          4: { cellWidth: 20 }, // Type
+          5: { cellWidth: 25 }, // Paiement
+          6: { cellWidth: 25 }, // Montant HT
+          7: { cellWidth: 25 }, // TVA
+          8: { cellWidth: 25 }  // Montant TTC
+        },
+        didDrawPage: function(data) {
+          // Numéro de page
+          doc.setFontSize(8);
+          doc.text(`Page ${doc.internal.getNumberOfPages()}`, 140, 200, { align: 'center' });
+        }
+      });
+      
+      // Sauvegarder le PDF
+      doc.save(`livre_recettes_${new Date().toISOString().split('T')[0]}.pdf`);
+    }
+
+    function exporterPDFFiltres() {
+      if (recettesFiltered.length === 0) {
+        alert('Aucune recette filtrée à exporter');
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('landscape', 'mm', 'a4');
+      
+      // En-tête légal du livre de recettes (filtres)
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('LIVRE DE RECETTES - FILTRES', 140, 15, { align: 'center' });
+      
+      // Informations de l'entreprise (à récupérer depuis la config utilisateur)
+      const user = apiService ? apiService.getCurrentUser() : JSON.parse(localStorage.getItem('user') || '{}');
+      const config = user.config || {};
+      
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text('IDENTIFICATION DE L\'ENTREPRISE :', 20, 30);
+      
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Raison sociale : ${config.emetteurNom || 'Non renseigné'}`, 20, 37);
+      doc.text(`Adresse : ${config.emetteurAdresse || 'Non renseigné'}`, 20, 42);
+      doc.text(`Code postal : ${config.emetteurCodePostal || 'Non renseigné'} - Ville : ${config.emetteurVille || 'Non renseigné'}`, 20, 47);
+      doc.text(`SIRET : ${config.emetteurSiret || 'Non renseigné'}`, 20, 52);
+      doc.text(`Téléphone : ${config.emetteurTel || 'Non renseigné'} - Email : ${config.emetteurEmail || 'Non renseigné'}`, 20, 57);
+      
+      // Informations légales
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.text('INFORMATIONS LÉGALES :', 20, 67);
+      
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.text('• Ce livre de recettes est conforme à l\'article L. 123-22 du Code de commerce', 20, 72);
+      doc.text('• Il doit être conservé pendant 10 ans à compter de la clôture de l\'exercice', 20, 76);
+      doc.text('• Chaque recette doit être numérotée de manière chronologique', 20, 80);
+      doc.text('• Les montants doivent être exprimés en euros (€)', 20, 84);
+      
+      // Informations de génération (filtres)
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Généré le ${new Date().toLocaleDateString('fr-FR')} à ${new Date().toLocaleTimeString('fr-FR')}`, 140, 30, { align: 'center' });
+      doc.text(`Résultats filtrés : ${recettesFiltered.length} recettes sur ${recettes.length}`, 140, 35, { align: 'center' });
+      doc.text(`Période filtrée : Du ${recettesFiltered.length > 0 ? new Date(Math.min(...recettesFiltered.map(r => new Date(r.date)))).toLocaleDateString('fr-FR') : 'N/A'} au ${recettesFiltered.length > 0 ? new Date(Math.max(...recettesFiltered.map(r => new Date(r.date)))).toLocaleDateString('fr-FR') : 'N/A'}`, 140, 40, { align: 'center' });
+      
+      // Calculs des totaux filtrés
+      const totalHT = recettesFiltered.reduce((sum, r) => sum + parseFloat(r.montantHT || 0), 0);
+      const totalTVA = recettesFiltered.reduce((sum, r) => sum + parseFloat(r.montantTVA || 0), 0);
+      const totalTTC = recettesFiltered.reduce((sum, r) => sum + parseFloat(r.montantTTC || 0), 0);
+      
+      doc.text(`Montant total HT : ${totalHT.toFixed(2)} €`, 140, 45, { align: 'center' });
+      doc.text(`Montant total TVA : ${totalTVA.toFixed(2)} €`, 140, 50, { align: 'center' });
+      doc.text(`Montant total TTC : ${totalTTC.toFixed(2)} €`, 140, 55, { align: 'center' });
+      
+      // Préparer les données pour le tableau
+      const headers = [
+        'Date', 'N° Facture', 'Client', 'Description', 'Type', 'Paiement', 'Montant HT', 'TVA', 'Montant TTC'
+      ];
+      
+      const data = recettesFiltered.map(recette => [
+        new Date(recette.date).toLocaleDateString('fr-FR'),
+        recette.numeroFacture,
+        recette.client,
+        recette.description,
+        recette.typePrestation || 'Non défini',
+        recette.modePaiement || 'Non défini',
+        parseFloat(recette.montantHT).toFixed(2) + ' €',
+        `${recette.tauxTVA || 0}% (${parseFloat(recette.montantTVA || 0).toFixed(2)} €)`,
+        parseFloat(recette.montantTTC).toFixed(2) + ' €'
+      ]);
+      
+      // Générer le tableau
+      doc.autoTable({
+        head: [headers],
+        body: data,
+        startY: 90,
+        theme: 'grid',
+        styles: {
+          fontSize: 8,
+          cellPadding: 2
+        },
+        headStyles: {
+          fillColor: [26, 126, 231],
+          textColor: 255,
+          fontStyle: 'bold'
+        },
+        columnStyles: {
+          0: { cellWidth: 20 }, // Date
+          1: { cellWidth: 25 }, // N° Facture
+          2: { cellWidth: 35 }, // Client
+          3: { cellWidth: 40 }, // Description
+          4: { cellWidth: 20 }, // Type
+          5: { cellWidth: 25 }, // Paiement
+          6: { cellWidth: 25 }, // Montant HT
+          7: { cellWidth: 25 }, // TVA
+          8: { cellWidth: 25 }  // Montant TTC
+        },
+        didDrawPage: function(data) {
+          // Numéro de page
+          doc.setFontSize(8);
+          doc.text(`Page ${doc.internal.getNumberOfPages()}`, 140, 200, { align: 'center' });
+        }
+      });
+      
+      // Sauvegarder le PDF
+      doc.save(`livre_recettes_filtres_${new Date().toISOString().split('T')[0]}.pdf`);
+    }
   </script>
 </body>
 </html> 

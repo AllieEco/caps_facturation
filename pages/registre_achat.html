@@ -524,6 +524,8 @@
       }
     }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
   <script src="../config/config.js"></script>
@@ -644,6 +646,18 @@
         </div>
       </div>
       
+      <div class="form-group">
+        <label for="tauxTVA">Taux de TVA (%)</label>
+        <select id="tauxTVA" required>
+          <option value="">Sélectionnez le taux</option>
+          <option value="0">0% - Exonéré</option>
+          <option value="2.1">2.1% - Presse, médicaments</option>
+          <option value="5.5">5.5% - Restauration, transport</option>
+          <option value="10">10% - Travaux, rénovation</option>
+          <option value="20" selected>20% - Taux normal</option>
+        </select>
+      </div>
+      
       <div class="form-row">
         <div class="form-group">
           <label for="montantHT">Montant HT (€)</label>
@@ -652,6 +666,19 @@
         <div class="form-group">
           <label for="montantTTC">Montant TTC (€)</label>
           <input type="number" id="montantTTC" step="0.01" min="0" value="0.00" required>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="montantTVA">Montant TVA (€)</label>
+          <input type="number" id="montantTVA" step="0.01" min="0" value="0.00" readonly style="background-color: #f5f5f5;">
+        </div>
+        <div class="form-group">
+          <label style="color: #666; font-size: 0.9rem;">Calcul automatique</label>
+          <div style="padding: 8px; background-color: #f8f9fa; border-radius: 6px; font-size: 0.9rem; color: #666;">
+            Les montants se calculent automatiquement selon le mode choisi
+          </div>
         </div>
       </div>
       
@@ -676,6 +703,30 @@
           </select>
         </div>
         <div class="form-group">
+          <label for="typeDepense">Type de dépense</label>
+          <select id="typeDepense" required>
+            <option value="">Sélectionnez le type</option>
+            <option value="achat_materiel">Achat de matériel</option>
+            <option value="fournitures_bureau">Fournitures de bureau</option>
+            <option value="logiciels">Logiciels et licences</option>
+            <option value="services_web">Services web et hébergement</option>
+            <option value="telecommunications">Télécommunications</option>
+            <option value="transport">Transport et déplacements</option>
+            <option value="restauration">Restauration et repas</option>
+            <option value="formation">Formation et développement</option>
+            <option value="marketing">Marketing et publicité</option>
+            <option value="assurance">Assurances</option>
+            <option value="comptabilite">Comptabilité et conseils</option>
+            <option value="maintenance">Maintenance et réparations</option>
+            <option value="loyer">Loyer et charges</option>
+            <option value="energie">Énergie et électricité</option>
+            <option value="autres" selected>Autres dépenses</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
           <label for="modePaiement">Mode de paiement</label>
           <select id="modePaiement" required>
             <option value="">Sélectionnez le mode</option>
@@ -685,6 +736,9 @@
             <option value="espece">Espèce</option>
             <option value="paypal">PayPal</option>
           </select>
+        </div>
+        <div class="form-group">
+          <!-- Espace réservé pour équilibrer la grille -->
         </div>
       </div>
       
@@ -701,6 +755,72 @@
     </form>
 
     <h2>Liste des achats</h2>
+    
+    <!-- Encart des filtres -->
+    <div class="filters-container" style="background: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 15px; border: 1px solid #e9ecef;">
+      <h3 style="margin-top: 0; margin-bottom: 10px; color: #1a7ee7; font-size: 1rem;">🔍 Filtres</h3>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="filterDateDebut">Date de début</label>
+          <input type="date" id="filterDateDebut">
+        </div>
+        <div class="form-group">
+          <label for="filterDateFin">Date de fin</label>
+          <input type="date" id="filterDateFin">
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="filterFournisseur">Fournisseur</label>
+          <input type="text" id="filterFournisseur" placeholder="Rechercher un fournisseur">
+        </div>
+        <div class="form-group">
+          <label for="filterTypeDepense">Type de dépense</label>
+          <select id="filterTypeDepense">
+            <option value="">Tous les types</option>
+            <option value="achat_materiel">Achat de matériel</option>
+            <option value="fournitures_bureau">Fournitures de bureau</option>
+            <option value="logiciels">Logiciels et licences</option>
+            <option value="services_web">Services web et hébergement</option>
+            <option value="telecommunications">Télécommunications</option>
+            <option value="transport">Transport et déplacements</option>
+            <option value="restauration">Restauration et repas</option>
+            <option value="formation">Formation et développement</option>
+            <option value="marketing">Marketing et publicité</option>
+            <option value="assurance">Assurances</option>
+            <option value="comptabilite">Comptabilité et conseils</option>
+            <option value="maintenance">Maintenance et réparations</option>
+            <option value="loyer">Loyer et charges</option>
+            <option value="energie">Énergie et électricité</option>
+            <option value="autres">Autres dépenses</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="filterMontantMin">Montant minimum (€)</label>
+          <input type="number" id="filterMontantMin" placeholder="0.00" step="0.01" min="0">
+        </div>
+        <div class="form-group">
+          <label for="filterMontantMax">Montant maximum (€)</label>
+          <input type="number" id="filterMontantMax" placeholder="9999.99" step="0.01" min="0">
+        </div>
+      </div>
+      
+      <div style="display: flex; gap: 8px; margin-top: 12px;">
+        <button type="button" class="btn btn-primary" onclick="appliquerFiltres()">🔍 Appliquer</button>
+        <button type="button" class="btn btn-secondary" onclick="reinitialiserFiltres()">🔄 Reset</button>
+        <button type="button" class="btn btn-success" onclick="exporterFiltres()">📊 CSV</button>
+      </div>
+      
+      <div id="filtresInfo" style="margin-top: 8px; font-size: 0.85rem; color: #666;">
+        <span id="nombreResultats">0</span> achats trouvés
+      </div>
+    </div>
+    
     <div class="table-container">
       <table id="achatsTable">
         <thead>
@@ -709,9 +829,11 @@
             <th>N° Facture</th>
             <th>Fournisseur</th>
             <th>Description</th>
-            <th>Type</th>
+            <th>Prestation</th>
+            <th>Dépense</th>
             <th>Paiement</th>
             <th>Montant HT</th>
+            <th>TVA</th>
             <th>Montant TTC</th>
             <th>Actions</th>
           </tr>
@@ -719,6 +841,22 @@
         <tbody id="achatsTableBody">
         </tbody>
       </table>
+    </div>
+    
+    <!-- Section d'export PDF -->
+    <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
+      <h3 style="margin-top: 0; margin-bottom: 15px; color: #1a7ee7; font-size: 1.1rem;">📄 Export PDF</h3>
+      <p style="margin-bottom: 15px; color: #666; font-size: 0.9rem;">
+        Exportez votre registre d'achats en PDF au format paysage pour une meilleure lisibilité de toutes les colonnes.
+      </p>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button type="button" class="btn btn-primary" onclick="exporterPDF()" style="background: #1a7ee7;">
+          📄 Exporter en PDF (Paysage)
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="exporterPDFFiltres()" style="background: #6c757d;">
+          📄 Exporter filtres en PDF
+        </button>
+      </div>
     </div>
   </div>
 
@@ -934,8 +1072,10 @@
           <td>${achat.fournisseur}</td>
           <td>${achat.description}</td>
           <td>${achat.typePrestation || 'Non défini'}</td>
+          <td>${achat.typeDepense || 'Non défini'}</td>
           <td>${achat.modePaiement || 'Non défini'}</td>
           <td>${parseFloat(achat.montantHT).toFixed(2)} €</td>
+          <td>${achat.tauxTVA ? achat.tauxTVA + '%' : '20%'} (${parseFloat(achat.montantTVA || 0).toFixed(2)} €)</td>
           <td>${parseFloat(achat.montantTTC).toFixed(2)} €</td>
           <td>
             <button class="btn btn-danger" onclick="deleteAchat(${index})">Supprimer</button>
@@ -975,13 +1115,18 @@
         numeroFacture: document.getElementById('numeroFacture').value,
         date: document.getElementById('dateAchat').value,
         montantHT: parseFloat(document.getElementById('montantHT').value),
+        tauxTVA: parseFloat(document.getElementById('tauxTVA').value),
+        montantTVA: parseFloat(document.getElementById('montantTVA').value),
         montantTTC: parseFloat(document.getElementById('montantTTC').value),
         fournisseur: document.getElementById('fournisseur').value,
         description: document.getElementById('description').value,
         typePrestation: document.getElementById('typePrestation').value,
+        typeDepense: document.getElementById('typeDepense').value,
         modePaiement: document.getElementById('modePaiement').value,
         notes: document.getElementById('notes').value
       };
+      
+      console.log('Données de l\'achat à envoyer:', achat);
       
       addAchat(achat);
       
@@ -989,9 +1134,55 @@
       document.getElementById('achatForm').reset();
       document.getElementById('numeroFacture').value = 'A' + String(achats.length + 1).padStart(3, '0');
       document.getElementById('dateAchat').value = new Date().toISOString().split('T')[0];
+      document.getElementById('tauxTVA').value = '20'; // Réinitialiser le taux de TVA à 20%
+      document.getElementById('typeDepense').value = 'autres'; // Réinitialiser le type de dépense
+      document.getElementById('montantHT').value = '0.00';
+      document.getElementById('montantTVA').value = '0.00';
+      document.getElementById('montantTTC').value = '0.00';
     });
 
-    // Initialisation
+    // Calcul automatique de la TVA
+    function calculateTVA() {
+      const tauxTVA = parseFloat(document.getElementById('tauxTVA').value) || 20;
+      const montantHT = parseFloat(document.getElementById('montantHT').value) || 0;
+      const montantTTC = parseFloat(document.getElementById('montantTTC').value) || 0;
+      
+      // Détecter quel champ a été modifié en dernier
+      const lastModifiedField = document.activeElement;
+      
+      if (lastModifiedField && lastModifiedField.id === 'montantHT') {
+        // L'utilisateur a modifié le HT, calculer TTC et TVA
+        const montantTVA = montantHT * (tauxTVA / 100);
+        const newMontantTTC = montantHT + montantTVA;
+        
+        document.getElementById('montantTVA').value = montantTVA.toFixed(2);
+        document.getElementById('montantTTC').value = newMontantTTC.toFixed(2);
+      } else if (lastModifiedField && lastModifiedField.id === 'montantTTC') {
+        // L'utilisateur a modifié le TTC, calculer HT et TVA
+        const newMontantHT = montantTTC / (1 + (tauxTVA / 100));
+        const montantTVA = montantTTC - newMontantHT;
+        
+        document.getElementById('montantHT').value = newMontantHT.toFixed(2);
+        document.getElementById('montantTVA').value = montantTVA.toFixed(2);
+      } else {
+        // Changement du taux de TVA, recalculer à partir du HT si disponible
+        if (montantHT > 0) {
+          const montantTVA = montantHT * (tauxTVA / 100);
+          const newMontantTTC = montantHT + montantTVA;
+          
+          document.getElementById('montantTVA').value = montantTVA.toFixed(2);
+          document.getElementById('montantTTC').value = newMontantTTC.toFixed(2);
+        } else if (montantTTC > 0) {
+          const newMontantHT = montantTTC / (1 + (tauxTVA / 100));
+          const montantTVA = montantTTC - newMontantHT;
+          
+          document.getElementById('montantHT').value = newMontantHT.toFixed(2);
+          document.getElementById('montantTVA').value = montantTVA.toFixed(2);
+        }
+      }
+    }
+
+    // Écouteurs d'événements pour le calcul automatique
     document.addEventListener('DOMContentLoaded', function() {
       // Initialiser la date du jour
       document.getElementById('dateAchat').value = new Date().toISOString().split('T')[0];
@@ -999,9 +1190,367 @@
       // Initialiser le numéro de facture
       document.getElementById('numeroFacture').value = 'A001';
       
+              // Ajouter les écouteurs pour le calcul automatique
+        document.getElementById('montantHT').addEventListener('input', calculateTVA);
+        document.getElementById('montantTTC').addEventListener('input', calculateTVA);
+        document.getElementById('tauxTVA').addEventListener('change', calculateTVA);
+      
       // Vérifier l'état d'authentification
       checkAuthStatus();
     });
+
+    // Fonctions de filtrage
+    function appliquerFiltres() {
+      const dateDebut = document.getElementById('filterDateDebut').value;
+      const dateFin = document.getElementById('filterDateFin').value;
+      const fournisseur = document.getElementById('filterFournisseur').value.toLowerCase();
+      const typeDepense = document.getElementById('filterTypeDepense').value;
+      const montantMin = parseFloat(document.getElementById('filterMontantMin').value) || 0;
+      const montantMax = parseFloat(document.getElementById('filterMontantMax').value) || Infinity;
+
+      achatsFiltered = achats.filter(achat => {
+        // Filtre par date
+        if (dateDebut && new Date(achat.date) < new Date(dateDebut)) return false;
+        if (dateFin && new Date(achat.date) > new Date(dateFin)) return false;
+
+        // Filtre par fournisseur
+        if (fournisseur && !achat.fournisseur.toLowerCase().includes(fournisseur)) return false;
+
+        // Filtre par type de dépense
+        if (typeDepense && achat.typeDepense !== typeDepense) return false;
+
+        // Filtre par montant
+        const montantTTC = parseFloat(achat.montantTTC);
+        if (montantTTC < montantMin || montantTTC > montantMax) return false;
+
+        return true;
+      });
+
+      updateAchatsTable();
+      updateFiltresInfo();
+    }
+
+    function reinitialiserFiltres() {
+      document.getElementById('filterDateDebut').value = '';
+      document.getElementById('filterDateFin').value = '';
+      document.getElementById('filterFournisseur').value = '';
+      document.getElementById('filterTypeDepense').value = '';
+      document.getElementById('filterMontantMin').value = '';
+      document.getElementById('filterMontantMax').value = '';
+
+      achatsFiltered = [...achats];
+      updateAchatsTable();
+      updateFiltresInfo();
+    }
+
+    function updateFiltresInfo() {
+      const total = achats.length;
+      const filtres = achatsFiltered.length;
+      document.getElementById('nombreResultats').textContent = filtres;
+      
+      if (filtres < total) {
+        document.getElementById('filtresInfo').style.color = '#1a7ee7';
+        document.getElementById('filtresInfo').innerHTML = 
+          `<span id="nombreResultats">${filtres}</span> achats trouvés sur ${total} (filtres actifs)`;
+      } else {
+        document.getElementById('filtresInfo').style.color = '#666';
+        document.getElementById('filtresInfo').innerHTML = 
+          `<span id="nombreResultats">${filtres}</span> achats trouvés`;
+      }
+    }
+
+    function exporterFiltres() {
+      if (achatsFiltered.length === 0) {
+        alert('Aucun achat à exporter');
+        return;
+      }
+
+      // Créer le contenu CSV
+      const headers = ['Date', 'N° Facture', 'Fournisseur', 'Description', 'Type Prestation', 'Type Dépense', 'Mode Paiement', 'Montant HT', 'TVA', 'Montant TTC'];
+      const csvContent = [
+        headers.join(','),
+        ...achatsFiltered.map(achat => [
+          new Date(achat.date).toLocaleDateString('fr-FR'),
+          achat.numeroFacture,
+          `"${achat.fournisseur}"`,
+          `"${achat.description}"`,
+          achat.typePrestation || '',
+          achat.typeDepense || '',
+          achat.modePaiement || '',
+          parseFloat(achat.montantHT).toFixed(2),
+          parseFloat(achat.montantTVA || 0).toFixed(2),
+          parseFloat(achat.montantTTC).toFixed(2)
+        ].join(','))
+      ].join('\n');
+
+      // Créer et télécharger le fichier
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `achats_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Mettre à jour les informations de filtres après chargement des données
+    function updateAchatsTable() {
+      const tbody = document.getElementById('achatsTableBody');
+      tbody.innerHTML = '';
+      
+      achatsFiltered.forEach((achat, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${new Date(achat.date).toLocaleDateString('fr-FR')}</td>
+          <td>${achat.numeroFacture}</td>
+          <td>${achat.fournisseur}</td>
+          <td>${achat.description}</td>
+          <td>${achat.typePrestation || 'Non défini'}</td>
+          <td>${achat.typeDepense || 'Non défini'}</td>
+          <td>${achat.modePaiement || 'Non défini'}</td>
+          <td>${parseFloat(achat.montantHT).toFixed(2)} €</td>
+          <td>${achat.tauxTVA ? achat.tauxTVA + '%' : '20%'} (${parseFloat(achat.montantTVA || 0).toFixed(2)} €)</td>
+          <td>${parseFloat(achat.montantTTC).toFixed(2)} €</td>
+          <td>
+            <button class="btn btn-danger" onclick="deleteAchat(${index})">Supprimer</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+      
+      updateFiltresInfo();
+    }
+
+    // Fonctions d'export PDF
+    function exporterPDF() {
+      if (achats.length === 0) {
+        alert('Aucun achat à exporter');
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('landscape', 'mm', 'a4');
+      
+      // En-tête légal du registre d'achats
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('REGISTRE D\'ACHATS', 140, 15, { align: 'center' });
+      
+      // Informations de l'entreprise (à récupérer depuis la config utilisateur)
+      const user = apiService ? apiService.getCurrentUser() : JSON.parse(localStorage.getItem('user') || '{}');
+      const config = user.config || {};
+      
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text('IDENTIFICATION DE L\'ENTREPRISE :', 20, 30);
+      
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Raison sociale : ${config.emetteurNom || 'Non renseigné'}`, 20, 37);
+      doc.text(`Adresse : ${config.emetteurAdresse || 'Non renseigné'}`, 20, 42);
+      doc.text(`Code postal : ${config.emetteurCodePostal || 'Non renseigné'} - Ville : ${config.emetteurVille || 'Non renseigné'}`, 20, 47);
+      doc.text(`SIRET : ${config.emetteurSiret || 'Non renseigné'}`, 20, 52);
+      doc.text(`Téléphone : ${config.emetteurTel || 'Non renseigné'} - Email : ${config.emetteurEmail || 'Non renseigné'}`, 20, 57);
+      
+      // Informations légales
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.text('INFORMATIONS LÉGALES :', 20, 67);
+      
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.text('• Ce registre d\'achats est conforme à l\'article L. 123-22 du Code de commerce', 20, 72);
+      doc.text('• Il doit être conservé pendant 10 ans à compter de la clôture de l\'exercice', 20, 76);
+      doc.text('• Chaque achat doit être numéroté de manière chronologique', 20, 80);
+      doc.text('• Les montants doivent être exprimés en euros (€)', 20, 84);
+      
+      // Informations de génération
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Généré le ${new Date().toLocaleDateString('fr-FR')} à ${new Date().toLocaleTimeString('fr-FR')}`, 140, 30, { align: 'center' });
+      doc.text(`Période : Du ${achats.length > 0 ? new Date(Math.min(...achats.map(a => new Date(a.date)))).toLocaleDateString('fr-FR') : 'N/A'} au ${achats.length > 0 ? new Date(Math.max(...achats.map(a => new Date(a.date)))).toLocaleDateString('fr-FR') : 'N/A'}`, 140, 35, { align: 'center' });
+      doc.text(`Total des achats : ${achats.length} factures`, 140, 40, { align: 'center' });
+      
+      // Calculs des totaux
+      const totalHT = achats.reduce((sum, a) => sum + parseFloat(a.montantHT || 0), 0);
+      const totalTVA = achats.reduce((sum, a) => sum + parseFloat(a.montantTVA || 0), 0);
+      const totalTTC = achats.reduce((sum, a) => sum + parseFloat(a.montantTTC || 0), 0);
+      
+      doc.text(`Montant total HT : ${totalHT.toFixed(2)} €`, 140, 45, { align: 'center' });
+      doc.text(`Montant total TVA : ${totalTVA.toFixed(2)} €`, 140, 50, { align: 'center' });
+      doc.text(`Montant total TTC : ${totalTTC.toFixed(2)} €`, 140, 55, { align: 'center' });
+      
+      // Préparer les données pour le tableau
+      const headers = [
+        'Date', 'N° Facture', 'Fournisseur', 'Description', 'Type Prestation', 'Type Dépense', 'Mode Paiement', 'Montant HT', 'TVA', 'Montant TTC'
+      ];
+      
+      const data = achats.map(achat => [
+        new Date(achat.date).toLocaleDateString('fr-FR'),
+        achat.numeroFacture,
+        achat.fournisseur,
+        achat.description,
+        achat.typePrestation || 'Non défini',
+        achat.typeDepense || 'Non défini',
+        achat.modePaiement || 'Non défini',
+        parseFloat(achat.montantHT).toFixed(2) + ' €',
+        `${achat.tauxTVA || 20}% (${parseFloat(achat.montantTVA || 0).toFixed(2)} €)`,
+        parseFloat(achat.montantTTC).toFixed(2) + ' €'
+      ]);
+      
+      // Générer le tableau
+      doc.autoTable({
+        head: [headers],
+        body: data,
+        startY: 90,
+        theme: 'grid',
+        styles: {
+          fontSize: 7,
+          cellPadding: 2
+        },
+        headStyles: {
+          fillColor: [26, 126, 231],
+          textColor: 255,
+          fontStyle: 'bold'
+        },
+        columnStyles: {
+          0: { cellWidth: 18 }, // Date
+          1: { cellWidth: 22 }, // N° Facture
+          2: { cellWidth: 30 }, // Fournisseur
+          3: { cellWidth: 35 }, // Description
+          4: { cellWidth: 20 }, // Type Prestation
+          5: { cellWidth: 20 }, // Type Dépense
+          6: { cellWidth: 20 }, // Mode Paiement
+          7: { cellWidth: 20 }, // Montant HT
+          8: { cellWidth: 20 }, // TVA
+          9: { cellWidth: 20 }  // Montant TTC
+        },
+        didDrawPage: function(data) {
+          // Numéro de page
+          doc.setFontSize(8);
+          doc.text(`Page ${doc.internal.getNumberOfPages()}`, 140, 200, { align: 'center' });
+        }
+      });
+      
+      // Sauvegarder le PDF
+      doc.save(`registre_achats_${new Date().toISOString().split('T')[0]}.pdf`);
+    }
+
+    function exporterPDFFiltres() {
+      if (achatsFiltered.length === 0) {
+        alert('Aucun achat filtré à exporter');
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('landscape', 'mm', 'a4');
+      
+      // En-tête légal du registre d'achats (filtres)
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('REGISTRE D\'ACHATS - FILTRES', 140, 15, { align: 'center' });
+      
+      // Informations de l'entreprise (à récupérer depuis la config utilisateur)
+      const user = apiService ? apiService.getCurrentUser() : JSON.parse(localStorage.getItem('user') || '{}');
+      const config = user.config || {};
+      
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text('IDENTIFICATION DE L\'ENTREPRISE :', 20, 30);
+      
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Raison sociale : ${config.emetteurNom || 'Non renseigné'}`, 20, 37);
+      doc.text(`Adresse : ${config.emetteurAdresse || 'Non renseigné'}`, 20, 42);
+      doc.text(`Code postal : ${config.emetteurCodePostal || 'Non renseigné'} - Ville : ${config.emetteurVille || 'Non renseigné'}`, 20, 47);
+      doc.text(`SIRET : ${config.emetteurSiret || 'Non renseigné'}`, 20, 52);
+      doc.text(`Téléphone : ${config.emetteurTel || 'Non renseigné'} - Email : ${config.emetteurEmail || 'Non renseigné'}`, 20, 57);
+      
+      // Informations légales
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.text('INFORMATIONS LÉGALES :', 20, 67);
+      
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.text('• Ce registre d\'achats est conforme à l\'article L. 123-22 du Code de commerce', 20, 72);
+      doc.text('• Il doit être conservé pendant 10 ans à compter de la clôture de l\'exercice', 20, 76);
+      doc.text('• Chaque achat doit être numéroté de manière chronologique', 20, 80);
+      doc.text('• Les montants doivent être exprimés en euros (€)', 20, 84);
+      
+      // Informations de génération (filtres)
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Généré le ${new Date().toLocaleDateString('fr-FR')} à ${new Date().toLocaleTimeString('fr-FR')}`, 140, 30, { align: 'center' });
+      doc.text(`Résultats filtrés : ${achatsFiltered.length} achats sur ${achats.length}`, 140, 35, { align: 'center' });
+      doc.text(`Période filtrée : Du ${achatsFiltered.length > 0 ? new Date(Math.min(...achatsFiltered.map(a => new Date(a.date)))).toLocaleDateString('fr-FR') : 'N/A'} au ${achatsFiltered.length > 0 ? new Date(Math.max(...achatsFiltered.map(a => new Date(a.date)))).toLocaleDateString('fr-FR') : 'N/A'}`, 140, 40, { align: 'center' });
+      
+      // Calculs des totaux filtrés
+      const totalHT = achatsFiltered.reduce((sum, a) => sum + parseFloat(a.montantHT || 0), 0);
+      const totalTVA = achatsFiltered.reduce((sum, a) => sum + parseFloat(a.montantTVA || 0), 0);
+      const totalTTC = achatsFiltered.reduce((sum, a) => sum + parseFloat(a.montantTTC || 0), 0);
+      
+      doc.text(`Montant total HT : ${totalHT.toFixed(2)} €`, 140, 45, { align: 'center' });
+      doc.text(`Montant total TVA : ${totalTVA.toFixed(2)} €`, 140, 50, { align: 'center' });
+      doc.text(`Montant total TTC : ${totalTTC.toFixed(2)} €`, 140, 55, { align: 'center' });
+      
+      // Préparer les données pour le tableau
+      const headers = [
+        'Date', 'N° Facture', 'Fournisseur', 'Description', 'Type Prestation', 'Type Dépense', 'Mode Paiement', 'Montant HT', 'TVA', 'Montant TTC'
+      ];
+      
+      const data = achatsFiltered.map(achat => [
+        new Date(achat.date).toLocaleDateString('fr-FR'),
+        achat.numeroFacture,
+        achat.fournisseur,
+        achat.description,
+        achat.typePrestation || 'Non défini',
+        achat.typeDepense || 'Non défini',
+        achat.modePaiement || 'Non défini',
+        parseFloat(achat.montantHT).toFixed(2) + ' €',
+        `${achat.tauxTVA || 20}% (${parseFloat(achat.montantTVA || 0).toFixed(2)} €)`,
+        parseFloat(achat.montantTTC).toFixed(2) + ' €'
+      ]);
+      
+      // Générer le tableau
+      doc.autoTable({
+        head: [headers],
+        body: data,
+        startY: 90,
+        theme: 'grid',
+        styles: {
+          fontSize: 7,
+          cellPadding: 2
+        },
+        headStyles: {
+          fillColor: [26, 126, 231],
+          textColor: 255,
+          fontStyle: 'bold'
+        },
+        columnStyles: {
+          0: { cellWidth: 18 }, // Date
+          1: { cellWidth: 22 }, // N° Facture
+          2: { cellWidth: 30 }, // Fournisseur
+          3: { cellWidth: 35 }, // Description
+          4: { cellWidth: 20 }, // Type Prestation
+          5: { cellWidth: 20 }, // Type Dépense
+          6: { cellWidth: 20 }, // Mode Paiement
+          7: { cellWidth: 20 }, // Montant HT
+          8: { cellWidth: 20 }, // TVA
+          9: { cellWidth: 20 }  // Montant TTC
+        },
+        didDrawPage: function(data) {
+          // Numéro de page
+          doc.setFontSize(8);
+          doc.text(`Page ${doc.internal.getNumberOfPages()}`, 140, 200, { align: 'center' });
+        }
+      });
+      
+      // Sauvegarder le PDF
+      doc.save(`registre_achats_filtres_${new Date().toISOString().split('T')[0]}.pdf`);
+    }
   </script>
 </body>
 </html> 
