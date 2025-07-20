@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion - CAPS FACT</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><style>.cls-1{fill:%23f4d03f;}.cls-2{fill:%23333;stroke:%23333;stroke-width:2;fill:none;}.cls-3{fill:%23333;}</style></defs><polygon class='cls-1' points='45,10 50,20 60,20 52,28 55,38 45,33 35,38 38,28 30,20 40,20'/><polygon class='cls-1' points='70,25 73,30 78,30 75,33 76,38 70,35 64,38 65,33 62,30 67,30'/><polygon class='cls-1' points='58,45 61,50 66,50 63,53 64,58 58,55 52,58 53,53 50,50 55,50'/><rect class='cls-2' x='15' y='25' width='45' height='60' rx='3'/><rect class='cls-3' x='20' y='35' width='25' height='2'/><rect class='cls-3' x='20' y='45' width='20' height='2'/><rect class='cls-3' x='20' y='55' width='25' height='2'/><rect class='cls-3' x='20' y='65' width='15' height='2'/><circle class='cls-2' cx='70' cy='60' r='15'/><text x='70' y='67' text-anchor='middle' class='cls-3' font-family='Arial' font-size='16' font-weight='bold'>$</text><path class='cls-2' d='M15,80 Q15,85 20,85 L75,85 Q80,85 80,80 L80,75 L15,75 Z'/></svg>" type="image/svg+xml">
+  <style>
+    body {
+      font-family: 'Montserrat', Arial, sans-serif;
+      background: linear-gradient(135deg, #1a7ee7, #0f5bb8);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .logo {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, #f4d03f, #f39c12);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: white;
+      font-weight: bold;
+    }
+
+    .title {
+      color: #1a7ee7;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 1rem;
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e1e8ed;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: 'Montserrat', Arial, sans-serif;
+      transition: border-color 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #1a7ee7;
+    }
+
+    .login-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #1a7ee7, #0f5bb8);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      font-family: 'Montserrat', Arial, sans-serif;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(26,126,231,0.3);
+    }
+
+    .login-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .register-link {
+      margin-top: 20px;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .register-link a {
+      color: #1a7ee7;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .register-link a:hover {
+      text-decoration: underline;
+    }
+
+    .error-message {
+      background: #fee;
+      color: #c33;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .success-message {
+      background: #efe;
+      color: #3c3;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="logo">CF</div>
+    <h1 class="title">CAPS FACT</h1>
+    <p class="subtitle">Connectez-vous à votre espace comptable</p>
+    
+    <div id="errorMessage" class="error-message"></div>
+    <div id="successMessage" class="success-message"></div>
+    
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      
+      <button type="submit" class="login-btn" id="loginBtn">
+        <span id="loginText">Se connecter</span>
+        <span id="loginSpinner" class="loading" style="display: none;"></span>
+      </button>
+    </form>
+    
+    <div class="register-link">
+      Pas encore de compte ? <a href="register.html">Créer un compte</a>
+    </div>
+  </div>
+
+  <script src="assets/js/api-service.js"></script>
+  <script>
+    // Vérifier si l'utilisateur est déjà connecté
+    if (apiService.isAuthenticated()) {
+      window.location.href = '/';
+    }
+
+    const loginForm = document.getElementById('loginForm');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginText = document.getElementById('loginText');
+    const loginSpinner = document.getElementById('loginSpinner');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.style.display = 'block';
+      successMessage.style.display = 'none';
+    }
+
+    function showSuccess(message) {
+      successMessage.textContent = message;
+      successMessage.style.display = 'block';
+      errorMessage.style.display = 'none';
+    }
+
+    function setLoading(loading) {
+      if (loading) {
+        loginBtn.disabled = true;
+        loginText.style.display = 'none';
+        loginSpinner.style.display = 'inline-block';
+      } else {
+        loginBtn.disabled = false;
+        loginText.style.display = 'inline';
+        loginSpinner.style.display = 'none';
+      }
+    }
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      if (!email || !password) {
+        showError('Veuillez remplir tous les champs');
+        return;
+      }
+
+      setLoading(true);
+      errorMessage.style.display = 'none';
+
+      try {
+        const response = await apiService.login({ email, password });
+        showSuccess('Connexion réussie ! Redirection...');
+        
+        // Redirection après 1 seconde
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1000);
+
+      } catch (error) {
+        console.error('Erreur de connexion:', error);
+        
+        if (error.status === 401) {
+          showError('Email ou mot de passe incorrect');
+        } else if (error.status === 0) {
+          showError('Impossible de se connecter au serveur. Vérifiez que le serveur MongoDB est démarré.');
+        } else {
+          showError('Erreur lors de la connexion. Veuillez réessayer.');
+        }
+      } finally {
+        setLoading(false);
+      }
+    });
+  </script>
+</body>
+</html> 

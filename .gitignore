@@ -1,5 +1,6 @@
 # Fichiers de configuration privés
 config.js
+.env
 
 # Fichiers système
 .DS_Store
@@ -10,4 +11,24 @@ Thumbs.db
 *.temp
 
 # Logs
-*.log 
+*.log
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# MongoDB
+*.db
+*.sqlite
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db 
