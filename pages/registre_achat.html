@@ -621,6 +621,12 @@
 
   <div class="container">
     <h1>💸 Registre d'Achat</h1>
+    <div style="margin-bottom: 20px; padding: 10px; background: #f0f8ff; border: 1px solid #1a7ee7; border-radius: 5px;">
+      <button onclick="forceReloadAchats()" style="background: #1a7ee7; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-right: 10px;">
+        🔄 Forcer le rechargement des achats
+      </button>
+      <span id="debugInfo" style="font-size: 12px; color: #666;"></span>
+    </div>
     
     <div class="stats-grid">
       <div class="stat-card">
@@ -885,15 +891,36 @@
     }
 
     function checkAuthStatus() {
-      if (typeof apiService !== 'undefined' && apiService && apiService.isAuthenticated()) {
-        const user = apiService.getCurrentUser();
-        if (user) {
-          showUserSection(user);
-          loadAchatsFromAPI();
+      console.log('🔍 Vérification de l\'état d\'authentification...');
+      console.log('API Service disponible:', typeof apiService !== 'undefined' && apiService);
+      
+      if (typeof apiService !== 'undefined' && apiService) {
+        console.log('Authentifié:', apiService.isAuthenticated());
+        console.log('Token:', apiService.token);
+        
+        if (apiService.isAuthenticated()) {
+          const user = apiService.getCurrentUser();
+          console.log('Utilisateur:', user);
+          if (user) {
+            showUserSection(user);
+            console.log('🚀 Chargement des achats...');
+            loadAchatsFromAPI();
+            
+            // Démarrer le rechargement automatique si pas déjà fait
+            if (!window.autoReloadStarted) {
+              window.autoReloadStarted = true;
+              startAutoReload();
+            }
+          } else {
+            console.log('❌ Utilisateur non trouvé');
+            showAuthSection();
+          }
         } else {
+          console.log('❌ Non authentifié');
           showAuthSection();
         }
       } else {
+        console.log('❌ API Service non disponible');
         showAuthSection();
       }
     }
@@ -1008,18 +1035,47 @@
     // Gestion des achats
     function loadAchatsFromAPI() {
       if (typeof apiService !== 'undefined' && apiService) {
+        console.log('🔄 Chargement des achats depuis MongoDB...');
+        
+        // Afficher l'indicateur de chargement
+        const debugInfo = document.getElementById('debugInfo');
+        if (debugInfo) {
+          debugInfo.textContent = '🔄 Chargement en cours...';
+          debugInfo.style.color = '#1a7ee7';
+        }
+        
         apiService.getAchats().then(result => {
-          achats = result.data || [];
+          console.log('📊 Résultat API:', result);
+          achats = result.data || result || [];
           achatsFiltered = [...achats];
+          console.log('✅ Achats chargés depuis MongoDB:', achats.length, 'achats');
+          console.log('📋 Détail des achats:', achats);
           updateAchatsTable();
           updateStats();
-          console.log('Achats chargés depuis MongoDB:', achats.length);
+          
+          // Mettre à jour l'indicateur
+          if (debugInfo) {
+            debugInfo.textContent = `✅ ${achats.length} achats chargés - Dernière mise à jour: ${new Date().toLocaleTimeString()}`;
+            debugInfo.style.color = '#27ae60';
+          }
         }).catch(error => {
-          console.error('Erreur lors du chargement depuis MongoDB:', error);
-          alert('Erreur lors du chargement des achats depuis MongoDB');
+          console.error('❌ Erreur lors du chargement depuis MongoDB:', error);
+          
+          // Mettre à jour l'indicateur d'erreur
+          if (debugInfo) {
+            debugInfo.textContent = '❌ Erreur de chargement - ' + error.message;
+            debugInfo.style.color = '#e74c3c';
+          }
         });
       } else {
-        alert('Service API non disponible');
+        console.error('❌ Service API non disponible');
+        
+        // Mettre à jour l'indicateur d'erreur
+        const debugInfo = document.getElementById('debugInfo');
+        if (debugInfo) {
+          debugInfo.textContent = '❌ Service API non disponible';
+          debugInfo.style.color = '#e74c3c';
+        }
       }
     }
 
@@ -1211,12 +1267,42 @@
       // Vérifier l'état d'authentification
       checkAuthStatus();
       
-      // Rafraîchir les données toutes les 10 secondes si connecté
-      setInterval(function() {
+      // Rechargement automatique et persistant
+      function startAutoReload() {
+        console.log('🚀 Démarrage du rechargement automatique des achats');
+        
+        // Rechargement immédiat
         if (typeof apiService !== 'undefined' && apiService && apiService.isAuthenticated()) {
           loadAchatsFromAPI();
         }
-      }, 10000);
+        
+        // Rechargement toutes les 5 secondes
+        setInterval(function() {
+          if (typeof apiService !== 'undefined' && apiService && apiService.isAuthenticated()) {
+            console.log('🔄 Rechargement automatique des achats...');
+            loadAchatsFromAPI();
+          }
+        }, 5000);
+        
+        // Rechargement quand la page redevient visible
+        document.addEventListener('visibilitychange', function() {
+          if (!document.hidden && typeof apiService !== 'undefined' && apiService && apiService.isAuthenticated()) {
+            console.log('👁️ Page visible, rechargement des achats...');
+            loadAchatsFromAPI();
+          }
+        });
+        
+        // Rechargement quand l'utilisateur revient sur l'onglet
+        window.addEventListener('focus', function() {
+          if (typeof apiService !== 'undefined' && apiService && apiService.isAuthenticated()) {
+            console.log('🎯 Onglet actif, rechargement des achats...');
+            loadAchatsFromAPI();
+          }
+        });
+      }
+      
+      // Démarrer le rechargement automatique
+      startAutoReload();
     });
 
     // Fonctions de filtrage
@@ -1570,6 +1656,31 @@
       
       // Sauvegarder le PDF
       doc.save(`registre_achats_filtres_${new Date().toISOString().split('T')[0]}.pdf`);
+    }
+
+    // Fonction de diagnostic pour forcer le rechargement des achats
+    function forceReloadAchats() {
+      console.log('🔧 FORÇAGE DU RECHARGEMENT DES ACHATS');
+      const debugInfo = document.getElementById('debugInfo');
+      debugInfo.textContent = 'Rechargement en cours...';
+      
+      if (typeof apiService !== 'undefined' && apiService) {
+        console.log('✅ API Service disponible');
+        console.log('🔑 Token:', apiService.token);
+        console.log('👤 Authentifié:', apiService.isAuthenticated());
+        
+        if (apiService.isAuthenticated()) {
+          console.log('🚀 Lancement du chargement...');
+          loadAchatsFromAPI();
+          debugInfo.textContent = 'Rechargement lancé - Vérifiez la console';
+        } else {
+          console.log('❌ Non authentifié');
+          debugInfo.textContent = 'ERREUR: Non authentifié';
+        }
+      } else {
+        console.log('❌ API Service non disponible');
+        debugInfo.textContent = 'ERREUR: API Service non disponible';
+      }
     }
   </script>
   

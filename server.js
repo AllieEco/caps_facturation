@@ -48,12 +48,20 @@ app.use((err, req, res, next) => {
   next();
 });
 
-// Rate limiting
+// Rate limiting général (plus permissif)
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limite chaque IP à 100 requêtes par fenêtre
+  max: 1000 // limite chaque IP à 1000 requêtes par fenêtre
 });
+
+// Rate limiting spécifique pour l'authentification (plus permissif)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 50 // limite chaque IP à 50 tentatives de connexion par fenêtre
+});
+
 app.use('/api/', limiter);
+app.use('/api/auth', authLimiter);
 
 // Connexion MongoDB
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/caps_fact', {
